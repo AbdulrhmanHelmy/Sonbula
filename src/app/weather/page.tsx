@@ -287,15 +287,15 @@ export default function WeatherPage() {
   const stagger = {
     hidden: {},
     show: { transition: { staggerChildren: 0.08 } },
-  };
+  } as const;
   const fadeUp = {
     hidden: { opacity: 0, y: 24 },
     show:   { opacity: 1, y: 0, transition: { duration: 0.55, ease: "easeOut" } },
-  };
+  } as const;
   const slideLeft = {
     hidden: { opacity: 0, x: -30 },
     show:   { opacity: 1, x: 0,  transition: { duration: 0.45, ease: "easeOut" } },
-  };
+  } as const;
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 relative overflow-x-hidden">

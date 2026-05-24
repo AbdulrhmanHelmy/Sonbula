@@ -162,7 +162,7 @@ const containerVariants = {
 const itemVariants = {
   hidden: { opacity: 0, y: 24 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: "easeOut" } },
-};
+} as const;
 
 export default function FAQPage() {
   const [activeCategory, setActiveCategory] = useState<Category>("All");
