@@ -25,8 +25,6 @@ import {
 import Navbar from "@/components/Navbar";
 import { useSettings } from "@/context/SettingsContext";
 
-// ─── Static UI Strings (bilingual) ───────────────────────────────────────────
-
 const UI = {
   en: {
     badge: "🌿 Plant Lovers Community",
@@ -117,8 +115,6 @@ const UI = {
   },
 };
 
-// ─── Shimmer CSS ──────────────────────────────────────────────────────────────
-
 const ShimmerStyles = () => (
   <style
     dangerouslySetInnerHTML={{
@@ -147,8 +143,8 @@ const ShimmerStyles = () => (
 
 // ─── Badge Component ──────────────────────────────────────────────────────────
 
-function Badge({ label, color }) {
-  const colorMap = {
+function Badge({ label, color }: { label: string; color: string }) {
+  const colorMap: Record<string, string> = {
     expert: "text-amber-400 bg-amber-500/10 border-amber-500/20",
     leader: "text-purple-400 bg-purple-500/10 border-purple-500/20",
     verified: "text-blue-400 bg-blue-500/10 border-blue-500/20",
@@ -164,7 +160,7 @@ function Badge({ label, color }) {
 
 // ─── Progress Bar ─────────────────────────────────────────────────────────────
 
-function ProgressBar({ value, max }) {
+function ProgressBar({ value, max }: { value: number; max: number }) {
   const pct = Math.round((value / max) * 100);
   return (
     <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
@@ -181,7 +177,21 @@ function ProgressBar({ value, max }) {
 
 // ─── Post Card ────────────────────────────────────────────────────────────────
 
-function PostCard({ post, liked, bookmarked, onLike, onBookmark, t }) {
+function PostCard({
+  post,
+  liked,
+  bookmarked,
+  onLike,
+  onBookmark,
+  t,
+}: {
+  post: (typeof INITIAL_POSTS)[number];
+  liked: boolean;
+  bookmarked: boolean;
+  onLike: () => void;
+  onBookmark: () => void;
+  t: (typeof UI)["en"];
+}) {
   const [showComments, setShowComments] = useState(false);
   const [commentInput, setCommentInput] = useState("");
 
@@ -363,7 +373,7 @@ function PostCard({ post, liked, bookmarked, onLike, onBookmark, t }) {
   );
 }
 
-// ─── Static Data (posts stay in English) ─────────────────────────────────────
+// ─── Static Data ──────────────────────────────────────────────────────────────
 
 const INITIAL_POSTS = [
   {
@@ -380,6 +390,8 @@ const INITIAL_POSTS = [
     comments: 45,
     bookmarks: 12,
     aiAssisted: true,
+    trending: false,
+    featured: false,
     imageEmoji: "🌹",
     imageGradient: "bg-gradient-to-br from-rose-950/60 to-pink-950/60",
     commentsData: [
@@ -414,6 +426,10 @@ const INITIAL_POSTS = [
     comments: 31,
     bookmarks: 5,
     aiAssisted: true,
+    trending: false,
+    featured: false,
+    imageEmoji: undefined,
+    imageGradient: undefined,
     commentsData: [
       {
         user: "OrganicFarm_Fatima",
@@ -445,6 +461,8 @@ const INITIAL_POSTS = [
     likes: 445,
     comments: 67,
     bookmarks: 89,
+    aiAssisted: false,
+    trending: false,
     featured: true,
     imageEmoji: "🏙️",
     imageGradient: "bg-gradient-to-br from-orange-950/50 to-amber-950/50",
@@ -479,6 +497,11 @@ const INITIAL_POSTS = [
     likes: 156,
     comments: 23,
     bookmarks: 8,
+    aiAssisted: false,
+    trending: false,
+    featured: false,
+    imageEmoji: undefined,
+    imageGradient: undefined,
     commentsData: [
       {
         user: "SunflowerPro_Maya",
@@ -510,7 +533,11 @@ const INITIAL_POSTS = [
     likes: 678,
     comments: 134,
     bookmarks: 234,
+    aiAssisted: false,
     trending: true,
+    featured: false,
+    imageEmoji: undefined,
+    imageGradient: undefined,
     commentsData: [
       {
         user: "ChemFree_Salwa",
@@ -542,6 +569,11 @@ const INITIAL_POSTS = [
     likes: 312,
     comments: 56,
     bookmarks: 78,
+    aiAssisted: false,
+    trending: false,
+    featured: false,
+    imageEmoji: undefined,
+    imageGradient: undefined,
     commentsData: [
       {
         user: "HerbLover_Dalia",
@@ -647,28 +679,28 @@ export default function CommunityPage() {
   const t = UI[isAr ? "ar" : "en"];
 
   const [activeTab, setActiveTab] = useState(0);
-  const [likedPosts, setLikedPosts] = useState(new Set());
-  const [bookmarkedPosts, setBookmarkedPosts] = useState(new Set());
+  const [likedPosts, setLikedPosts] = useState(new Set<number>());
+  const [bookmarkedPosts, setBookmarkedPosts] = useState(new Set<number>());
   const [composeOpen, setComposeOpen] = useState(false);
   const [composeText, setComposeText] = useState("");
-  const [followedMembers, setFollowedMembers] = useState(new Set());
+  const [followedMembers, setFollowedMembers] = useState(new Set<number>());
   const [loadingMore, setLoadingMore] = useState(false);
   const [postCount, setPostCount] = useState(6);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const toggleLike = (id) =>
+  const toggleLike = (id: number) =>
     setLikedPosts((prev) => {
       const n = new Set(prev);
       n.has(id) ? n.delete(id) : n.add(id);
       return n;
     });
-  const toggleBookmark = (id) =>
+  const toggleBookmark = (id: number) =>
     setBookmarkedPosts((prev) => {
       const n = new Set(prev);
       n.has(id) ? n.delete(id) : n.add(id);
       return n;
     });
-  const toggleFollow = (idx) =>
+  const toggleFollow = (idx: number) =>
     setFollowedMembers((prev) => {
       const n = new Set(prev);
       n.has(idx) ? n.delete(idx) : n.add(idx);
@@ -698,7 +730,7 @@ export default function CommunityPage() {
       <Navbar />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-24 relative z-10">
-        {/* ── HERO ─────────────────────────────────────────────────────── */}
+        {/* HERO */}
         <div className="text-center mb-12">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
@@ -755,7 +787,7 @@ export default function CommunityPage() {
           </motion.div>
         </div>
 
-        {/* ── SEARCH BAR ──────────────────────────────────────────────── */}
+        {/* SEARCH BAR */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
@@ -785,9 +817,9 @@ export default function CommunityPage() {
           </motion.button>
         </motion.div>
 
-        {/* ── MAIN LAYOUT ─────────────────────────────────────────────── */}
+        {/* MAIN LAYOUT */}
         <div className="flex flex-col lg:flex-row gap-6">
-          {/* ── FEED ────────────────────────────────────────────────────── */}
+          {/* FEED */}
           <div className="flex-1 min-w-0 space-y-5">
             {/* Tabs */}
             <div className="flex gap-1 bg-slate-900/30 backdrop-blur-md rounded-xl border border-slate-800/60 p-1">
@@ -915,7 +947,7 @@ export default function CommunityPage() {
             </motion.div>
           </div>
 
-          {/* ── SIDEBAR ─────────────────────────────────────────────────── */}
+          {/* SIDEBAR */}
           <div className="w-full lg:w-80 xl:w-96 shrink-0 space-y-4">
             {/* Trending Topics */}
             <motion.div
@@ -1054,7 +1086,7 @@ export default function CommunityPage() {
         </div>
       </div>
 
-      {/* ── FOOTER ──────────────────────────────────────────────────────────── */}
+      {/* FOOTER */}
       <footer className="border-t border-slate-800/60 bg-slate-950/80 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">

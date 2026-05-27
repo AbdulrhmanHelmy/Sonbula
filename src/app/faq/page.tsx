@@ -19,12 +19,12 @@ import Link from "next/link";
 
 // ─── Static Data (bilingual) ──────────────────────────────────────────────────
 
-const getCategories = (isAr) =>
+const getCategories = (isAr: boolean): string[] =>
   isAr
     ? ["الكل", "الدقة", "النباتات", "الأمان", "الاستخدام", "التقنية"]
     : ["All", "Accuracy", "Plants", "Security", "Usage", "Technology"];
 
-const getCategoryMap = (isAr) =>
+const getCategoryMap = (isAr: boolean): Record<string, string> =>
   isAr
     ? {
         Accuracy: "الدقة",
@@ -184,7 +184,7 @@ const FAQ_DATA = [
   },
 ];
 
-const categoryIcon = (cat, size = 16) => {
+const categoryIcon = (cat: string, size: number = 16) => {
   switch (cat) {
     case "Accuracy":
       return <Brain size={size} />;
@@ -206,12 +206,14 @@ const containerVariants = {
   visible: { transition: { staggerChildren: 0.08 } },
 };
 
-const itemVariants = {
+import type { Variants } from "framer-motion";
+
+const itemVariants: Variants = {
   hidden: { opacity: 0, y: 24 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.45, ease: "easeOut" },
+    transition: { duration: 0.45, ease: "easeOut" as const },
   },
 };
 
@@ -221,13 +223,12 @@ export default function FAQPage() {
   const isAr = language === "ar";
   const [activeCategory, setActiveCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
-  const [openId, setOpenId] = useState(null);
+  const [openId, setOpenId] = useState<number | null>(null);
 
   const categoryMap = getCategoryMap(isAr);
   const CATEGORIES = getCategories(isAr);
   const allKey = isAr ? "الكل" : "All";
 
-  // Map displayed active category back to English key
   const activeCategoryEn = useMemo(() => {
     if (
       activeCategory === allKey ||
@@ -256,7 +257,7 @@ export default function FAQPage() {
     });
   }, [activeCategoryEn, searchQuery, isAr]);
 
-  const toggle = (id) => setOpenId((prev) => (prev === id ? null : id));
+  const toggle = (id: number) => setOpenId((prev) => (prev === id ? null : id));
 
   const t = {
     badge: isAr ? "✦ لديك أسئلة؟" : "✦ Got Questions?",
@@ -292,7 +293,7 @@ export default function FAQPage() {
       className="min-h-screen bg-slate-950 text-slate-100 overflow-x-hidden"
       dir={isAr ? "rtl" : "ltr"}>
       <Navbar />
-      {/* ── Hero ── */}
+      {/* Hero */}
       <section className="relative pt-24 sm:pt-32 pb-20 px-4 sm:px-6 lg:px-8">
         <div className="absolute top-0 right-0 w-[40vw] max-w-[600px] h-[40vw] max-h-[600px] bg-emerald-500/10 rounded-full blur-[130px] pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-[35vw] max-w-[500px] h-[35vw] max-h-[500px] bg-emerald-700/8 rounded-full blur-[120px] pointer-events-none" />
@@ -349,7 +350,7 @@ export default function FAQPage() {
         </div>
       </section>
 
-      {/* ── Category Tabs ── */}
+      {/* Category Tabs */}
       <section className="px-4 sm:px-6 lg:px-8 mb-10">
         <div className="max-w-4xl mx-auto">
           <motion.div
@@ -359,7 +360,6 @@ export default function FAQPage() {
             className="flex gap-2.5 overflow-x-auto pb-2 scrollbar-none">
             {CATEGORIES.map((cat) => {
               const isActive = activeCategory === cat;
-              // Get English key for icon
               const catEn =
                 Object.entries(categoryMap).find(([, v]) => v === cat)?.[0] ||
                 cat;
@@ -391,7 +391,7 @@ export default function FAQPage() {
         </div>
       </section>
 
-      {/* ── FAQ List ── */}
+      {/* FAQ List */}
       <section className="px-4 sm:px-6 lg:px-8 pb-24">
         <div className="max-w-4xl mx-auto">
           {filteredFAQs.length === 0 ? (
@@ -496,7 +496,7 @@ export default function FAQPage() {
         </div>
       </section>
 
-      {/* ── CTA Banner ── */}
+      {/* CTA Banner */}
       <section className="px-4 sm:px-6 lg:px-8 pb-24">
         <div className="max-w-4xl mx-auto">
           <motion.div
@@ -539,7 +539,7 @@ export default function FAQPage() {
         </div>
       </section>
 
-      {/* ── Footer ── */}
+      {/* Footer */}
       <footer className="border-t border-slate-800/60 bg-slate-950">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
