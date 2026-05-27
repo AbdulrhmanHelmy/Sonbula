@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbar";
 import { useState, useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import Link from "next/link";
+import { useSettings } from "@/context/SettingsContext";
 import {
   Droplets,
   Sun,
@@ -18,20 +19,46 @@ import {
   ChevronRight,
 } from "lucide-react";
 
-// ─── Types ───────────────────────────────────────────────────────────────────
+// ─── Types ────────────────────────────────────────────────────────────────────
 interface NavItem {
   id: string;
   label: string;
+  labelAr: string;
   icon: React.ReactNode;
 }
 
 // ─── Sidebar nav config ───────────────────────────────────────────────────────
 const navItems: NavItem[] = [
-  { id: "watering", label: "Watering Guide", icon: <Droplets className="w-4 h-4" /> },
-  { id: "fertilizer", label: "Fertilizer Guide", icon: <FlaskConical className="w-4 h-4" /> },
-  { id: "lighting", label: "Lighting Guide", icon: <Sun className="w-4 h-4" /> },
-  { id: "soil", label: "Soil Guide", icon: <Sprout className="w-4 h-4" /> },
-  { id: "pruning", label: "Pruning Guide", icon: <Scissors className="w-4 h-4" /> },
+  {
+    id: "watering",
+    label: "Watering Guide",
+    labelAr: "دليل الري",
+    icon: <Droplets className="w-4 h-4" />,
+  },
+  {
+    id: "fertilizer",
+    label: "Fertilizer Guide",
+    labelAr: "دليل التسميد",
+    icon: <FlaskConical className="w-4 h-4" />,
+  },
+  {
+    id: "lighting",
+    label: "Lighting Guide",
+    labelAr: "دليل الإضاءة",
+    icon: <Sun className="w-4 h-4" />,
+  },
+  {
+    id: "soil",
+    label: "Soil Guide",
+    labelAr: "دليل التربة",
+    icon: <Sprout className="w-4 h-4" />,
+  },
+  {
+    id: "pruning",
+    label: "Pruning Guide",
+    labelAr: "دليل التقليم",
+    icon: <Scissors className="w-4 h-4" />,
+  },
 ];
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -51,8 +78,7 @@ function SectionWrapper({
       initial={{ opacity: 0, y: 30 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.6 }}
-      className="scroll-mt-24"
-    >
+      className="scroll-mt-24">
       {children}
     </motion.section>
   );
@@ -67,8 +93,7 @@ function GlassCard({
 }) {
   return (
     <div
-      className={`bg-slate-900/30 backdrop-blur-md rounded-2xl border border-slate-800/60 ${className}`}
-    >
+      className={`bg-slate-900/30 backdrop-blur-md rounded-2xl border border-slate-800/60 ${className}`}>
       {children}
     </div>
   );
@@ -89,9 +114,13 @@ function SectionTitle({
         <span className="flex items-center justify-center w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
           {icon}
         </span>
-        <h2 className="text-2xl sm:text-3xl font-extrabold text-white">{label}</h2>
+        <h2 className="text-2xl sm:text-3xl font-extrabold text-white">
+          {label}
+        </h2>
       </div>
-      <p className="text-slate-400 text-sm sm:text-base leading-relaxed">{description}</p>
+      <p className="text-slate-400 text-sm sm:text-base leading-relaxed">
+        {description}
+      </p>
     </div>
   );
 }
@@ -114,48 +143,85 @@ function WarningTip({ children }: { children: React.ReactNode }) {
   );
 }
 
-// ─── SECTIONS ─────────────────────────────────────────────────────────────────
-
-// 1. Watering
-function WateringSection() {
-  const wateringTypes = [
-    {
-      title: "Indoor Plants",
-      emoji: "🪴",
-      freq: "Every 7–10 days",
-      color: "emerald",
-      tips: [
-        "Water when top 2 cm of soil is dry",
-        "Mist leaves weekly to raise humidity",
-        "Use room-temperature water",
-        "Ensure pot has proper drainage",
-      ],
-    },
-    {
-      title: "Outdoor Crops",
-      emoji: "🌽",
-      freq: "2–3 times / week",
-      color: "sky",
-      tips: [
-        "Water deeply to encourage root growth",
-        "Avoid wetting foliage — invite disease",
-        "Early morning watering is best",
-        "Mulch to retain soil moisture",
-      ],
-    },
-    {
-      title: "Succulents & Cacti",
-      emoji: "🌵",
-      freq: "Once every 2–3 weeks",
-      color: "orange",
-      tips: [
-        "Let soil dry completely between waterings",
-        "Never let roots sit in standing water",
-        "Reduce watering in winter dormancy",
-        "Use terracotta pots for faster drying",
-      ],
-    },
-  ];
+// ─── 1. Watering ──────────────────────────────────────────────────────────────
+function WateringSection({ isAr }: { isAr: boolean }) {
+  const wateringTypes = isAr
+    ? [
+        {
+          title: "النباتات الداخلية",
+          emoji: "🪴",
+          freq: "كل ٧–١٠ أيام",
+          color: "emerald",
+          tips: [
+            "اسقِ عندما تجف أعلى ٢ سم من التربة",
+            "رشّ الأوراق أسبوعياً لرفع الرطوبة",
+            "استخدم ماءً بدرجة حرارة الغرفة",
+            "تأكد من وجود صرف جيد في الأصيص",
+          ],
+        },
+        {
+          title: "المحاصيل الخارجية",
+          emoji: "🌽",
+          freq: "٢–٣ مرات أسبوعياً",
+          color: "sky",
+          tips: [
+            "اسقِ بعمق لتشجيع نمو الجذور",
+            "تجنب بلل الأوراق – يسبب الأمراض",
+            "الري الصباحي المبكر هو الأمثل",
+            "ضع مهاداً للحفاظ على رطوبة التربة",
+          ],
+        },
+        {
+          title: "العصاريات والصبار",
+          emoji: "🌵",
+          freq: "مرة كل ٢–٣ أسابيع",
+          color: "orange",
+          tips: [
+            "اتركها تجف تماماً بين كل ريَّتين",
+            "لا تترك الجذور في ماء راكد",
+            "قلل الري في فترة السكون الشتوي",
+            "استخدم أصص خزفية لتجفيف أسرع",
+          ],
+        },
+      ]
+    : [
+        {
+          title: "Indoor Plants",
+          emoji: "🪴",
+          freq: "Every 7–10 days",
+          color: "emerald",
+          tips: [
+            "Water when top 2 cm of soil is dry",
+            "Mist leaves weekly to raise humidity",
+            "Use room-temperature water",
+            "Ensure pot has proper drainage",
+          ],
+        },
+        {
+          title: "Outdoor Crops",
+          emoji: "🌽",
+          freq: "2–3 times / week",
+          color: "sky",
+          tips: [
+            "Water deeply to encourage root growth",
+            "Avoid wetting foliage — invite disease",
+            "Early morning watering is best",
+            "Mulch to retain soil moisture",
+          ],
+        },
+        {
+          title: "Succulents & Cacti",
+          emoji: "🌵",
+          freq: "Once every 2–3 weeks",
+          color: "orange",
+          tips: [
+            "Let soil dry completely between waterings",
+            "Never let roots sit in standing water",
+            "Reduce watering in winter dormancy",
+            "Use terracotta pots for faster drying",
+          ],
+        },
+      ];
 
   const colorMap: Record<string, string> = {
     emerald: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20",
@@ -163,19 +229,62 @@ function WateringSection() {
     orange: "text-orange-400 bg-orange-500/10 border-orange-500/20",
   };
 
-  const seasonCalendar = [
-    { season: "Spring", freq: "Moderate", note: "Resume regular watering as growth picks up" },
-    { season: "Summer", freq: "High", note: "Water frequently; heat accelerates evaporation" },
-    { season: "Autumn", freq: "Low–Moderate", note: "Gradually reduce as growth slows" },
-    { season: "Winter", freq: "Minimal", note: "Most plants need very little — check soil first" },
-  ];
+  const seasonCalendar = isAr
+    ? [
+        {
+          season: "الربيع",
+          freq: "متوسط",
+          note: "استأنف الري المنتظم مع بدء النمو",
+        },
+        {
+          season: "الصيف",
+          freq: "مرتفع",
+          note: "اسقِ بكثرة؛ الحرارة تسرّع التبخر",
+        },
+        {
+          season: "الخريف",
+          freq: "منخفض–متوسط",
+          note: "قلل تدريجياً مع تباطؤ النمو",
+        },
+        {
+          season: "الشتاء",
+          freq: "ضئيل",
+          note: "معظم النباتات تحتاج القليل – افحص التربة أولاً",
+        },
+      ]
+    : [
+        {
+          season: "Spring",
+          freq: "Moderate",
+          note: "Resume regular watering as growth picks up",
+        },
+        {
+          season: "Summer",
+          freq: "High",
+          note: "Water frequently; heat accelerates evaporation",
+        },
+        {
+          season: "Autumn",
+          freq: "Low–Moderate",
+          note: "Gradually reduce as growth slows",
+        },
+        {
+          season: "Winter",
+          freq: "Minimal",
+          note: "Most plants need very little — check soil first",
+        },
+      ];
 
   return (
     <SectionWrapper id="watering">
       <SectionTitle
         icon={<Droplets className="w-5 h-5" />}
-        label="Watering Guide"
-        description="Proper watering is the single most impactful care habit. Learn the right frequency, method, and seasonal adjustments for every plant type."
+        label={isAr ? "دليل الري" : "Watering Guide"}
+        description={
+          isAr
+            ? "الري الصحيح هو أهم عادة في رعاية النباتات. تعلم التكرار المناسب والأسلوب الصحيح والتعديلات الموسمية لكل نوع."
+            : "Proper watering is the single most impactful care habit. Learn the right frequency, method, and seasonal adjustments for every plant type."
+        }
       />
 
       <div className="grid sm:grid-cols-3 gap-4 mb-6">
@@ -186,14 +295,12 @@ function WateringSection() {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.1 }}
             viewport={{ once: true }}
-            whileHover={{ y: -4 }}
-          >
+            whileHover={{ y: -4 }}>
             <GlassCard className="p-5 h-full">
               <div className="flex items-center justify-between mb-3">
                 <span className="text-2xl">{type.emoji}</span>
                 <span
-                  className={`text-xs px-2.5 py-0.5 rounded-full border font-medium ${colorMap[type.color]}`}
-                >
+                  className={`text-xs px-2.5 py-0.5 rounded-full border font-medium ${colorMap[type.color]}`}>
                   {type.freq}
                 </span>
               </div>
@@ -213,30 +320,54 @@ function WateringSection() {
 
       <div className="mb-6">
         <WarningTip>
-          <strong className="text-amber-300">Overwatering</strong> is the #1 killer of houseplants.
-          Yellow leaves, mushy stems, and a sour soil smell are classic signs. Always check soil
-          moisture before reaching for the watering can.
+          {isAr ? (
+            <>
+              <strong className="text-amber-300">الإفراط في الري</strong> هو
+              السبب الأول لموت النباتات الداخلية. اصفرار الأوراق والسيقان الطرية
+              والرائحة الحامضة من التربة علامات كلاسيكية. افحص رطوبة التربة
+              دائماً قبل الري.
+            </>
+          ) : (
+            <>
+              <strong className="text-amber-300">Overwatering</strong> is the #1
+              killer of houseplants. Yellow leaves, mushy stems, and a sour soil
+              smell are classic signs. Always check soil moisture before
+              reaching for the watering can.
+            </>
+          )}
         </WarningTip>
       </div>
 
-      {/* Seasonal calendar */}
       <GlassCard className="p-5">
         <h3 className="font-bold text-white mb-4 flex items-center gap-2">
-          <Leaf className="w-4 h-4 text-emerald-400" /> Seasonal Watering Calendar
+          <Leaf className="w-4 h-4 text-emerald-400" />
+          {isAr ? "تقويم الري الموسمي" : "Seasonal Watering Calendar"}
         </h3>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="text-left text-slate-500 border-b border-slate-800/60">
-                <th className="pb-2 pr-4 font-semibold">Season</th>
-                <th className="pb-2 pr-4 font-semibold">Frequency</th>
-                <th className="pb-2 font-semibold">Guidance</th>
+              <tr
+                className="text-slate-500 border-b border-slate-800/60"
+                style={{ textAlign: isAr ? "right" : "left" }}>
+                <th className="pb-2 pr-4 font-semibold">
+                  {isAr ? "الموسم" : "Season"}
+                </th>
+                <th className="pb-2 pr-4 font-semibold">
+                  {isAr ? "التكرار" : "Frequency"}
+                </th>
+                <th className="pb-2 font-semibold">
+                  {isAr ? "التوجيه" : "Guidance"}
+                </th>
               </tr>
             </thead>
             <tbody>
               {seasonCalendar.map((row, i) => (
-                <tr key={row.season} className={i % 2 === 0 ? "bg-white/2" : ""}>
-                  <td className="py-2 pr-4 text-emerald-400 font-medium">{row.season}</td>
+                <tr
+                  key={row.season}
+                  className={i % 2 === 0 ? "bg-white/2" : ""}>
+                  <td className="py-2 pr-4 text-emerald-400 font-medium">
+                    {row.season}
+                  </td>
                   <td className="py-2 pr-4 text-slate-300">{row.freq}</td>
                   <td className="py-2 text-slate-400">{row.note}</td>
                 </tr>
@@ -249,57 +380,218 @@ function WateringSection() {
   );
 }
 
-// 2. Fertilizer
-function FertilizerSection() {
-  const npk = [
-    { letter: "N", name: "Nitrogen", color: "text-green-400 bg-green-500/10 border-green-500/20", desc: "Drives leafy, vegetative growth" },
-    { letter: "P", name: "Phosphorus", color: "text-purple-400 bg-purple-500/10 border-purple-500/20", desc: "Supports root & flower development" },
-    { letter: "K", name: "Potassium", color: "text-orange-400 bg-orange-500/10 border-orange-500/20", desc: "Boosts overall plant health & resilience" },
-  ];
+// ─── 2. Fertilizer ────────────────────────────────────────────────────────────
+function FertilizerSection({ isAr }: { isAr: boolean }) {
+  const npk = isAr
+    ? [
+        {
+          letter: "N",
+          name: "النيتروجين",
+          color: "text-green-400 bg-green-500/10 border-green-500/20",
+          desc: "يحفز النمو الخضري الورقي",
+        },
+        {
+          letter: "P",
+          name: "الفوسفور",
+          color: "text-purple-400 bg-purple-500/10 border-purple-500/20",
+          desc: "يدعم نمو الجذور والأزهار",
+        },
+        {
+          letter: "K",
+          name: "البوتاسيوم",
+          color: "text-orange-400 bg-orange-500/10 border-orange-500/20",
+          desc: "يعزز الصحة العامة ومقاومة النبات",
+        },
+      ]
+    : [
+        {
+          letter: "N",
+          name: "Nitrogen",
+          color: "text-green-400 bg-green-500/10 border-green-500/20",
+          desc: "Drives leafy, vegetative growth",
+        },
+        {
+          letter: "P",
+          name: "Phosphorus",
+          color: "text-purple-400 bg-purple-500/10 border-purple-500/20",
+          desc: "Supports root & flower development",
+        },
+        {
+          letter: "K",
+          name: "Potassium",
+          color: "text-orange-400 bg-orange-500/10 border-orange-500/20",
+          desc: "Boosts overall plant health & resilience",
+        },
+      ];
 
-  const fertTypes = [
-    {
-      title: "Organic",
-      emoji: "🌿",
-      when: "Throughout growing season",
-      benefits: ["Feeds soil microbes", "Long-lasting effect", "Low burn risk", "Improves soil structure"],
-    },
-    {
-      title: "Liquid",
-      emoji: "💧",
-      when: "Every 2–4 weeks when actively growing",
-      benefits: ["Fast-acting results", "Easy to apply", "Precise dosing", "Great for container plants"],
-    },
-    {
-      title: "Granular",
-      emoji: "🪨",
-      when: "Start of growing season",
-      benefits: ["Slow-release option", "Covers large areas", "Cost-effective", "Reduces application frequency"],
-    },
-    {
-      title: "Slow-Release",
-      emoji: "⏱️",
-      when: "Every 3–6 months",
-      benefits: ["Feeds for months", "Minimal risk of over-feeding", "Convenient", "Ideal for busy gardeners"],
-    },
-  ];
+  const fertTypes = isAr
+    ? [
+        {
+          title: "عضوي",
+          emoji: "🌿",
+          when: "خلال موسم النمو",
+          benefits: [
+            "يغذي ميكروبات التربة",
+            "مفعول طويل الأمد",
+            "خطر حرق منخفض",
+            "يحسن بنية التربة",
+          ],
+        },
+        {
+          title: "سائل",
+          emoji: "💧",
+          when: "كل ٢–٤ أسابيع في موسم النمو",
+          benefits: [
+            "نتائج سريعة",
+            "سهل التطبيق",
+            "جرعة دقيقة",
+            "مثالي لنباتات الأصص",
+          ],
+        },
+        {
+          title: "حبيبي",
+          emoji: "🪨",
+          when: "بداية موسم النمو",
+          benefits: [
+            "خيار بطيء الإفراز",
+            "يغطي مساحات كبيرة",
+            "اقتصادي",
+            "يقلل تكرار التطبيق",
+          ],
+        },
+        {
+          title: "بطيء الإفراز",
+          emoji: "⏱️",
+          when: "كل ٣–٦ أشهر",
+          benefits: [
+            "يغذي لأشهر",
+            "خطر إفراط التغذية منخفض",
+            "مريح",
+            "مثالي للبستانيين المشغولين",
+          ],
+        },
+      ]
+    : [
+        {
+          title: "Organic",
+          emoji: "🌿",
+          when: "Throughout growing season",
+          benefits: [
+            "Feeds soil microbes",
+            "Long-lasting effect",
+            "Low burn risk",
+            "Improves soil structure",
+          ],
+        },
+        {
+          title: "Liquid",
+          emoji: "💧",
+          when: "Every 2–4 weeks when actively growing",
+          benefits: [
+            "Fast-acting results",
+            "Easy to apply",
+            "Precise dosing",
+            "Great for container plants",
+          ],
+        },
+        {
+          title: "Granular",
+          emoji: "🪨",
+          when: "Start of growing season",
+          benefits: [
+            "Slow-release option",
+            "Covers large areas",
+            "Cost-effective",
+            "Reduces application frequency",
+          ],
+        },
+        {
+          title: "Slow-Release",
+          emoji: "⏱️",
+          when: "Every 3–6 months",
+          benefits: [
+            "Feeds for months",
+            "Minimal risk of over-feeding",
+            "Convenient",
+            "Ideal for busy gardeners",
+          ],
+        },
+      ];
 
-  const schedule = [
-    { type: "Tropical Houseplants", spring: "Bi-weekly liquid", summer: "Weekly liquid", fall: "Monthly", winter: "None" },
-    { type: "Vegetables", spring: "Starter granular", summer: "Weekly liquid", fall: "Light potassium", winter: "None" },
-    { type: "Flowering Plants", spring: "High-P liquid", summer: "High-P liquid", fall: "Reduce gradually", winter: "None" },
-    { type: "Succulents", spring: "Diluted liquid ×1", summer: "Monthly diluted", fall: "None", winter: "None" },
-  ];
+  const schedule = isAr
+    ? [
+        {
+          type: "النباتات الاستوائية الداخلية",
+          spring: "سائل كل أسبوعين",
+          summer: "سائل أسبوعياً",
+          fall: "شهرياً",
+          winter: "لا شيء",
+        },
+        {
+          type: "الخضروات",
+          spring: "حبيبي للبداية",
+          summer: "سائل أسبوعياً",
+          fall: "بوتاسيوم خفيف",
+          winter: "لا شيء",
+        },
+        {
+          type: "النباتات المزهرة",
+          spring: "سائل عالي P",
+          summer: "سائل عالي P",
+          fall: "تقليل تدريجي",
+          winter: "لا شيء",
+        },
+        {
+          type: "العصاريات",
+          spring: "سائل مخفف مرة",
+          summer: "مخفف شهرياً",
+          fall: "لا شيء",
+          winter: "لا شيء",
+        },
+      ]
+    : [
+        {
+          type: "Tropical Houseplants",
+          spring: "Bi-weekly liquid",
+          summer: "Weekly liquid",
+          fall: "Monthly",
+          winter: "None",
+        },
+        {
+          type: "Vegetables",
+          spring: "Starter granular",
+          summer: "Weekly liquid",
+          fall: "Light potassium",
+          winter: "None",
+        },
+        {
+          type: "Flowering Plants",
+          spring: "High-P liquid",
+          summer: "High-P liquid",
+          fall: "Reduce gradually",
+          winter: "None",
+        },
+        {
+          type: "Succulents",
+          spring: "Diluted liquid ×1",
+          summer: "Monthly diluted",
+          fall: "None",
+          winter: "None",
+        },
+      ];
 
   return (
     <SectionWrapper id="fertilizer">
       <SectionTitle
         icon={<FlaskConical className="w-5 h-5" />}
-        label="Fertilizer Guide"
-        description="Plants need macro and micro nutrients to thrive. Understanding NPK ratios and fertilizer types lets you feed your plants smarter, not harder."
+        label={isAr ? "دليل التسميد" : "Fertilizer Guide"}
+        description={
+          isAr
+            ? "تحتاج النباتات للعناصر الكبرى والصغرى لتزدهر. فهم نسب NPK وأنواع الأسمدة يتيح لك تغذية نباتاتك بذكاء."
+            : "Plants need macro and micro nutrients to thrive. Understanding NPK ratios and fertilizer types lets you feed your plants smarter, not harder."
+        }
       />
 
-      {/* NPK */}
       <div className="grid grid-cols-3 gap-3 mb-6">
         {npk.map((n, i) => (
           <motion.div
@@ -307,10 +599,10 @@ function FertilizerSection() {
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
             transition={{ delay: i * 0.1 }}
-            viewport={{ once: true }}
-          >
+            viewport={{ once: true }}>
             <GlassCard className="p-4 text-center">
-              <span className={`inline-block text-2xl font-extrabold mb-1 px-3 py-1 rounded-lg border ${n.color}`}>
+              <span
+                className={`inline-block text-2xl font-extrabold mb-1 px-3 py-1 rounded-lg border ${n.color}`}>
                 {n.letter}
               </span>
               <p className="font-semibold text-white text-sm mb-1">{n.name}</p>
@@ -320,7 +612,6 @@ function FertilizerSection() {
         ))}
       </div>
 
-      {/* Fertilizer cards */}
       <div className="grid sm:grid-cols-2 gap-4 mb-6">
         {fertTypes.map((f, i) => (
           <motion.div
@@ -329,8 +620,7 @@ function FertilizerSection() {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.1 }}
             viewport={{ once: true }}
-            whileHover={{ y: -3 }}
-          >
+            whileHover={{ y: -3 }}>
             <GlassCard className="p-5 h-full">
               <div className="flex items-center gap-3 mb-3">
                 <span className="text-xl">{f.emoji}</span>
@@ -354,32 +644,66 @@ function FertilizerSection() {
 
       <div className="mb-6">
         <ProTip>
-          Fertilize during the <strong className="text-emerald-300">active growing season</strong> (spring
-          and summer). Most plants enter dormancy in winter — feeding them then wastes fertilizer and
-          can burn roots.
+          {isAr ? (
+            <>
+              {" "}
+              سمّد خلال{" "}
+              <strong className="text-emerald-300">
+                موسم النمو النشط
+              </strong>{" "}
+              (الربيع والصيف). تدخل معظم النباتات في سكون شتوي – التسميد حينها
+              يهدر السماد وقد يحرق الجذور.
+            </>
+          ) : (
+            <>
+              {" "}
+              Fertilize during the{" "}
+              <strong className="text-emerald-300">
+                active growing season
+              </strong>{" "}
+              (spring and summer). Most plants enter dormancy in winter —
+              feeding them then wastes fertilizer and can burn roots.
+            </>
+          )}
         </ProTip>
       </div>
 
-      {/* Schedule grid */}
       <GlassCard className="p-5">
         <h3 className="font-bold text-white mb-4 flex items-center gap-2">
-          <FlaskConical className="w-4 h-4 text-emerald-400" /> Fertilizer Schedule by Plant Type
+          <FlaskConical className="w-4 h-4 text-emerald-400" />
+          {isAr
+            ? "جدول التسميد حسب نوع النبات"
+            : "Fertilizer Schedule by Plant Type"}
         </h3>
         <div className="overflow-x-auto">
           <table className="w-full text-xs sm:text-sm">
             <thead>
-              <tr className="text-left text-slate-500 border-b border-slate-800/60">
-                <th className="pb-2 pr-3 font-semibold">Plant Type</th>
-                <th className="pb-2 pr-3 font-semibold text-green-400">Spring</th>
-                <th className="pb-2 pr-3 font-semibold text-yellow-400">Summer</th>
-                <th className="pb-2 pr-3 font-semibold text-orange-400">Fall</th>
-                <th className="pb-2 font-semibold text-blue-400">Winter</th>
+              <tr
+                className="text-slate-500 border-b border-slate-800/60"
+                style={{ textAlign: isAr ? "right" : "left" }}>
+                <th className="pb-2 pr-3 font-semibold">
+                  {isAr ? "نوع النبات" : "Plant Type"}
+                </th>
+                <th className="pb-2 pr-3 font-semibold text-green-400">
+                  {isAr ? "ربيع" : "Spring"}
+                </th>
+                <th className="pb-2 pr-3 font-semibold text-yellow-400">
+                  {isAr ? "صيف" : "Summer"}
+                </th>
+                <th className="pb-2 pr-3 font-semibold text-orange-400">
+                  {isAr ? "خريف" : "Fall"}
+                </th>
+                <th className="pb-2 font-semibold text-blue-400">
+                  {isAr ? "شتاء" : "Winter"}
+                </th>
               </tr>
             </thead>
             <tbody>
               {schedule.map((row, i) => (
                 <tr key={row.type} className={i % 2 === 0 ? "bg-white/2" : ""}>
-                  <td className="py-2 pr-3 text-white font-medium">{row.type}</td>
+                  <td className="py-2 pr-3 text-white font-medium">
+                    {row.type}
+                  </td>
                   <td className="py-2 pr-3 text-slate-400">{row.spring}</td>
                   <td className="py-2 pr-3 text-slate-400">{row.summer}</td>
                   <td className="py-2 pr-3 text-slate-400">{row.fall}</td>
@@ -394,54 +718,219 @@ function FertilizerSection() {
   );
 }
 
-// 3. Lighting
-function LightingSection() {
-  const lightLevels = [
-    { label: "Deep Shade", lux: "< 500 lux", color: "bg-slate-700", textColor: "text-slate-300", plants: "Pothos, Cast Iron Plant, Peace Lily" },
-    { label: "Partial Shade", lux: "500–2,000 lux", color: "bg-slate-600", textColor: "text-slate-200", plants: "Ferns, Snake Plant, ZZ Plant" },
-    { label: "Indirect Light", lux: "2,000–10,000 lux", color: "bg-emerald-800", textColor: "text-emerald-200", plants: "Monsteras, Philodendrons, Orchids" },
-    { label: "Bright Indirect", lux: "10,000–20,000 lux", color: "bg-emerald-600", textColor: "text-white", plants: "Fiddle Leaf Fig, Bird of Paradise" },
-    { label: "Full Sun", lux: "> 20,000 lux", color: "bg-yellow-500", textColor: "text-yellow-950", plants: "Tomatoes, Cacti, Lavender, Basil" },
-  ];
+// ─── 3. Lighting ──────────────────────────────────────────────────────────────
+function LightingSection({ isAr }: { isAr: boolean }) {
+  const lightLevels = isAr
+    ? [
+        {
+          label: "ظل عميق",
+          lux: "< ٥٠٠ لكس",
+          color: "bg-slate-700",
+          textColor: "text-slate-300",
+          plants: "بوثوس، نبات الحديد الزهر، زنبق السلام",
+        },
+        {
+          label: "ظل جزئي",
+          lux: "٥٠٠–٢٠٠٠ لكس",
+          color: "bg-slate-600",
+          textColor: "text-slate-200",
+          plants: "سرخس، نبات الأفعى، نبات ZZ",
+        },
+        {
+          label: "ضوء غير مباشر",
+          lux: "٢٠٠٠–١٠٠٠٠ لكس",
+          color: "bg-emerald-800",
+          textColor: "text-emerald-200",
+          plants: "مونستيرا، فيلودندرون، أوركيد",
+        },
+        {
+          label: "ضوء غير مباشر ساطع",
+          lux: "١٠٠٠٠–٢٠٠٠٠ لكس",
+          color: "bg-emerald-600",
+          textColor: "text-white",
+          plants: "تين الكمان، طائر الجنة",
+        },
+        {
+          label: "شمس كاملة",
+          lux: "> ٢٠٠٠٠ لكس",
+          color: "bg-yellow-500",
+          textColor: "text-yellow-950",
+          plants: "طماطم، صبار، لافندر، ريحان",
+        },
+      ]
+    : [
+        {
+          label: "Deep Shade",
+          lux: "< 500 lux",
+          color: "bg-slate-700",
+          textColor: "text-slate-300",
+          plants: "Pothos, Cast Iron Plant, Peace Lily",
+        },
+        {
+          label: "Partial Shade",
+          lux: "500–2,000 lux",
+          color: "bg-slate-600",
+          textColor: "text-slate-200",
+          plants: "Ferns, Snake Plant, ZZ Plant",
+        },
+        {
+          label: "Indirect Light",
+          lux: "2,000–10,000 lux",
+          color: "bg-emerald-800",
+          textColor: "text-emerald-200",
+          plants: "Monsteras, Philodendrons, Orchids",
+        },
+        {
+          label: "Bright Indirect",
+          lux: "10,000–20,000 lux",
+          color: "bg-emerald-600",
+          textColor: "text-white",
+          plants: "Fiddle Leaf Fig, Bird of Paradise",
+        },
+        {
+          label: "Full Sun",
+          lux: "> 20,000 lux",
+          color: "bg-yellow-500",
+          textColor: "text-yellow-950",
+          plants: "Tomatoes, Cacti, Lavender, Basil",
+        },
+      ];
 
-  const lightCards = [
-    { title: "Low-Light Lovers", emoji: "🌑", desc: "Thrive in north-facing rooms or far from windows. Perfect for offices.", examples: ["Pothos", "Cast Iron Plant", "Dracaena", "Chinese Evergreen"] },
-    { title: "Medium-Light Plants", emoji: "🌤️", desc: "Need a few feet from a bright window or near east-facing glass.", examples: ["Snake Plant", "Ferns", "Peace Lily", "Spider Plant"] },
-    { title: "Bright Indirect", emoji: "⛅", desc: "Best near south or west windows with a sheer curtain as diffuser.", examples: ["Monstera", "Fiddle Leaf Fig", "Anthuriums", "Calathea"] },
-    { title: "Full-Sun Lovers", emoji: "☀️", desc: "Require 6+ hours of direct sun. Ideal on south-facing windowsills or outdoors.", examples: ["Succulents", "Cacti", "Herbs", "Tomatoes"] },
-  ];
+  const lightCards = isAr
+    ? [
+        {
+          title: "محبة الظل",
+          emoji: "🌑",
+          desc: "تزدهر في الغرف الشمالية أو بعيداً عن النوافذ. مثالية للمكاتب.",
+          examples: ["بوثوس", "نبات الحديد الزهر", "دراسينا", "فيلوديندرون"],
+        },
+        {
+          title: "نباتات الضوء المتوسط",
+          emoji: "🌤️",
+          desc: "تحتاج لبضعة أقدام من نافذة مضيئة أو بالقرب من زجاج شرقي.",
+          examples: ["نبات الأفعى", "سرخس", "زنبق السلام", "نبات العنكبوت"],
+        },
+        {
+          title: "الضوء غير المباشر الساطع",
+          emoji: "⛅",
+          desc: "الأفضل بالقرب من نوافذ جنوبية أو غربية مع ستارة شفافة كمرشح.",
+          examples: ["مونستيرا", "تين الكمان", "أنثوريوم", "كالاثيا"],
+        },
+        {
+          title: "محبة الشمس الكاملة",
+          emoji: "☀️",
+          desc: "تتطلب 6+ ساعات من الشمس المباشرة. مثالية على أعتاب النوافذ الجنوبية أو في الخارج.",
+          examples: ["عصاريات", "صبار", "أعشاب", "طماطم"],
+        },
+      ]
+    : [
+        {
+          title: "Low-Light Lovers",
+          emoji: "🌑",
+          desc: "Thrive in north-facing rooms or far from windows. Perfect for offices.",
+          examples: [
+            "Pothos",
+            "Cast Iron Plant",
+            "Dracaena",
+            "Chinese Evergreen",
+          ],
+        },
+        {
+          title: "Medium-Light Plants",
+          emoji: "🌤️",
+          desc: "Need a few feet from a bright window or near east-facing glass.",
+          examples: ["Snake Plant", "Ferns", "Peace Lily", "Spider Plant"],
+        },
+        {
+          title: "Bright Indirect",
+          emoji: "⛅",
+          desc: "Best near south or west windows with a sheer curtain as diffuser.",
+          examples: ["Monstera", "Fiddle Leaf Fig", "Anthuriums", "Calathea"],
+        },
+        {
+          title: "Full-Sun Lovers",
+          emoji: "☀️",
+          desc: "Require 6+ hours of direct sun. Ideal on south-facing windowsills or outdoors.",
+          examples: ["Succulents", "Cacti", "Herbs", "Tomatoes"],
+        },
+      ];
 
-  const growLights = [
-    { type: "Seedling Trays", watts: "20–40 W", note: "LED panel, 16 h/day" },
-    { type: "Small Houseplants", watts: "40–80 W", note: "Full-spectrum LED, 14 h/day" },
-    { type: "Medium Tropicals", watts: "100–200 W", note: "LED or T5 fluorescent, 12 h/day" },
-    { type: "Fruiting Crops", watts: "300–600 W", note: "High-output LED, 18 h/day" },
-  ];
+  const growLights = isAr
+    ? [
+        {
+          type: "صواني البذور",
+          watts: "٢٠–٤٠ واط",
+          note: "لوح LED، ١٦ ساعة/يوم",
+        },
+        {
+          type: "نباتات داخلية صغيرة",
+          watts: "٤٠–٨٠ واط",
+          note: "LED طيف كامل، ١٤ ساعة/يوم",
+        },
+        {
+          type: "استوائية متوسطة",
+          watts: "١٠٠–٢٠٠ واط",
+          note: "LED أو T5 فلوري، ١٢ ساعة/يوم",
+        },
+        {
+          type: "محاصيل مثمرة",
+          watts: "٣٠٠–٦٠٠ واط",
+          note: "LED عالي الإخراج، ١٨ ساعة/يوم",
+        },
+      ]
+    : [
+        {
+          type: "Seedling Trays",
+          watts: "20–40 W",
+          note: "LED panel, 16 h/day",
+        },
+        {
+          type: "Small Houseplants",
+          watts: "40–80 W",
+          note: "Full-spectrum LED, 14 h/day",
+        },
+        {
+          type: "Medium Tropicals",
+          watts: "100–200 W",
+          note: "LED or T5 fluorescent, 12 h/day",
+        },
+        {
+          type: "Fruiting Crops",
+          watts: "300–600 W",
+          note: "High-output LED, 18 h/day",
+        },
+      ];
 
   return (
     <SectionWrapper id="lighting">
       <SectionTitle
         icon={<Sun className="w-5 h-5" />}
-        label="Lighting Guide"
-        description="Light is plant food. Getting the light level right prevents leggy growth, leaf burn, and poor flowering. Every plant has a sweet spot on the spectrum."
+        label={isAr ? "دليل الإضاءة" : "Lighting Guide"}
+        description={
+          isAr
+            ? "الضوء غذاء النبات. الحصول على المستوى الصحيح يمنع الاصفرار وحرق الأوراق وضعف التزهير. لكل نبات نقطة توازن مثالية."
+            : "Light is plant food. Getting the light level right prevents leggy growth, leaf burn, and poor flowering. Every plant has a sweet spot on the spectrum."
+        }
       />
 
-      {/* Spectrum bar */}
       <div className="mb-6">
-        <p className="text-slate-400 text-sm mb-3 font-medium">Light Level Spectrum</p>
+        <p className="text-slate-400 text-sm mb-3 font-medium">
+          {isAr ? "طيف مستويات الضوء" : "Light Level Spectrum"}
+        </p>
         <div className="flex rounded-xl overflow-hidden h-10 border border-slate-800/60">
           {lightLevels.map((l) => (
             <div
               key={l.label}
-              className={`flex-1 flex items-center justify-center text-[10px] font-semibold ${l.color} ${l.textColor} px-1 text-center leading-tight`}
-            >
+              className={`flex-1 flex items-center justify-center text-[10px] font-semibold ${l.color} ${l.textColor} px-1 text-center leading-tight`}>
               {l.label}
             </div>
           ))}
         </div>
         <div className="flex mt-1">
           {lightLevels.map((l) => (
-            <div key={l.label} className="flex-1 text-center text-[9px] text-slate-500 px-0.5">
+            <div
+              key={l.label}
+              className="flex-1 text-center text-[9px] text-slate-500 px-0.5">
               {l.lux}
             </div>
           ))}
@@ -456,17 +945,20 @@ function LightingSection() {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.1 }}
             viewport={{ once: true }}
-            whileHover={{ y: -3 }}
-          >
+            whileHover={{ y: -3 }}>
             <GlassCard className="p-5 h-full">
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-xl">{c.emoji}</span>
                 <h3 className="font-bold text-white">{c.title}</h3>
               </div>
-              <p className="text-slate-400 text-xs mb-3 leading-relaxed">{c.desc}</p>
+              <p className="text-slate-400 text-xs mb-3 leading-relaxed">
+                {c.desc}
+              </p>
               <div className="flex flex-wrap gap-1.5">
                 {c.examples.map((e) => (
-                  <span key={e} className="text-xs text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                  <span
+                    key={e}
+                    className="text-xs text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
                     {e}
                   </span>
                 ))}
@@ -478,28 +970,62 @@ function LightingSection() {
 
       <div className="grid sm:grid-cols-2 gap-4 mb-6">
         <WarningTip>
-          <strong className="text-amber-300">Too much light:</strong> Bleached, faded, or scorched patches on leaves. Move plant further from direct sun or add a sheer curtain.
+          {isAr ? (
+            <>
+              <strong className="text-amber-300">ضوء زائد:</strong> بقع شاحبة أو
+              محترقة على الأوراق. أبعد النبات عن الشمس المباشرة أو أضف ستارة
+              شفافة.
+            </>
+          ) : (
+            <>
+              <strong className="text-amber-300">Too much light:</strong>{" "}
+              Bleached, faded, or scorched patches on leaves. Move plant further
+              from direct sun or add a sheer curtain.
+            </>
+          )}
         </WarningTip>
         <div className="flex gap-3 p-4 bg-slate-800/30 border border-slate-700/40 rounded-xl">
           <AlertTriangle className="w-5 h-5 text-purple-400 shrink-0 mt-0.5" />
           <p className="text-slate-300 text-sm leading-relaxed">
-            <strong className="text-purple-300">Too little light (etiolation):</strong> Pale, stretched stems reaching toward the window. Rotate plants 90° weekly for even growth.
+            {isAr ? (
+              <>
+                <strong className="text-purple-300">ضوء ناقص (شحوب):</strong>{" "}
+                سيقان شاحبة ممتدة نحو النافذة. أدر النباتات 90° أسبوعياً لنمو
+                متساوٍ.
+              </>
+            ) : (
+              <>
+                <strong className="text-purple-300">
+                  Too little light (etiolation):
+                </strong>{" "}
+                Pale, stretched stems reaching toward the window. Rotate plants
+                90° weekly for even growth.
+              </>
+            )}
           </p>
         </div>
       </div>
 
-      {/* Grow light guide */}
       <GlassCard className="p-5">
         <h3 className="font-bold text-white mb-4 flex items-center gap-2">
-          <Sun className="w-4 h-4 text-yellow-400" /> Indoor Grow Light Recommendations
+          <Sun className="w-4 h-4 text-yellow-400" />
+          {isAr
+            ? "توصيات مصابيح النمو الداخلية"
+            : "Indoor Grow Light Recommendations"}
         </h3>
         <div className="grid sm:grid-cols-2 gap-3">
           {growLights.map((g, i) => (
-            <div key={g.type} className="flex items-center gap-3 p-3 bg-white/3 rounded-xl border border-slate-800/40">
-              <span className="text-lg font-black text-yellow-400">{i + 1}</span>
+            <div
+              key={g.type}
+              className="flex items-center gap-3 p-3 bg-white/3 rounded-xl border border-slate-800/40">
+              <span className="text-lg font-black text-yellow-400">
+                {i + 1}
+              </span>
               <div>
                 <p className="text-white text-sm font-semibold">{g.type}</p>
-                <p className="text-emerald-400 text-xs font-medium">{g.watts}</p>
+                <p className="text-emerald-400 text-xs font-medium">
+                  {g.watts}
+                </p>
                 <p className="text-slate-400 text-xs">{g.note}</p>
               </div>
             </div>
@@ -510,38 +1036,170 @@ function LightingSection() {
   );
 }
 
-// 4. Soil
-function SoilSection() {
-  const soilTypes = [
-    { name: "Sandy Soil", swatch: "bg-amber-200", char: "Fast-draining, low nutrients", ideal: ["Cacti", "Lavender", "Carrots"] },
-    { name: "Clay Soil", swatch: "bg-orange-400", char: "High nutrients, waterlogged risk", ideal: ["Willows", "Asters", "Sedges"] },
-    { name: "Loamy Soil", swatch: "bg-amber-700", char: "Balanced drainage & nutrients", ideal: ["Vegetables", "Roses", "Fruit trees"] },
-    { name: "Peat-based", swatch: "bg-amber-900", char: "Moisture-retaining, acidic", ideal: ["Blueberries", "Orchids", "Ferns"] },
-    { name: "Cactus Mix", swatch: "bg-yellow-200", char: "Ultra-porous, mineral-rich", ideal: ["Succulents", "Cacti", "Agave"] },
-  ];
+// ─── 4. Soil ──────────────────────────────────────────────────────────────────
+function SoilSection({ isAr }: { isAr: boolean }) {
+  const soilTypes = isAr
+    ? [
+        {
+          name: "تربة رملية",
+          swatch: "bg-amber-200",
+          char: "صرف سريع، عناصر غذائية منخفضة",
+          ideal: ["صبار", "لافندر", "جزر"],
+        },
+        {
+          name: "تربة طينية",
+          swatch: "bg-orange-400",
+          char: "عناصر غذائية عالية، خطر التشبع",
+          ideal: ["صفصاف", "أسترا", "أسل"],
+        },
+        {
+          name: "تربة طميية",
+          swatch: "bg-amber-700",
+          char: "صرف وعناصر متوازنة",
+          ideal: ["خضروات", "ورد", "أشجار فاكهة"],
+        },
+        {
+          name: "تربة خثية",
+          swatch: "bg-amber-900",
+          char: "تحتجز الرطوبة، حمضية",
+          ideal: ["توت أزرق", "أوركيد", "سرخس"],
+        },
+        {
+          name: "مزيج صبار",
+          swatch: "bg-yellow-200",
+          char: "شديدة المسامية، غنية بالمعادن",
+          ideal: ["عصاريات", "صبار", "أغافا"],
+        },
+      ]
+    : [
+        {
+          name: "Sandy Soil",
+          swatch: "bg-amber-200",
+          char: "Fast-draining, low nutrients",
+          ideal: ["Cacti", "Lavender", "Carrots"],
+        },
+        {
+          name: "Clay Soil",
+          swatch: "bg-orange-400",
+          char: "High nutrients, waterlogged risk",
+          ideal: ["Willows", "Asters", "Sedges"],
+        },
+        {
+          name: "Loamy Soil",
+          swatch: "bg-amber-700",
+          char: "Balanced drainage & nutrients",
+          ideal: ["Vegetables", "Roses", "Fruit trees"],
+        },
+        {
+          name: "Peat-based",
+          swatch: "bg-amber-900",
+          char: "Moisture-retaining, acidic",
+          ideal: ["Blueberries", "Orchids", "Ferns"],
+        },
+        {
+          name: "Cactus Mix",
+          swatch: "bg-yellow-200",
+          char: "Ultra-porous, mineral-rich",
+          ideal: ["Succulents", "Cacti", "Agave"],
+        },
+      ];
 
-  const phLevels = [
-    { range: "4.0 – 5.5", label: "Strongly Acidic", color: "text-red-400 bg-red-500/10 border-red-500/20", plants: "Blueberries, Azaleas, Rhododendrons" },
-    { range: "5.5 – 6.5", label: "Mildly Acidic", color: "text-orange-400 bg-orange-500/10 border-orange-500/20", plants: "Most vegetables, Roses, Strawberries" },
-    { range: "6.5 – 7.0", label: "Neutral", color: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20", plants: "Lawns, most houseplants, herbs" },
-    { range: "7.0 – 8.0", label: "Alkaline", color: "text-sky-400 bg-sky-500/10 border-sky-500/20", plants: "Lavender, Clematis, Dianthus" },
-  ];
+  const phLevels = isAr
+    ? [
+        {
+          range: "٤.٠ – ٥.٥",
+          label: "حمضي بشدة",
+          color: "text-red-400 bg-red-500/10 border-red-500/20",
+          plants: "توت أزرق، أزاليا، رودودندرون",
+        },
+        {
+          range: "٥.٥ – ٦.٥",
+          label: "حمضي خفيف",
+          color: "text-orange-400 bg-orange-500/10 border-orange-500/20",
+          plants: "معظم الخضروات، ورد، فراولة",
+        },
+        {
+          range: "٦.٥ – ٧.٠",
+          label: "متعادل",
+          color: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20",
+          plants: "عشب، معظم النباتات الداخلية، أعشاب",
+        },
+        {
+          range: "٧.٠ – ٨.٠",
+          label: "قلوي",
+          color: "text-sky-400 bg-sky-500/10 border-sky-500/20",
+          plants: "لافندر، كليماتيس، ديانثوس",
+        },
+      ]
+    : [
+        {
+          range: "4.0 – 5.5",
+          label: "Strongly Acidic",
+          color: "text-red-400 bg-red-500/10 border-red-500/20",
+          plants: "Blueberries, Azaleas, Rhododendrons",
+        },
+        {
+          range: "5.5 – 6.5",
+          label: "Mildly Acidic",
+          color: "text-orange-400 bg-orange-500/10 border-orange-500/20",
+          plants: "Most vegetables, Roses, Strawberries",
+        },
+        {
+          range: "6.5 – 7.0",
+          label: "Neutral",
+          color: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20",
+          plants: "Lawns, most houseplants, herbs",
+        },
+        {
+          range: "7.0 – 8.0",
+          label: "Alkaline",
+          color: "text-sky-400 bg-sky-500/10 border-sky-500/20",
+          plants: "Lavender, Clematis, Dianthus",
+        },
+      ];
 
-  const diyMixes = [
-    { plant: "Tropical Houseplants", recipe: "2 parts potting soil + 1 part perlite + 1 part coco coir" },
-    { plant: "Succulents & Cacti", recipe: "1 part potting soil + 1 part coarse sand + 1 part perlite" },
-    { plant: "Vegetables", recipe: "3 parts compost + 2 parts garden soil + 1 part perlite" },
-  ];
+  const diyMixes = isAr
+    ? [
+        {
+          plant: "النباتات الاستوائية الداخلية",
+          recipe: "جزءان تربة زراعية + جزء بيرلايت + جزء كوكو",
+        },
+        {
+          plant: "عصاريات وصبار",
+          recipe: "جزء تربة زراعية + جزء رمل خشن + جزء بيرلايت",
+        },
+        {
+          plant: "الخضروات",
+          recipe: "٣ أجزاء سماد عضوي + جزءان تربة حديقة + جزء بيرلايت",
+        },
+      ]
+    : [
+        {
+          plant: "Tropical Houseplants",
+          recipe: "2 parts potting soil + 1 part perlite + 1 part coco coir",
+        },
+        {
+          plant: "Succulents & Cacti",
+          recipe: "1 part potting soil + 1 part coarse sand + 1 part perlite",
+        },
+        {
+          plant: "Vegetables",
+          recipe: "3 parts compost + 2 parts garden soil + 1 part perlite",
+        },
+      ];
 
   return (
     <SectionWrapper id="soil">
       <SectionTitle
         icon={<Sprout className="w-5 h-5" />}
-        label="Soil Guide"
-        description="Soil is more than just dirt — it's the living foundation of your plant's health. The right mix determines drainage, aeration, pH, and nutrient availability."
+        label={isAr ? "دليل التربة" : "Soil Guide"}
+        description={
+          isAr
+            ? "التربة أكثر من مجرد تراب – إنها الأساس الحي لصحة نباتك. الخليط الصحيح يحدد الصرف والتهوية والحموضة وتوافر العناصر."
+            : "Soil is more than just dirt — it's the living foundation of your plant's health. The right mix determines drainage, aeration, pH, and nutrient availability."
+        }
       />
 
-      {/* Soil types */}
       <div className="grid sm:grid-cols-5 gap-3 mb-6">
         {soilTypes.map((s, i) => (
           <motion.div
@@ -550,15 +1208,20 @@ function SoilSection() {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.08 }}
             viewport={{ once: true }}
-            whileHover={{ y: -4 }}
-          >
+            whileHover={{ y: -4 }}>
             <GlassCard className="p-4 h-full flex flex-col items-center text-center">
-              <div className={`w-10 h-10 rounded-full ${s.swatch} mb-2 border-2 border-white/10`} />
+              <div
+                className={`w-10 h-10 rounded-full ${s.swatch} mb-2 border-2 border-white/10`}
+              />
               <p className="font-bold text-white text-xs mb-1">{s.name}</p>
-              <p className="text-slate-400 text-[10px] mb-2 leading-tight">{s.char}</p>
+              <p className="text-slate-400 text-[10px] mb-2 leading-tight">
+                {s.char}
+              </p>
               <div className="flex flex-wrap gap-1 justify-center">
                 {s.ideal.map((p) => (
-                  <span key={p} className="text-[9px] text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded-full border border-emerald-500/20">
+                  <span
+                    key={p}
+                    className="text-[9px] text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded-full border border-emerald-500/20">
                     {p}
                   </span>
                 ))}
@@ -568,10 +1231,10 @@ function SoilSection() {
         ))}
       </div>
 
-      {/* pH Chart */}
       <GlassCard className="p-5 mb-6">
         <h3 className="font-bold text-white mb-4 flex items-center gap-2">
-          <FlaskConical className="w-4 h-4 text-emerald-400" /> Soil pH Chart
+          <FlaskConical className="w-4 h-4 text-emerald-400" />
+          {isAr ? "جدول حموضة التربة (pH)" : "Soil pH Chart"}
         </h3>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
           {phLevels.map((ph, i) => (
@@ -581,11 +1244,12 @@ function SoilSection() {
               whileInView={{ opacity: 1, scale: 1 }}
               transition={{ delay: i * 0.1 }}
               viewport={{ once: true }}
-              className={`p-3 rounded-xl border text-center ${ph.color}`}
-            >
+              className={`p-3 rounded-xl border text-center ${ph.color}`}>
               <p className="text-lg font-extrabold mb-0.5">{ph.range}</p>
               <p className="text-xs font-semibold mb-1">{ph.label}</p>
-              <p className="text-[10px] text-slate-400 leading-tight">{ph.plants}</p>
+              <p className="text-[10px] text-slate-400 leading-tight">
+                {ph.plants}
+              </p>
             </motion.div>
           ))}
         </div>
@@ -593,24 +1257,29 @@ function SoilSection() {
 
       <div className="mb-6">
         <ProTip>
-          Good drainage prevents root rot. Always use pots with drainage holes and consider a layer of
-          gravel at the bottom for particularly moisture-sensitive plants.
+          {isAr
+            ? "الصرف الجيد يمنع عفن الجذور. استخدم دائماً أصصاً بها ثقوب صرف وضع طبقة حصى في الأسفل للنباتات الحساسة للرطوبة."
+            : "Good drainage prevents root rot. Always use pots with drainage holes and consider a layer of gravel at the bottom for particularly moisture-sensitive plants."}
         </ProTip>
       </div>
 
-      {/* DIY mixes */}
       <GlassCard className="p-5">
         <h3 className="font-bold text-white mb-4 flex items-center gap-2">
-          <Sprout className="w-4 h-4 text-emerald-400" /> DIY Soil Mix Recipes
+          <Sprout className="w-4 h-4 text-emerald-400" />
+          {isAr ? "وصفات خلط التربة بنفسك" : "DIY Soil Mix Recipes"}
         </h3>
         <div className="space-y-3">
           {diyMixes.map((mix, i) => (
-            <div key={mix.plant} className="flex items-start gap-3 p-3 bg-white/3 rounded-xl border border-slate-800/40">
+            <div
+              key={mix.plant}
+              className="flex items-start gap-3 p-3 bg-white/3 rounded-xl border border-slate-800/40">
               <span className="flex items-center justify-center w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-bold shrink-0">
                 {i + 1}
               </span>
               <div>
-                <p className="text-white text-sm font-semibold mb-0.5">{mix.plant}</p>
+                <p className="text-white text-sm font-semibold mb-0.5">
+                  {mix.plant}
+                </p>
                 <p className="text-slate-400 text-xs">{mix.recipe}</p>
               </div>
             </div>
@@ -621,45 +1290,190 @@ function SoilSection() {
   );
 }
 
-// 5. Pruning
-function PruningSection() {
-  const seasonPruning = [
-    { season: "🌸 Spring", action: "Growth Pruning", desc: "Shape plants, encourage branching and new shoots" },
-    { season: "☀️ Summer", action: "Maintenance", desc: "Deadhead flowers, remove spent blooms & suckers" },
-    { season: "🍂 Fall", action: "Prep & Cleanup", desc: "Remove dead material before dormancy sets in" },
-    { season: "❄️ Winter", action: "Minimal", desc: "Only remove dead or diseased wood on hardy plants" },
-  ];
+// ─── 5. Pruning ───────────────────────────────────────────────────────────────
+function PruningSection({ isAr }: { isAr: boolean }) {
+  const seasonPruning = isAr
+    ? [
+        {
+          season: "🌸 الربيع",
+          action: "تقليم النمو",
+          desc: "شكّل النباتات، شجّع التفرع والبراعم الجديدة",
+        },
+        {
+          season: "☀️ الصيف",
+          action: "صيانة",
+          desc: "أزل الأزهار الذابلة والبراعم المنفقة",
+        },
+        {
+          season: "🍂 الخريف",
+          action: "تهيئة وتنظيف",
+          desc: "أزل المواد الميتة قبل السكون",
+        },
+        {
+          season: "❄️ الشتاء",
+          action: "الحد الأدنى",
+          desc: "أزل الأخشاب الميتة أو المريضة فقط",
+        },
+      ]
+    : [
+        {
+          season: "🌸 Spring",
+          action: "Growth Pruning",
+          desc: "Shape plants, encourage branching and new shoots",
+        },
+        {
+          season: "☀️ Summer",
+          action: "Maintenance",
+          desc: "Deadhead flowers, remove spent blooms & suckers",
+        },
+        {
+          season: "🍂 Fall",
+          action: "Prep & Cleanup",
+          desc: "Remove dead material before dormancy sets in",
+        },
+        {
+          season: "❄️ Winter",
+          action: "Minimal",
+          desc: "Only remove dead or diseased wood on hardy plants",
+        },
+      ];
 
-  const tools = [
-    { name: "Bypass Pruners", emoji: "✂️", desc: "Best for stems up to 1.5 cm. Clean, precise cuts with scissor-like blades." },
-    { name: "Garden Scissors", emoji: "🪚", desc: "Ideal for herbs, deadheading flowers, and delicate houseplant trimming." },
-    { name: "Pruning Saw", emoji: "🔧", desc: "For branches over 2.5 cm. Use on woody shrubs and small trees." },
-  ];
+  const tools = isAr
+    ? [
+        {
+          name: "مقص التقليم الجانبي",
+          emoji: "✂️",
+          desc: "الأفضل للسيقان حتى ١.٥ سم. قطعات نظيفة ودقيقة بشفرات مقصية.",
+        },
+        {
+          name: "مقص الحديقة",
+          emoji: "🪚",
+          desc: "مثالي للأعشاب، إزالة الأزهار الذابلة، وتقليم النباتات الداخلية الدقيقة.",
+        },
+        {
+          name: "منشار التقليم",
+          emoji: "🔧",
+          desc: "للأغصان فوق ٢.٥ سم. استخدمه على الشجيرات الخشبية والأشجار الصغيرة.",
+        },
+      ]
+    : [
+        {
+          name: "Bypass Pruners",
+          emoji: "✂️",
+          desc: "Best for stems up to 1.5 cm. Clean, precise cuts with scissor-like blades.",
+        },
+        {
+          name: "Garden Scissors",
+          emoji: "🪚",
+          desc: "Ideal for herbs, deadheading flowers, and delicate houseplant trimming.",
+        },
+        {
+          name: "Pruning Saw",
+          emoji: "🔧",
+          desc: "For branches over 2.5 cm. Use on woody shrubs and small trees.",
+        },
+      ];
 
-  const steps = [
-    { num: 1, title: "Sterilize Your Tools", desc: "Wipe blades with 70% isopropyl alcohol or diluted bleach solution before starting." },
-    { num: 2, title: "Identify Target Growth", desc: "Look for dead, diseased, crossing, or inward-facing branches first." },
-    { num: 3, title: "Cut at a 45° Angle", desc: "Angled cuts shed water and direct new growth outward from the plant." },
-    { num: 4, title: "Seal Large Cuts", desc: "Apply pruning paste or wound sealant to cuts wider than 2.5 cm to prevent disease entry." },
-    { num: 5, title: "Dispose of Diseased Material", desc: "Never compost diseased clippings — bag and bin them to stop pathogen spread." },
-  ];
+  const steps = isAr
+    ? [
+        {
+          num: 1,
+          title: "عقّم أدواتك",
+          desc: "امسح الشفرات بكحول 70% أو محلول مخفف من المبيض قبل البدء.",
+        },
+        {
+          num: 2,
+          title: "حدد النمو المستهدف",
+          desc: "ابحث أولاً عن الأغصان الميتة أو المريضة أو المتقاطعة أو المتجهة للداخل.",
+        },
+        {
+          num: 3,
+          title: "اقطع بزاوية 45°",
+          desc: "القطعات المائلة تصرف الماء وتوجه النمو الجديد للخارج.",
+        },
+        {
+          num: 4,
+          title: "اختم القطعات الكبيرة",
+          desc: "ضع معجون التقليم على القطعات الأعرض من ٢.٥ سم لمنع دخول الأمراض.",
+        },
+        {
+          num: 5,
+          title: "تخلص من المواد المريضة",
+          desc: "لا تضع القطعات المريضة في الكمبوست – ضعها في أكياس ورمِها لمنع انتشار الممرضات.",
+        },
+      ]
+    : [
+        {
+          num: 1,
+          title: "Sterilize Your Tools",
+          desc: "Wipe blades with 70% isopropyl alcohol or diluted bleach solution before starting.",
+        },
+        {
+          num: 2,
+          title: "Identify Target Growth",
+          desc: "Look for dead, diseased, crossing, or inward-facing branches first.",
+        },
+        {
+          num: 3,
+          title: "Cut at a 45° Angle",
+          desc: "Angled cuts shed water and direct new growth outward from the plant.",
+        },
+        {
+          num: 4,
+          title: "Seal Large Cuts",
+          desc: "Apply pruning paste or wound sealant to cuts wider than 2.5 cm to prevent disease entry.",
+        },
+        {
+          num: 5,
+          title: "Dispose of Diseased Material",
+          desc: "Never compost diseased clippings — bag and bin them to stop pathogen spread.",
+        },
+      ];
 
-  const mistakes = [
-    { warning: "Pruning too late in fall can stimulate growth that gets killed by frost." },
-    { warning: "Leaving stubs invites disease and insect infestation — always cut flush to the branch collar." },
-    { warning: "Removing more than 1/3 of the plant at once causes severe stress." },
-    { warning: "Dull blades crush rather than cut — sharpen or replace tools regularly." },
-  ];
+  const mistakes = isAr
+    ? [
+        { warning: "التقليم المتأخر في الخريف قد يحفز نمواً يتضرر بالصقيع." },
+        {
+          warning:
+            "ترك الجذوع يستقطب الأمراض والحشرات – اقطع دائماً عند طوق الغصن.",
+        },
+        { warning: "إزالة أكثر من ثلث النبات دفعة واحدة يسبب إجهاداً شديداً." },
+        {
+          warning:
+            "الشفرات الكليلة تسحق بدلاً من القطع – حدّد أدواتك أو استبدلها بانتظام.",
+        },
+      ]
+    : [
+        {
+          warning:
+            "Pruning too late in fall can stimulate growth that gets killed by frost.",
+        },
+        {
+          warning:
+            "Leaving stubs invites disease and insect infestation — always cut flush to the branch collar.",
+        },
+        {
+          warning:
+            "Removing more than 1/3 of the plant at once causes severe stress.",
+        },
+        {
+          warning:
+            "Dull blades crush rather than cut — sharpen or replace tools regularly.",
+        },
+      ];
 
   return (
     <SectionWrapper id="pruning">
       <SectionTitle
         icon={<Scissors className="w-5 h-5" />}
-        label="Pruning Guide"
-        description="Strategic pruning keeps plants healthy, shapely, and productive. The right cut at the right time makes all the difference between flourishing and failure."
+        label={isAr ? "دليل التقليم" : "Pruning Guide"}
+        description={
+          isAr
+            ? "التقليم الاستراتيجي يحافظ على صحة النباتات وشكلها وإنتاجيتها. القطعة الصحيحة في الوقت المناسب تصنع الفارق."
+            : "Strategic pruning keeps plants healthy, shapely, and productive. The right cut at the right time makes all the difference between flourishing and failure."
+        }
       />
 
-      {/* Season chart */}
       <div className="grid sm:grid-cols-4 gap-3 mb-6">
         {seasonPruning.map((s, i) => (
           <motion.div
@@ -668,8 +1482,7 @@ function PruningSection() {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.1 }}
             viewport={{ once: true }}
-            whileHover={{ y: -3 }}
-          >
+            whileHover={{ y: -3 }}>
             <GlassCard className="p-4 text-center h-full">
               <p className="text-xl mb-1">{s.season.split(" ")[0]}</p>
               <p className="text-white font-bold text-sm mb-1">{s.action}</p>
@@ -679,7 +1492,6 @@ function PruningSection() {
         ))}
       </div>
 
-      {/* Tools */}
       <div className="grid sm:grid-cols-3 gap-4 mb-6">
         {tools.map((t, i) => (
           <motion.div
@@ -688,8 +1500,7 @@ function PruningSection() {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.1 }}
             viewport={{ once: true }}
-            whileHover={{ y: -3 }}
-          >
+            whileHover={{ y: -3 }}>
             <GlassCard className="p-5">
               <span className="text-2xl mb-2 block">{t.emoji}</span>
               <h3 className="font-bold text-white mb-1">{t.name}</h3>
@@ -699,37 +1510,38 @@ function PruningSection() {
         ))}
       </div>
 
-      {/* Step-by-step */}
       <GlassCard className="p-5 mb-6">
         <h3 className="font-bold text-white mb-5 flex items-center gap-2">
-          <CheckCircle2 className="w-4 h-4 text-emerald-400" /> Step-by-Step Pruning Method
+          <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+          {isAr ? "خطوات التقليم خطوة بخطوة" : "Step-by-Step Pruning Method"}
         </h3>
         <div className="space-y-3">
           {steps.map((step, i) => (
             <motion.div
               key={step.num}
-              initial={{ opacity: 0, x: -20 }}
+              initial={{ opacity: 0, x: isAr ? 20 : -20 }}
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ delay: i * 0.1 }}
               viewport={{ once: true }}
-              className="flex items-start gap-4 p-3 bg-white/3 rounded-xl border border-slate-800/40"
-            >
+              className="flex items-start gap-4 p-3 bg-white/3 rounded-xl border border-slate-800/40">
               <span className="flex items-center justify-center w-8 h-8 rounded-full bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 font-black text-sm shrink-0">
                 {step.num}
               </span>
               <div>
                 <p className="text-white font-semibold text-sm">{step.title}</p>
-                <p className="text-slate-400 text-xs leading-relaxed mt-0.5">{step.desc}</p>
+                <p className="text-slate-400 text-xs leading-relaxed mt-0.5">
+                  {step.desc}
+                </p>
               </div>
             </motion.div>
           ))}
         </div>
       </GlassCard>
 
-      {/* Common mistakes */}
       <div className="space-y-3">
         <h3 className="font-bold text-white flex items-center gap-2">
-          <AlertTriangle className="w-4 h-4 text-amber-400" /> Common Pruning Mistakes
+          <AlertTriangle className="w-4 h-4 text-amber-400" />
+          {isAr ? "أخطاء التقليم الشائعة" : "Common Pruning Mistakes"}
         </h3>
         {mistakes.map((m, i) => (
           <motion.div
@@ -737,8 +1549,7 @@ function PruningSection() {
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.08 }}
-            viewport={{ once: true }}
-          >
+            viewport={{ once: true }}>
             <WarningTip>{m.warning}</WarningTip>
           </motion.div>
         ))}
@@ -747,13 +1558,19 @@ function PruningSection() {
   );
 }
 
-// ─── AI PANEL ─────────────────────────────────────────────────────────────────
-function AIPanel() {
-  const chips = [
-    "💧 Water alert: 3 plants need watering",
-    "☀️ Optimal sunlight detected",
-    "🌿 Fertilizer due in 5 days",
-  ];
+// ─── AI Panel ─────────────────────────────────────────────────────────────────
+function AIPanel({ isAr }: { isAr: boolean }) {
+  const chips = isAr
+    ? [
+        "💧 تنبيه ري: ٣ نباتات تحتاج للري",
+        "☀️ ضوء شمس مثالي مكتشف",
+        "🌿 موعد التسميد خلال ٥ أيام",
+      ]
+    : [
+        "💧 Water alert: 3 plants need watering",
+        "☀️ Optimal sunlight detected",
+        "🌿 Fertilizer due in 5 days",
+      ];
 
   return (
     <motion.div
@@ -761,24 +1578,32 @@ function AIPanel() {
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.7 }}
       viewport={{ once: true }}
-      className="mt-20"
-    >
+      className="mt-20">
       <div className="relative overflow-hidden bg-slate-900/40 backdrop-blur-xl rounded-3xl border border-emerald-500/20 p-8 sm:p-12 text-center">
-        {/* Glow */}
         <div className="absolute inset-0 bg-emerald-500/5 rounded-3xl pointer-events-none" />
         <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-64 h-64 bg-emerald-500/15 rounded-full blur-[80px] pointer-events-none" />
 
         <div className="relative z-10">
           <span className="inline-block text-4xl mb-4">🤖</span>
           <h2 className="text-2xl sm:text-3xl font-extrabold text-white mb-3">
-            AI Plant Care <span className="text-emerald-400">Assistant</span>
+            {isAr ? (
+              <>
+                مساعد رعاية النباتات{" "}
+                <span className="text-emerald-400">بالذكاء الاصطناعي</span>
+              </>
+            ) : (
+              <>
+                AI Plant Care{" "}
+                <span className="text-emerald-400">Assistant</span>
+              </>
+            )}
           </h2>
           <p className="text-slate-400 max-w-xl mx-auto mb-8 leading-relaxed">
-            Get personalized care recommendations for your specific plants. Our AI analyses your
-            plant collection, local climate, and growth history to deliver targeted, actionable advice.
+            {isAr
+              ? "احصل على توصيات رعاية مخصصة لنباتاتك. يحلل الذكاء الاصطناعي مجموعتك ومناخك المحلي وتاريخ نموك لتقديم نصائح دقيقة وقابلة للتنفيذ."
+              : "Get personalized care recommendations for your specific plants. Our AI analyses your plant collection, local climate, and growth history to deliver targeted, actionable advice."}
           </p>
 
-          {/* Chip row */}
           <div className="flex flex-wrap items-center justify-center gap-2 mb-8">
             {chips.map((chip, i) => (
               <motion.span
@@ -787,8 +1612,7 @@ function AIPanel() {
                 whileInView={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.4 + i * 0.15 }}
                 viewport={{ once: true }}
-                className="text-xs text-emerald-300 bg-emerald-500/10 border border-emerald-500/25 px-3 py-1.5 rounded-full font-medium"
-              >
+                className="text-xs text-emerald-300 bg-emerald-500/10 border border-emerald-500/25 px-3 py-1.5 rounded-full font-medium">
                 {chip}
               </motion.span>
             ))}
@@ -798,10 +1622,9 @@ function AIPanel() {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.97 }}
-              className="inline-flex items-center gap-2 px-8 py-3.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-xl transition-colors shadow-lg shadow-emerald-500/30"
-            >
-              Try AI Assistant
-              <ArrowRight className="w-4 h-4" />
+              className="inline-flex items-center gap-2 px-8 py-3.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-xl transition-colors shadow-lg shadow-emerald-500/30">
+              {isAr ? "جرّب المساعد الذكي" : "Try AI Assistant"}
+              <ArrowRight className={`w-4 h-4 ${isAr ? "rotate-180" : ""}`} />
             </motion.button>
           </Link>
         </div>
@@ -812,24 +1635,33 @@ function AIPanel() {
 
 // ─── MAIN PAGE ────────────────────────────────────────────────────────────────
 export default function CareGuidePage() {
+  const { language } = useSettings();
+  const isAr = language === "ar";
+
   const [activeSection, setActiveSection] = useState("watering");
 
   const scrollTo = (id: string) => {
     setActiveSection(id);
     const el = document.getElementById(id);
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
-  const quickStats = [
-    { label: "Plants Covered", value: "200+" },
-    { label: "Care Categories", value: "5" },
-    { label: "AI-Powered Tips", value: "∞" },
-  ];
+  const quickStats = isAr
+    ? [
+        { label: "نبات مشمول", value: "+٢٠٠" },
+        { label: "فئات رعاية", value: "٥" },
+        { label: "نصائح ذكاء اصطناعي", value: "∞" },
+      ]
+    : [
+        { label: "Plants Covered", value: "200+" },
+        { label: "Care Categories", value: "5" },
+        { label: "AI-Powered Tips", value: "∞" },
+      ];
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
+    <div
+      className="min-h-screen bg-slate-950 text-slate-100"
+      dir={isAr ? "rtl" : "ltr"}>
       {/* Ambient orbs */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-emerald-500/10 rounded-full blur-[130px]" />
@@ -845,10 +1677,9 @@ export default function CareGuidePage() {
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
+            transition={{ duration: 0.6 }}>
             <span className="text-xs text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20 font-medium">
-              ✦ Expert Plant Care
+              ✦ {isAr ? "رعاية نباتات من الخبراء" : "Expert Plant Care"}
             </span>
           </motion.div>
 
@@ -856,34 +1687,44 @@ export default function CareGuidePage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.15 }}
-            className="mt-6 text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight"
-          >
-            Complete Plant{" "}
-            <span className="bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
-              Care Guide
-            </span>
+            className="mt-6 text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight">
+            {isAr ? (
+              <>
+                دليل رعاية النباتات{" "}
+                <span className="bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
+                  الشامل
+                </span>
+              </>
+            ) : (
+              <>
+                Complete Plant{" "}
+                <span className="bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
+                  Care Guide
+                </span>
+              </>
+            )}
           </motion.h1>
 
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.25 }}
-            className="mt-4 text-slate-400 text-lg max-w-xl mx-auto"
-          >
-            Master the art of plant care with AI-backed guidance on watering, nutrition, light, soil,
-            and pruning.
+            className="mt-4 text-slate-400 text-lg max-w-xl mx-auto">
+            {isAr
+              ? "أتقن فن رعاية النباتات بتوجيهات مدعومة بالذكاء الاصطناعي حول الري والتغذية والضوء والتربة والتقليم."
+              : "Master the art of plant care with AI-backed guidance on watering, nutrition, light, soil, and pruning."}
           </motion.p>
 
-          {/* Quick stats */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.35 }}
-            className="mt-10 flex items-center justify-center gap-6 sm:gap-12 flex-wrap"
-          >
+            className="mt-10 flex items-center justify-center gap-6 sm:gap-12 flex-wrap">
             {quickStats.map((s) => (
               <div key={s.label} className="text-center">
-                <p className="text-2xl sm:text-3xl font-extrabold text-emerald-400">{s.value}</p>
+                <p className="text-2xl sm:text-3xl font-extrabold text-emerald-400">
+                  {s.value}
+                </p>
                 <p className="text-xs text-slate-400 mt-0.5">{s.label}</p>
               </div>
             ))}
@@ -895,14 +1736,13 @@ export default function CareGuidePage() {
           <div className="flex flex-col lg:flex-row gap-8">
             {/* Sidebar */}
             <motion.aside
-              initial={{ opacity: 0, x: -20 }}
+              initial={{ opacity: 0, x: isAr ? 20 : -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5, delay: 0.4 }}
-              className="lg:w-56 shrink-0"
-            >
+              className="lg:w-56 shrink-0">
               <div className="lg:sticky lg:top-24 bg-slate-900/30 backdrop-blur-md rounded-2xl border border-slate-800/60 p-4">
                 <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-3 px-2">
-                  Sections
+                  {isAr ? "الأقسام" : "Sections"}
                 </p>
                 <nav className="space-y-1">
                   {navItems.map((item) => (
@@ -913,18 +1753,20 @@ export default function CareGuidePage() {
                         activeSection === item.id
                           ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/25"
                           : "text-slate-400 hover:text-slate-200 hover:bg-white/4"
-                      }`}
-                    >
+                      }`}>
                       <span
                         className={
-                          activeSection === item.id ? "text-emerald-400" : "text-slate-500"
-                        }
-                      >
+                          activeSection === item.id
+                            ? "text-emerald-400"
+                            : "text-slate-500"
+                        }>
                         {item.icon}
                       </span>
-                      {item.label}
+                      {isAr ? item.labelAr : item.label}
                       {activeSection === item.id && (
-                        <ChevronRight className="w-3 h-3 ml-auto text-emerald-400" />
+                        <ChevronRight
+                          className={`w-3 h-3 ${isAr ? "mr-auto rotate-180" : "ml-auto"} text-emerald-400`}
+                        />
                       )}
                     </button>
                   ))}
@@ -934,12 +1776,12 @@ export default function CareGuidePage() {
 
             {/* Content */}
             <div className="flex-1 space-y-20">
-              <WateringSection />
-              <FertilizerSection />
-              <LightingSection />
-              <SoilSection />
-              <PruningSection />
-              <AIPanel />
+              <WateringSection isAr={isAr} />
+              <FertilizerSection isAr={isAr} />
+              <LightingSection isAr={isAr} />
+              <SoilSection isAr={isAr} />
+              <PruningSection isAr={isAr} />
+              <AIPanel isAr={isAr} />
             </div>
           </div>
         </div>
@@ -951,16 +1793,30 @@ export default function CareGuidePage() {
               <div className="flex items-center gap-2">
                 <span className="text-xl">🌱</span>
                 <span className="text-lg font-bold bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
-                  Sonbula
+                  {isAr ? "سنبلة" : "Sonbula"}
                 </span>
               </div>
               <p className="text-slate-500 text-sm">
-                © {new Date().getFullYear()} Sonbula. AI-powered plant care, always growing.
+                {isAr
+                  ? `© ${new Date().getFullYear()} سنبلة. رعاية نباتات بالذكاء الاصطناعي، دائماً في نمو.`
+                  : `© ${new Date().getFullYear()} Sonbula. AI-powered plant care, always growing.`}
               </p>
               <div className="flex items-center gap-5 text-sm text-slate-500">
-                <Link href="/" className="hover:text-emerald-400 transition-colors">Home</Link>
-                <Link href="/assistant" className="hover:text-emerald-400 transition-colors">Assistant</Link>
-                <Link href="/about" className="hover:text-emerald-400 transition-colors">About</Link>
+                <Link
+                  href="/"
+                  className="hover:text-emerald-400 transition-colors">
+                  {isAr ? "الرئيسية" : "Home"}
+                </Link>
+                <Link
+                  href="/assistant"
+                  className="hover:text-emerald-400 transition-colors">
+                  {isAr ? "المساعد" : "Assistant"}
+                </Link>
+                <Link
+                  href="/about"
+                  className="hover:text-emerald-400 transition-colors">
+                  {isAr ? "عنا" : "About"}
+                </Link>
               </div>
             </div>
           </div>
