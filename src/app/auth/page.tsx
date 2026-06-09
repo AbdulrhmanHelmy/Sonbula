@@ -2,8 +2,8 @@ import { Metadata } from "next";
 import AuthForm from "@/components/AuthForm";
 
 export const metadata: Metadata = {
-  title: "Login / Sign Up | Sonbula",
-  description: "Login or sign up to access the plant disease detection AI",
+  title: "تسجيل الدخول / إنشاء حساب | سنبلة",
+  description: "سجل دخولك أو أنشئ حساباً للوصول إلى نظام الذكاء الاصطناعي لاكتشاف أمراض النباتات",
 };
 
 export default function AuthPage() {

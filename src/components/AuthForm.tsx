@@ -4,6 +4,36 @@ import { useState, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
 
+const egyptGovernorates = [
+  { id: 'Cairo', name: 'القاهرة' },
+  { id: 'Alexandria', name: 'الإسكندرية' },
+  { id: 'Giza', name: 'الجيزة' },
+  { id: 'Qalyubia', name: 'القليوبية' },
+  { id: 'Dakahlia', name: 'الدقهلية' },
+  { id: 'Sharqia', name: 'الشرقية' },
+  { id: 'Gharbia', name: 'الغربية' },
+  { id: 'Monufia', name: 'المنوفية' },
+  { id: 'Beheira', name: 'البحيرة' },
+  { id: 'Kafr El Sheikh', name: 'كفر الشيخ' },
+  { id: 'Damietta', name: 'دمياط' },
+  { id: 'Port Said', name: 'بورسعيد' },
+  { id: 'Ismailia', name: 'الإسماعيلية' },
+  { id: 'Suez', name: 'السويس' },
+  { id: 'North Sinai', name: 'شمال سيناء' },
+  { id: 'South Sinai', name: 'جنوب سيناء' },
+  { id: 'Matrouh', name: 'مطروح' },
+  { id: 'Faiyum', name: 'الفيوم' },
+  { id: 'Beni Suef', name: 'بني سويف' },
+  { id: 'Minya', name: 'المنيا' },
+  { id: 'Asyut', name: 'أسيوط' },
+  { id: 'Sohag', name: 'سوهاج' },
+  { id: 'Qena', name: 'قنا' },
+  { id: 'Luxor', name: 'الأقصر' },
+  { id: 'Aswan', name: 'أسوان' },
+  { id: 'Red Sea', name: 'البحر الأحمر' },
+  { id: 'New Valley', name: 'الوادي الجديد' }
+];
+
 export default function AuthForm() {
   const router = useRouter();
   const [isLogin, setIsLogin] = useState(true);
@@ -11,14 +41,14 @@ export default function AuthForm() {
   const [error, setError] = useState("");
 
   const [loginData, setLoginData] = useState({ email: "", password: "" });
-  const [signupData, setSignupData] = useState({ username: "", email: "", password: "" });
+  const [signupData, setSignupData] = useState({ username: "", email: "", password: "", governorate: "" });
 
   const handleLoginChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLoginData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     setError("");
   };
 
-  const handleSignupChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSignupChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setSignupData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     setError("");
   };
@@ -33,7 +63,7 @@ export default function AuthForm() {
       api.setUser({ _id: result.data._id, username: result.data.username, email: result.data.email });
       router.push("/");
     } else {
-      setError(result.message || "Login failed");
+      setError(result.message || "فشل تسجيل الدخول، يرجى المحاولة مرة أخرى.");
     }
     setLoading(false);
   };
@@ -42,13 +72,14 @@ export default function AuthForm() {
     e.preventDefault();
     setLoading(true);
     setError("");
-    const result = await api.signup(signupData.username, signupData.email, signupData.password);
+    // لاحظ إننا ضفنا المحافظة هنا، هتحتاج تعدل api.signup عشان تستقبل المتغير الرابع
+    const result = await api.signup(signupData.username, signupData.email, signupData.password, signupData.governorate);
     if (result.success && result.data) {
       api.setToken(result.data.token);
-      api.setUser({ _id: result.data._id, username: result.data.username, email: result.data.email });
+      api.setUser({ _id: result.data._id, username: result.data.username, email: result.data.email, governorate: result.data.governorate });
       router.push("/");
     } else {
-      setError(result.message || "Signup failed");
+      setError(result.message || "فشل إنشاء الحساب، يرجى المحاولة مرة أخرى.");
     }
     setLoading(false);
   };
@@ -66,15 +97,15 @@ export default function AuthForm() {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-green-100 flex items-center justify-center px-4 py-12 sm:py-16">
+    <div dir="rtl" className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-green-100 flex items-center justify-center px-4 py-12 sm:py-16">
       <div className="w-full max-w-md">
         <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8 space-y-6">
           <div className="text-center space-y-2">
             <div className="flex justify-center text-4xl mb-4">
               <span>🌱</span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Sonbula</h1>
-            <p className="text-gray-600 text-sm sm:text-base">Plant Disease Detection AI</p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">سنبلة</h1>
+            <p className="text-gray-600 text-sm sm:text-base">نظام لاكتشاف أمراض النباتات بالذكاء الاصطناعي</p>
           </div>
 
           <div className="space-y-4">
@@ -85,7 +116,7 @@ export default function AuthForm() {
                   isLogin ? "bg-green-600 text-white shadow-md" : "text-gray-700 hover:text-green-600"
                 }`}
               >
-                Login
+                تسجيل الدخول
               </button>
               <button
                 onClick={() => { setIsLogin(false); setError(""); }}
@@ -93,7 +124,7 @@ export default function AuthForm() {
                   !isLogin ? "bg-green-600 text-white shadow-md" : "text-gray-700 hover:text-green-600"
                 }`}
               >
-                Sign Up
+                إنشاء حساب
               </button>
             </div>
 
@@ -107,7 +138,7 @@ export default function AuthForm() {
               <form onSubmit={handleLoginSubmit} className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1.5" htmlFor="login-email">
-                    Email
+                    البريد الإلكتروني
                   </label>
                   <input
                     id="login-email"
@@ -124,7 +155,7 @@ export default function AuthForm() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1.5" htmlFor="login-password">
-                    Password
+                    كلمة المرور
                   </label>
                   <input
                     id="login-password"
@@ -144,7 +175,7 @@ export default function AuthForm() {
                   disabled={loading}
                   className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-lg transition-all shadow-md hover:shadow-lg text-sm sm:text-base"
                 >
-                  {loading ? "Logging in…" : "Login"}
+                  {loading ? "جاري تسجيل الدخول…" : "دخول"}
                 </button>
 
                 <div className="relative">
@@ -152,7 +183,7 @@ export default function AuthForm() {
                     <div className="w-full border-t border-gray-300" />
                   </div>
                   <div className="relative flex justify-center text-sm">
-                    <span className="px-3 bg-white text-gray-500">OR</span>
+                    <span className="px-3 bg-white text-gray-500">أو</span>
                   </div>
                 </div>
 
@@ -161,7 +192,7 @@ export default function AuthForm() {
                   className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-all shadow-sm hover:shadow-md text-sm sm:text-base"
                 >
                   <GoogleIcon />
-                  <span className="text-gray-700 font-medium">Continue with Google</span>
+                  <span className="text-gray-700 font-medium">المتابعة باستخدام جوجل</span>
                 </button>
               </form>
             )}
@@ -170,7 +201,7 @@ export default function AuthForm() {
               <form onSubmit={handleSignupSubmit} className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1.5" htmlFor="signup-username">
-                    Username
+                    اسم المستخدم
                   </label>
                   <input
                     id="signup-username"
@@ -187,7 +218,7 @@ export default function AuthForm() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1.5" htmlFor="signup-email">
-                    Email
+                    البريد الإلكتروني
                   </label>
                   <input
                     id="signup-email"
@@ -204,7 +235,7 @@ export default function AuthForm() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1.5" htmlFor="signup-password">
-                    Password
+                    كلمة المرور
                   </label>
                   <input
                     id="signup-password"
@@ -219,12 +250,33 @@ export default function AuthForm() {
                   />
                 </div>
 
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5" htmlFor="signup-governorate">
+                    المحافظة
+                  </label>
+                  <select
+                    id="signup-governorate"
+                    name="governorate"
+                    value={signupData.governorate}
+                    onChange={handleSignupChange}
+                    required
+                    className={inputClass}
+                  >
+                    <option value="" disabled>اختر محافظتك</option>
+                    {egyptGovernorates.map((gov) => (
+                      <option key={gov.id} value={gov.id}>
+                        {gov.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
                 <button
                   type="submit"
                   disabled={loading}
                   className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-lg transition-all shadow-md hover:shadow-lg text-sm sm:text-base"
                 >
-                  {loading ? "Signing up…" : "Sign Up"}
+                  {loading ? "جاري إنشاء الحساب…" : "إنشاء حساب"}
                 </button>
 
                 <div className="relative">
@@ -232,7 +284,7 @@ export default function AuthForm() {
                     <div className="w-full border-t border-gray-300" />
                   </div>
                   <div className="relative flex justify-center text-sm">
-                    <span className="px-3 bg-white text-gray-500">OR</span>
+                    <span className="px-3 bg-white text-gray-500">أو</span>
                   </div>
                 </div>
 
@@ -241,7 +293,7 @@ export default function AuthForm() {
                   className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-all shadow-sm hover:shadow-md text-sm sm:text-base"
                 >
                   <GoogleIcon />
-                  <span className="text-gray-700 font-medium">Continue with Google</span>
+                  <span className="text-gray-700 font-medium">المتابعة باستخدام جوجل</span>
                 </button>
               </form>
             )}
@@ -249,7 +301,7 @@ export default function AuthForm() {
         </div>
 
         <p className="text-center text-gray-600 text-sm mt-6">
-          Plant disease detection powered by AI
+          اكتشاف أمراض النباتات مدعوم بالذكاء الاصطناعي
         </p>
       </div>
     </div>
