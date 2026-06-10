@@ -3,23 +3,29 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import {
+  User,
+  Mail,
+  Fingerprint,
+  LogOut,
+  ArrowLeft,
+  Sparkles,
+} from "lucide-react";
 import Navbar from "@/components/Navbar";
-import { api, type User } from "@/lib/api";
+import { api, type User as ApiUser } from "@/lib/api";
 
 export default function ProfilePage() {
   const router = useRouter();
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<ApiUser | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const token = api.getToken();
     const userInfo = api.getUser();
-
     if (!token || !userInfo) {
       router.push("/auth");
       return;
     }
-
     setUser(userInfo);
     setLoading(false);
   }, [router]);
@@ -31,12 +37,12 @@ export default function ProfilePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50">
+      <div className="min-h-screen bg-slate-950 text-slate-100">
         <Navbar />
         <div className="flex items-center justify-center h-[calc(100vh-64px)]">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading...</p>
+          <div className="text-center space-y-3">
+            <div className="w-8 h-8 border-2 border-emerald-500/30 border-t-emerald-400 rounded-full animate-spin mx-auto" />
+            <p className="text-sm text-slate-500">جار التحميل...</p>
           </div>
         </div>
       </div>
@@ -44,73 +50,86 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50">
+    <div className="min-h-screen bg-slate-950 text-slate-100 relative overflow-x-hidden">
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-[130px] pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-emerald-500/5 rounded-full blur-[110px] pointer-events-none" />
+
       <Navbar />
 
-      <main className="max-w-2xl mx-auto px-4 py-16">
-        <div className="bg-white rounded-2xl shadow-lg p-8 sm:p-12">
-          {/* Header */}
+      <main className="max-w-lg mx-auto px-4 py-12 relative z-10">
+        <div className="bg-slate-900/40 backdrop-blur-md border border-slate-800/60 rounded-2xl p-8">
           <div className="text-center mb-8">
-            <div className="flex justify-center mb-6">
-              <div className="w-20 h-20 rounded-full bg-gradient-to-r from-green-600 to-emerald-600 flex items-center justify-center text-white text-4xl font-bold shadow-lg">
-                {user?.username?.charAt(0).toUpperCase() || "U"}
-              </div>
+            <div className="w-16 h-16 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 text-2xl font-bold mx-auto mb-4">
+              {user?.username?.charAt(0).toUpperCase() || "U"}
             </div>
-            <h1 className="text-4xl font-bold text-gray-900 mb-2">User Profile</h1>
-            <p className="text-gray-600">Manage your account information</p>
+            <h1 className="text-xl font-bold text-white">{user?.username}</h1>
+            <p className="text-sm text-slate-500 mt-1">إدارة معلومات حسابك</p>
           </div>
 
-          {/* Divider */}
-          <div className="h-px bg-gray-200 my-8"></div>
+          <hr className="border-slate-800/60 mb-6" />
 
-          {/* User Information */}
-          <div className="space-y-6 mb-8">
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Username</label>
-              <div className="px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 font-medium">
-                {user?.username || "N/A"}
+          <div className="flex items-center gap-2 text-xs font-bold text-white mb-4">
+            <User className="w-3.5 h-3.5 text-emerald-400" />
+            معلومات الحساب
+          </div>
+
+          <div className="space-y-4 mb-5">
+            {[
+              {
+                icon: <User className="w-3.5 h-3.5" />,
+                label: "اسم المستخدم",
+                value: user?.username,
+              },
+              {
+                icon: <Mail className="w-3.5 h-3.5" />,
+                label: "البريد الإلكتروني",
+                value: user?.email,
+              },
+            ].map((f) => (
+              <div key={f.label}>
+                <div className="flex items-center gap-1.5 text-xs text-slate-500 font-medium mb-1.5">
+                  {f.icon} {f.label}
+                </div>
+                <div className="px-3.5 py-2.5 bg-slate-950/50 border border-slate-800/50 rounded-xl text-sm text-slate-300">
+                  {f.value || "—"}
+                </div>
               </div>
-            </div>
+            ))}
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Email</label>
-              <div className="px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 font-medium">
-                {user?.email || "N/A"}
+              <div className="flex items-center gap-1.5 text-xs text-slate-500 font-medium mb-1.5">
+                <Fingerprint className="w-3.5 h-3.5" /> معرف المستخدم
               </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">User ID</label>
-              <div className="px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-600 text-sm font-mono break-all">
-                {user?._id || "N/A"}
+              <div className="px-3.5 py-2.5 bg-slate-950/50 border border-slate-800/50 rounded-xl text-xs font-mono text-slate-600 break-all">
+                {user?._id || "—"}
               </div>
             </div>
           </div>
 
-          {/* Coming Soon Section */}
-          <div className="bg-green-50 border border-green-200 rounded-lg p-6 mb-8 text-center">
-            <p className="text-green-800 font-semibold mb-2">✨ More Features Coming Soon</p>
-            <p className="text-green-700 text-sm">
-              Profile features like account settings, password change, and preferences coming soon...
-            </p>
+          <div className="flex items-start gap-3 bg-emerald-500/5 border border-emerald-500/20 rounded-xl p-4 mb-6">
+            <Sparkles className="w-4 h-4 text-emerald-400 mt-0.5 shrink-0" />
+            <div>
+              <p className="text-xs font-semibold text-emerald-400">
+                مميزات قريباً
+              </p>
+              <p className="text-xs text-emerald-700 mt-0.5">
+                تعديل الملف الشخصي، تغيير كلمة المرور، والإعدادات
+              </p>
+            </div>
           </div>
 
-          {/* Divider */}
-          <div className="h-px bg-gray-200 my-8"></div>
+          <hr className="border-slate-800/60 mb-6" />
 
-          {/* Actions */}
-          <div className="flex flex-col sm:flex-row gap-4">
+          <div className="grid grid-cols-2 gap-3">
             <Link
               href="/"
-              className="flex-1 inline-flex items-center justify-center px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-900 font-semibold rounded-lg transition-all"
-            >
-              Back to Home
+              className="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-slate-900/60 border border-slate-800/60 hover:border-slate-700 text-sm font-semibold text-slate-400 hover:text-slate-200 transition-all">
+              <ArrowLeft className="w-4 h-4" /> الرئيسية
             </Link>
             <button
               onClick={handleLogout}
-              className="flex-1 px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition-all shadow-md hover:shadow-lg"
-            >
-              Logout
+              className="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-red-500/10 border border-red-500/25 hover:bg-red-500/20 text-sm font-semibold text-red-400 transition-all">
+              <LogOut className="w-4 h-4" /> تسجيل الخروج
             </button>
           </div>
         </div>
