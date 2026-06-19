@@ -118,7 +118,7 @@ export default function Home() {
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Link
-              href="/auth"
+              href="/assistant"
               className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105 group">
               <span>{t.btnAnalyze}</span>
               <svg
@@ -245,8 +245,8 @@ export default function Home() {
             {t.ctaSub}
           </p>
           <Link
-            href="/auth"
-            className="inline-flex items-center justify-center px-8 py-4 bg-white text-green-600 font-semibold rounded-xl hover:bg-green-50 shadow-lg transition-all transform hover:scale-105 group">
+            href="/assistant"
+            className="inline-flex items-center justify-center px-8 py-4 bg-white/15 backdrop-blur-sm text-white font-semibold rounded-xl hover:bg-white/25 shadow-lg border border-white/20 transition-all transform hover:scale-105 group">
             <span>{t.ctaBtn}</span>
             <svg
               className={`w-5 h-5 ${isAr ? "mr-2 rotate-180 group-hover:-translate-x-1" : "ml-2 group-hover:translate-x-1"} transition-transform`}

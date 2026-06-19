@@ -250,6 +250,127 @@ export const api = {
     }
   },
 
+  // --- Community Endpoints ---
+
+  getPosts: async () => {
+    try {
+      const token = api.getToken();
+      const response = await fetch(`${API_BASE_URL}/community/posts`, {
+        headers: {
+          "Authorization": `Bearer ${token}`,
+        },
+      });
+      return await response.json();
+    } catch (error) {
+      console.error(error);
+      return { success: false, data: [] };
+    }
+  },
+
+  createPost: async (content: string, media?: File) => {
+    try {
+      const token = api.getToken();
+      const formData = new FormData();
+      formData.append("content", content);
+      if (media) {
+        formData.append("media", media);
+      }
+      const response = await fetch(`${API_BASE_URL}/community/posts`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+        },
+        body: formData,
+      });
+      return await response.json();
+    } catch (error) {
+      console.error(error);
+      return { success: false };
+    }
+  },
+
+  togglePostUpvote: async (postId: string) => {
+    try {
+      const token = api.getToken();
+      const response = await fetch(`${API_BASE_URL}/community/posts/${postId}/upvote`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+        },
+      });
+      return await response.json();
+    } catch (error) {
+      console.error(error);
+      return { success: false };
+    }
+  },
+
+  getPostComments: async (postId: string) => {
+    try {
+      const token = api.getToken();
+      const response = await fetch(`${API_BASE_URL}/community/posts/${postId}/comments`, {
+        headers: {
+          "Authorization": `Bearer ${token}`,
+        },
+      });
+      return await response.json();
+    } catch (error) {
+      console.error(error);
+      return { success: false, data: [] };
+    }
+  },
+
+  addComment: async (postId: string, content: string) => {
+    try {
+      const token = api.getToken();
+      const response = await fetch(`${API_BASE_URL}/community/posts/${postId}/comments`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ content }),
+      });
+      return await response.json();
+    } catch (error) {
+      console.error(error);
+      return { success: false };
+    }
+  },
+
+  voteComment: async (commentId: string, voteType: "upvote" | "downvote") => {
+    try {
+      const token = api.getToken();
+      const response = await fetch(`${API_BASE_URL}/community/comments/${commentId}/vote`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ voteType }),
+      });
+      return await response.json();
+    } catch (error) {
+      console.error(error);
+      return { success: false };
+    }
+  },
+
+  getUserPosts: async (userId: string) => {
+    try {
+      const token = api.getToken();
+      const response = await fetch(`${API_BASE_URL}/community/users/${userId}/posts`, {
+        headers: {
+          "Authorization": `Bearer ${token}`,
+        },
+      });
+      return await response.json();
+    } catch (error) {
+      console.error(error);
+      return { success: false, data: [] };
+    }
+  },
+
   // --- User Profile & Greeting ---
   getUserGreeting: async () => {
     try {

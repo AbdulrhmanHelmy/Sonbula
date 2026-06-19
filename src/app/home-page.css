@@ -99,7 +99,7 @@ nav.sticky .text-xl.font-bold {
   letter-spacing: -0.02em;
 }
 
-nav.sticky a[href="/auth"].hidden {
+nav.sticky a[href="/assistant"].hidden {
   background: linear-gradient(135deg, #16a34a, #22c55e) !important;
   border: 1px solid rgba(74,222,128,0.3) !important;
   box-shadow: 0 2px 12px rgba(22,163,74,0.35), inset 0 1px 0 rgba(255,255,255,0.1) !important;
@@ -109,7 +109,7 @@ nav.sticky a[href="/auth"].hidden {
   letter-spacing: 0.01em;
   transition: var(--transition-fast) !important;
 }
-nav.sticky a[href="/auth"].hidden:hover {
+nav.sticky a[href="/assistant"].hidden:hover {
   box-shadow: 0 4px 20px rgba(22,163,74,0.55), inset 0 1px 0 rgba(255,255,255,0.15) !important;
   transform: translateY(-1px) scale(1.03) !important;
 }
@@ -172,7 +172,7 @@ section:first-of-type p.text-xl {
   animation: fade-up 1s 0.2s ease both;
 }
 
-a[href="/auth"].inline-flex.px-8 {
+a[href="/assistant"].inline-flex.px-8 {
   background: linear-gradient(135deg, #15803d 0%, #22c55e 100%) !important;
   border: 1px solid rgba(74,222,128,0.4) !important;
   box-shadow: var(--shadow-button), inset 0 1px 0 rgba(255,255,255,0.15) !important;
@@ -190,7 +190,7 @@ a[href="/auth"].inline-flex.px-8 {
   white-space: nowrap;
 }
 
-a[href="/auth"].inline-flex.px-8::before {
+a[href="/assistant"].inline-flex.px-8::before {
   content: '';
   position: absolute;
   inset: 0;
@@ -198,7 +198,7 @@ a[href="/auth"].inline-flex.px-8::before {
   pointer-events: none;
 }
 
-a[href="/auth"].inline-flex.px-8:hover {
+a[href="/assistant"].inline-flex.px-8:hover {
   box-shadow: 0 8px 40px rgba(34,197,94,0.55), inset 0 1px 0 rgba(255,255,255,0.2) !important;
   transform: translateY(-2px) scale(1.04) !important;
 }
@@ -459,7 +459,7 @@ section.bg-gradient-to-r p.text-xl {
   line-height: 1.7 !important;
 }
 
-section.bg-gradient-to-r a[href="/auth"] {
+section.bg-gradient-to-r a[href="/assistant"] {
   background: rgba(255,255,255,0.95) !important;
   color: #15803d !important;
   border-radius: 14px !important;
@@ -470,7 +470,7 @@ section.bg-gradient-to-r a[href="/auth"] {
   border: none !important;
   transition: var(--transition-fast) !important;
 }
-section.bg-gradient-to-r a[href="/auth"]:hover {
+section.bg-gradient-to-r a[href="/assistant"]:hover {
   background: #fff !important;
   box-shadow: 0 8px 40px rgba(0,0,0,0.28) !important;
   transform: translateY(-3px) scale(1.05) !important;
@@ -604,7 +604,7 @@ section:first-of-type h1 span:first-child {
     padding: 0.75rem 0;
   }
 
-  a[href="/auth"].inline-flex.px-8,
+  a[href="/assistant"].inline-flex.px-8,
   a[href="/plants"].inline-flex,
   a[href="/assistant"].inline-flex {
     width: 100%;
@@ -636,3 +636,174 @@ section:first-of-type h1 span:first-child {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   LIGHT THEME — Home Page Overrides
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+html[data-theme="light"] .home-root {
+  background: #f8faf9 !important;
+  color: #1a2e1e !important;
+}
+
+html[data-theme="light"] .home-root::before {
+  background:
+    radial-gradient(ellipse 80% 60% at 50% -10%, rgba(34,197,94,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 90% 80%, rgba(22,163,74,0.04) 0%, transparent 50%),
+    linear-gradient(160deg, #f8faf9 0%, #f0f5f1 40%, #f8faf9 100%) !important;
+}
+
+html[data-theme="light"] .home-root::after {
+  background: radial-gradient(circle, rgba(34,197,94,0.03) 0%, transparent 70%) !important;
+}
+
+/* Navbar */
+html[data-theme="light"] nav.sticky {
+  background: rgba(248,250,249,0.88) !important;
+  border-bottom: 1px solid rgba(0,0,0,0.06) !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06) !important;
+}
+
+html[data-theme="light"] nav.sticky .text-gray-700 {
+  color: #3d5e44 !important;
+}
+
+html[data-theme="light"] nav.sticky .text-gray-700:hover {
+  color: #16a34a !important;
+}
+
+/* Hero badge (the AI-Powered tag) */
+html[data-theme="light"] section:first-of-type .text-center::before {
+  background: rgba(34,197,94,0.06) !important;
+  border-color: rgba(34,197,94,0.15) !important;
+}
+
+/* Hero title second line */
+html[data-theme="light"] section:first-of-type h1 span.block {
+  color: #0f1f13 !important;
+}
+
+/* Hero gradient text - keep gradient but remove glow */
+html[data-theme="light"] section:first-of-type h1 span:first-child {
+  filter: none !important;
+}
+
+/* Hero subtitle */
+html[data-theme="light"] section:first-of-type p.text-xl {
+  color: #4a6b50 !important;
+}
+
+/* Hero buttons - Plants Dictionary */
+html[data-theme="light"] a[href="/plants"].inline-flex {
+  background: rgba(34,197,94,0.06) !important;
+  border-color: rgba(34,197,94,0.2) !important;
+  color: #16a34a !important;
+}
+
+html[data-theme="light"] a[href="/plants"].inline-flex:hover {
+  background: rgba(34,197,94,0.12) !important;
+  border-color: rgba(34,197,94,0.4) !important;
+}
+
+/* Hero buttons - AI Assistant */
+html[data-theme="light"] a[href="/assistant"].inline-flex {
+  border-color: rgba(34,197,94,0.2) !important;
+  color: #16a34a !important;
+}
+
+html[data-theme="light"] a[href="/assistant"].inline-flex:hover {
+  background: rgba(34,197,94,0.06) !important;
+  color: #15803d !important;
+}
+
+/* Stats grid */
+html[data-theme="light"] .grid.grid-cols-3 {
+  border-top-color: rgba(34,197,94,0.12) !important;
+}
+
+html[data-theme="light"] .grid.grid-cols-3 .space-y-1:not(:last-child)::after {
+  background: rgba(34,197,94,0.12) !important;
+}
+
+html[data-theme="light"] .grid.grid-cols-3 p.text-3xl,
+html[data-theme="light"] .grid.grid-cols-3 p.text-4xl,
+html[data-theme="light"] .grid.grid-cols-3 p.sm\:text-4xl {
+  text-shadow: none !important;
+}
+
+html[data-theme="light"] .grid.grid-cols-3 p.text-sm,
+html[data-theme="light"] .grid.grid-cols-3 p.text-base {
+  color: #5a7d60 !important;
+}
+
+/* Features section */
+html[data-theme="light"] section:nth-of-type(2)::before {
+  background: radial-gradient(ellipse 60% 50% at 50% 50%, rgba(34,197,94,0.03) 0%, transparent 70%) !important;
+}
+
+html[data-theme="light"] section:nth-of-type(2) h2 {
+  color: #0f1f13 !important;
+}
+
+html[data-theme="light"] section:nth-of-type(2) p.text-xl {
+  color: #4a6b50 !important;
+}
+
+/* Feature cards */
+html[data-theme="light"] section:nth-of-type(2) .group.bg-white {
+  background: rgba(255,255,255,0.95) !important;
+  border-color: rgba(0,0,0,0.06) !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06) !important;
+}
+
+html[data-theme="light"] section:nth-of-type(2) .group.bg-white:hover {
+  background: rgba(255,255,255,1) !important;
+  border-color: rgba(34,197,94,0.2) !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.08), 0 0 20px rgba(34,197,94,0.06) !important;
+}
+
+html[data-theme="light"] section:nth-of-type(2) h3 {
+  color: #0f1f13 !important;
+}
+
+html[data-theme="light"] section:nth-of-type(2) .group p.text-gray-600 {
+  color: #4a6b50 !important;
+}
+
+html[data-theme="light"] section:nth-of-type(2) .border-t.border-gray-200 {
+  border-color: rgba(0,0,0,0.06) !important;
+}
+
+html[data-theme="light"] section:nth-of-type(2) ul li {
+  color: #5a7d60 !important;
+}
+
+/* CTA Section — keep green gradient, it looks good in both themes */
+
+/* CTA button (previously /auth, now /assistant) */
+html[data-theme="light"] section.bg-gradient-to-r a[href="/assistant"] {
+  background: rgba(255,255,255,0.95) !important;
+  color: #15803d !important;
+}
+
+html[data-theme="light"] section.bg-gradient-to-r a[href="/assistant"]:hover {
+  background: #fff !important;
+}
+
+/* Footer */
+html[data-theme="light"] footer.bg-gray-900 {
+  background: #1a2e1e !important;
+}
+
+html[data-theme="light"] footer .text-gray-400 {
+  color: rgba(187,247,208,0.55) !important;
+}
+
+html[data-theme="light"] footer .font-bold.text-white {
+  color: #f0fdf4 !important;
+}
+
+html[data-theme="light"] footer .hover\:text-green-500:hover {
+  color: #4ade80 !important;
+}
+

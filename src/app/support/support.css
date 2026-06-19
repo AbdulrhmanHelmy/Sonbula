@@ -933,3 +933,194 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   LIGHT THEME — Support Page Overrides
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+html[data-theme="light"] .support-root {
+  background: #f8faf9 !important;
+  color: #1a2e1e !important;
+}
+
+html[data-theme="light"] .support-hero-bg {
+  background:
+    radial-gradient(ellipse 80% 60% at 50% -10%, rgba(34,197,94,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 55% 45% at 85% 80%, rgba(22,163,74,0.05) 0%, transparent 55%),
+    linear-gradient(160deg, #f0f5f1 0%, #e8f0ea 50%, #f0f5f1 100%) !important;
+}
+
+html[data-theme="light"] .support-hero-orb {
+  background: radial-gradient(circle, rgba(34,197,94,0.04) 0%, transparent 70%) !important;
+}
+
+html[data-theme="light"] .support-hero-title {
+  color: #0f1f13 !important;
+}
+
+html[data-theme="light"] .support-hero-sub {
+  color: #4a6b50 !important;
+}
+
+html[data-theme="light"] .support-gradient-text {
+  filter: none !important;
+}
+
+html[data-theme="light"] .sh-stat-value {
+  text-shadow: none !important;
+}
+
+html[data-theme="light"] .sh-stat-label {
+  color: #5a7d60 !important;
+}
+
+html[data-theme="light"] .sh-stat-div {
+  background: rgba(34,197,94,0.15) !important;
+}
+
+/* Cards */
+html[data-theme="light"] .support-info-card {
+  background: rgba(255,255,255,0.9) !important;
+  border-color: rgba(0,0,0,0.06) !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04) !important;
+}
+
+html[data-theme="light"] .support-info-card:hover {
+  background: rgba(255,255,255,1) !important;
+  border-color: rgba(34,197,94,0.2) !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08), 0 0 20px rgba(34,197,94,0.08) !important;
+}
+
+html[data-theme="light"] .sic-title {
+  color: #0f1f13 !important;
+}
+
+html[data-theme="light"] .sic-desc {
+  color: #5a7d60 !important;
+}
+
+/* Form */
+html[data-theme="light"] .support-form-card {
+  background: rgba(255,255,255,0.9) !important;
+  border-color: rgba(0,0,0,0.06) !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06) !important;
+}
+
+html[data-theme="light"] .sfc-header {
+  border-bottom-color: rgba(0,0,0,0.06) !important;
+}
+
+html[data-theme="light"] .sfc-title {
+  color: #0f1f13 !important;
+}
+
+html[data-theme="light"] .sfc-sub {
+  color: #5a7d60 !important;
+}
+
+html[data-theme="light"] .sf-label {
+  color: #2d4a33 !important;
+}
+
+html[data-theme="light"] .sf-optional {
+  color: #93ab98 !important;
+}
+
+html[data-theme="light"] .sf-input,
+html[data-theme="light"] .sf-select,
+html[data-theme="light"] .sf-textarea {
+  background: rgba(241,245,241,0.8) !important;
+  border-color: rgba(0,0,0,0.1) !important;
+  color: #0f1f13 !important;
+}
+
+html[data-theme="light"] .sf-input::placeholder,
+html[data-theme="light"] .sf-textarea::placeholder {
+  color: #93ab98 !important;
+}
+
+html[data-theme="light"] .sf-select option {
+  background: #ffffff !important;
+  color: #0f1f13 !important;
+}
+
+html[data-theme="light"] .sf-input:focus,
+html[data-theme="light"] .sf-select:focus,
+html[data-theme="light"] .sf-textarea:focus {
+  background: rgba(34,197,94,0.04) !important;
+  border-color: rgba(34,197,94,0.4) !important;
+  box-shadow: 0 0 0 3px rgba(34,197,94,0.08) !important;
+}
+
+html[data-theme="light"] .sf-hint {
+  color: #93ab98 !important;
+}
+
+html[data-theme="light"] .sf-dropzone {
+  border-color: rgba(34,197,94,0.15) !important;
+  background: rgba(34,197,94,0.02) !important;
+}
+
+html[data-theme="light"] .dz-primary {
+  color: #5a7d60 !important;
+}
+
+html[data-theme="light"] .dz-secondary {
+  color: #93ab98 !important;
+}
+
+/* Sidebar */
+html[data-theme="light"] .sc-heading {
+  color: #0f1f13 !important;
+}
+
+html[data-theme="light"] .sc-desc {
+  color: #5a7d60 !important;
+}
+
+/* Sidebar cards */
+html[data-theme="light"] .support-side-card {
+  background: rgba(255,255,255,0.9) !important;
+  border-color: rgba(0,0,0,0.06) !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06) !important;
+}
+
+html[data-theme="light"] .support-side-card:hover {
+  background: rgba(255,255,255,1) !important;
+  border-color: rgba(34,197,94,0.2) !important;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08) !important;
+}
+
+/* FAQ items */
+html[data-theme="light"] .sfaq-q {
+  color: #0f1f13 !important;
+}
+
+html[data-theme="light"] .sfaq-a {
+  color: #4a6b50 !important;
+}
+
+html[data-theme="light"] .sfaq-item {
+  border-color: rgba(0,0,0,0.06) !important;
+}
+
+/* Footer */
+html[data-theme="light"] .sf-footer {
+  border-top-color: rgba(0,0,0,0.06) !important;
+}
+
+html[data-theme="light"] .sf-footer-link {
+  color: #5a7d60 !important;
+}
+
+html[data-theme="light"] .sf-footer-copy {
+  color: #93ab98 !important;
+}
+
+/* Success state */
+html[data-theme="light"] .support-success-card {
+  background: rgba(255,255,255,0.9) !important;
+  border-color: rgba(34,197,94,0.15) !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06) !important;
+}
+

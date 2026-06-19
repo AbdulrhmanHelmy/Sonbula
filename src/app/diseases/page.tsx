@@ -583,7 +583,7 @@ function DiseaseCard({
 
               {/* CTA */}
               <a
-                href="/auth"
+                href="/assistant"
                 onClick={(e) => e.stopPropagation()}
                 className="mt-2 flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 hover:border-emerald-500/60 text-emerald-400 text-sm font-semibold transition-all duration-200">
                 <Zap className="w-4 h-4" />
@@ -827,13 +827,13 @@ export default function DiseasesPage() {
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
               <a
-                href="/auth"
+                href="/assistant"
                 className="inline-flex items-center gap-2 px-8 py-3.5 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm transition-all duration-200 shadow-lg shadow-emerald-500/25 hover:shadow-emerald-400/40">
                 <Zap className="w-4 h-4" />
                 {isAr ? "ارفع صورة النبات" : "Upload Plant Photo"}
               </a>
               <a
-                href="/features"
+                href="/about"
                 className="inline-flex items-center gap-2 text-sm text-emerald-400 font-semibold hover:text-emerald-300 transition-colors">
                 {isAr
                   ? "تعرف على مميزات الذكاء الاصطناعي"
@@ -866,7 +866,7 @@ export default function DiseasesPage() {
               {isAr ? "الرئيسية" : "Home"}
             </a>
             <a
-              href="/features"
+              href="/about"
               className="hover:text-emerald-400 transition-colors">
               {isAr ? "المميزات" : "Features"}
             </a>
@@ -879,7 +879,7 @@ export default function DiseasesPage() {
               {isAr ? "عنا" : "About"}
             </a>
             <a
-              href="/auth"
+              href="/assistant"
               className="hover:text-emerald-400 transition-colors">
               {isAr ? "ابدأ الآن" : "Get Started"}
             </a>

@@ -522,7 +522,7 @@ export default function FAQPage() {
 
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <Link
-                  href="/auth"
+                  href="/assistant"
                   className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold text-sm transition-colors duration-200">
                   <Leaf size={16} />
                   {t.analyzePlant}

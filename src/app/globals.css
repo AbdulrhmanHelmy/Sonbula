@@ -26,6 +26,17 @@
   --fs-base: 16px;
   --fs-sm: 13px;
   --fs-xs: 11px;
+
+  /* ─── Theme-aware tokens (consumed by light override) ─── */
+  --page-bg: #080f0a;
+  --page-text: #e8f5e9;
+  --card-bg: rgba(15, 23, 42, 0.6);
+  --card-border: rgba(148, 163, 184, 0.1);
+  --input-bg: rgba(30, 41, 59, 0.4);
+  --muted-text: #94a3b8;
+  --hero-gradient-start: rgba(2,6,23,0.3);
+  --hero-gradient-mid: rgba(2,6,23,0.85);
+  --hero-gradient-end: rgba(2,6,23,1);
 }
 
 /* ─── Dark Mode ────────────────────────────────────────────────────────────── */
@@ -46,6 +57,26 @@ html.dark {
   --scrollbar-track: #080f0a;
   --scrollbar-thumb: rgba(34, 197, 94, 0.25);
   --scrollbar-thumb-hover: rgba(34, 197, 94, 0.45);
+
+  --page-bg: #080f0a;
+  --page-text: #e8f5e9;
+  --card-bg: rgba(15, 23, 42, 0.6);
+  --card-border: rgba(148, 163, 184, 0.1);
+  --input-bg: rgba(30, 41, 59, 0.4);
+  --muted-text: #94a3b8;
+}
+
+/* ─── Light Mode Token Overrides ───────────────────────────────────────────── */
+html[data-theme="light"] {
+  --page-bg: #f8faf9;
+  --page-text: #1a2e1e;
+  --card-bg: rgba(255, 255, 255, 0.85);
+  --card-border: rgba(0, 0, 0, 0.08);
+  --input-bg: rgba(241, 245, 241, 0.8);
+  --muted-text: #5a7d60;
+  --hero-gradient-start: rgba(248,250,249,0.2);
+  --hero-gradient-mid: rgba(248,250,249,0.75);
+  --hero-gradient-end: rgba(248,250,249,1);
 }
 
 /* ─── Font Size Scaling ────────────────────────────────────────────────────── */
@@ -161,4 +192,211 @@ html[dir="rtl"] .flip-rtl {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   LIGHT THEME — Global color remap
+   Uses a single high-specificity selector to override the hardcoded dark 
+   Tailwind classes that every page uses. Scoped carefully to NOT override 
+   text inside colored/gradient buttons.
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+/* ── 1. Page root backgrounds ──────────────────────────────────────────────── */
+/* Every page wraps content in a div with bg-slate-950 */
+html[data-theme="light"] [class*="bg-slate-950"] {
+  background-color: var(--page-bg) !important;
+}
+
+html[data-theme="light"] [class*="bg-slate-900"] {
+  background-color: var(--page-bg) !important;
+}
+
+/* Partials like bg-slate-900/30 or bg-slate-800/40 → light cards */
+html[data-theme="light"] [class*="bg-slate-900/"],
+html[data-theme="light"] [class*="bg-slate-800/"] {
+  background-color: var(--card-bg) !important;
+}
+
+html[data-theme="light"] [class*="bg-slate-800"]:not([class*="bg-slate-800/"]) {
+  background-color: #e8f0ea !important;
+}
+
+html[data-theme="light"] [class*="bg-slate-700"] {
+  background-color: #d4e0d6 !important;
+}
+
+/* ── 2. Text: remap dark-theme text to readable light-mode colors ──────────── */
+/* IMPORTANT: only override text NOT inside buttons with colored backgrounds */
+html[data-theme="light"] [class*="text-white"]:not([class*="bg-gradient"]):not([class*="bg-emerald"]):not([class*="bg-green"]):not([class*="bg-blue"]):not([class*="bg-red"]):not([class*="bg-amber"]):not([class*="bg-cyan"]):not(button):not(a[class*="bg-"]) {
+  color: var(--text-primary) !important;
+}
+
+html[data-theme="light"] [class*="text-slate-100"] {
+  color: #1a2e1e !important;
+}
+html[data-theme="light"] [class*="text-slate-200"] {
+  color: #2d4a33 !important;
+}
+html[data-theme="light"] [class*="text-slate-300"] {
+  color: #3d5e44 !important;
+}
+html[data-theme="light"] [class*="text-slate-400"]:not(button):not(a) {
+  color: #5a7d60 !important;
+}
+html[data-theme="light"] [class*="text-slate-500"] {
+  color: #7a9a80 !important;
+}
+html[data-theme="light"] [class*="text-slate-600"] {
+  color: #93ab98 !important;
+}
+
+/* ── 3. Borders ────────────────────────────────────────────────────────────── */
+html[data-theme="light"] [class*="border-slate-800"],
+html[data-theme="light"] [class*="border-slate-700"] {
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+/* ── 4. Glass card class (community page) ──────────────────────────────────── */
+html[data-theme="light"] .glass-card {
+  background: var(--card-bg) !important;
+  border-color: var(--card-border) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06) !important;
+}
+
+html[data-theme="light"] .glass-card-light {
+  background: rgba(255, 255, 255, 0.6) !important;
+  border-color: rgba(0, 0, 0, 0.05) !important;
+}
+
+/* ── 5. Hero overlay (community page) ──────────────────────────────────────── */
+html[data-theme="light"] .hero-overlay {
+  background: linear-gradient(180deg,
+    var(--hero-gradient-start) 0%,
+    var(--hero-gradient-mid) 50%,
+    var(--hero-gradient-end) 100%
+  ) !important;
+}
+
+/* ── 6. Home page root ─────────────────────────────────────────────────────── */
+html[data-theme="light"] .home-root {
+  background: var(--page-bg) !important;
+  color: var(--text-primary) !important;
+}
+
+html[data-theme="light"] .home-root::before {
+  background:
+    radial-gradient(ellipse 80% 60% at 50% -10%, rgba(34,197,94,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 90% 80%, rgba(22,163,74,0.04) 0%, transparent 50%),
+    linear-gradient(160deg, #f8faf9 0%, #f0f5f1 40%, #f8faf9 100%) !important;
+}
+
+html[data-theme="light"] .home-root::after {
+  background: radial-gradient(circle, rgba(34,197,94,0.03) 0%, transparent 70%) !important;
+}
+
+/* ── 7. Support page root ──────────────────────────────────────────────────── */
+html[data-theme="light"] .support-root {
+  background: var(--page-bg) !important;
+  color: var(--text-primary) !important;
+}
+
+html[data-theme="light"] .support-hero-bg {
+  background:
+    radial-gradient(ellipse 80% 60% at 50% -10%, rgba(34,197,94,0.08) 0%, transparent 60%),
+    linear-gradient(160deg, #f0f5f1 0%, #e8f0ea 50%, #f0f5f1 100%) !important;
+}
+
+html[data-theme="light"] .support-hero-orb {
+  background: radial-gradient(circle, rgba(34,197,94,0.04) 0%, transparent 70%) !important;
+}
+
+/* ── 8. Navbar in light mode ───────────────────────────────────────────────── */
+html[data-theme="light"] nav.sticky {
+  background: rgba(248,250,249,0.88) !important;
+  border-bottom-color: rgba(0,0,0,0.06) !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06) !important;
+}
+
+html[data-theme="light"] nav.sticky .text-gray-700 {
+  color: #3d5e44 !important;
+}
+
+html[data-theme="light"] nav.sticky .text-gray-700:hover {
+  color: #16a34a !important;
+}
+
+/* ── 9. Input/form fields ──────────────────────────────────────────────────── */
+html[data-theme="light"] input.bg-transparent,
+html[data-theme="light"] textarea.bg-transparent,
+html[data-theme="light"] input[class*="bg-slate"],
+html[data-theme="light"] textarea[class*="bg-slate"] {
+  color: var(--text-primary) !important;
+  background-color: var(--input-bg) !important;
+}
+
+html[data-theme="light"] input::placeholder,
+html[data-theme="light"] textarea::placeholder {
+  color: #93ab98 !important;
+}
+
+/* ── 10. Skeleton pulse ────────────────────────────────────────────────────── */
+html[data-theme="light"] .skeleton-pulse {
+  background-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+/* ── 11. Shimmer text ──────────────────────────────────────────────────────── */
+html[data-theme="light"] .shimmer-text {
+  background: linear-gradient(90deg, #16a34a, #059669, #0d9488, #16a34a) !important;
+  background-size: 300% auto !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+}
+
+/* ── 12. Profile dropdown ──────────────────────────────────────────────────── */
+html[data-theme="light"] [class*="bg-slate-900/95"],
+html[data-theme="light"] [class*="bg-slate-900/90"] {
+  background-color: rgba(255, 255, 255, 0.96) !important;
+}
+
+/* ── 13. Emerald accent tints → softer on light ────────────────────────────── */
+html[data-theme="light"] [class*="bg-emerald-500/10"],
+html[data-theme="light"] [class*="bg-emerald-500/15"],
+html[data-theme="light"] [class*="bg-emerald-500/20"] {
+  background-color: rgba(22, 163, 74, 0.08) !important;
+}
+
+/* ── 14. Footer stays dark ─────────────────────────────────────────────────── */
+html[data-theme="light"] footer[class*="bg-gray-900"] {
+  background-color: #1a2e1e !important;
+}
+/* Keep text in dark footer light */
+html[data-theme="light"] footer[class*="bg-gray-900"] [class*="text-white"],
+html[data-theme="light"] footer[class*="bg-gray-900"] [class*="text-gray"] {
+  color: inherit !important;
+}
+
+/* ── 15. Keep text white INSIDE colored buttons/links ──────────────────────── */
+html[data-theme="light"] a[class*="bg-gradient"] *,
+html[data-theme="light"] button[class*="bg-gradient"] *,
+html[data-theme="light"] a[class*="bg-emerald"] *,
+html[data-theme="light"] button[class*="bg-emerald"] *,
+html[data-theme="light"] a[class*="bg-green"] *,
+html[data-theme="light"] button[class*="bg-green"] *,
+html[data-theme="light"] [class*="bg-gradient-to-r"][class*="from-emerald"] *,
+html[data-theme="light"] [class*="bg-gradient-to-br"][class*="from-emerald"] *,
+html[data-theme="light"] [class*="bg-gradient-to-r"][class*="from-green"] *,
+html[data-theme="light"] [class*="bg-gradient-to-br"][class*="from-green"] * {
+  color: white !important;
+}
+
+/* ── 16. Keep CTA banner section text white ────────────────────────────────── */
+html[data-theme="light"] section[class*="bg-gradient-to-r"] *[class*="text-white"],
+html[data-theme="light"] section[class*="bg-gradient-to-r"] *[class*="text-green-50"] {
+  color: white !important;
+}
+
+/* Also keep white/15 button text white in CTA */
+html[data-theme="light"] a[class*="bg-white/15"],
+html[data-theme="light"] a[class*="bg-white/15"] * {
+  color: white !important;
 }
