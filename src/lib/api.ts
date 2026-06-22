@@ -5,7 +5,7 @@ export interface User {
   _id: string;
   username: string;
   email: string;
-  governorate?: string; // 👈 ضفنا المحافظة هنا
+  governorate?: string; 
 }
 
 export interface AuthResponse {
@@ -16,7 +16,7 @@ export interface AuthResponse {
     username: string;
     email: string;
     token: string;
-    governorate?: string; // 👈 وهنا كمان عشان لو الباك إند بيرجعها في الرد
+    governorate?: string;
   };
   error?: string[] | string;
 }
@@ -59,7 +59,6 @@ export const api = {
         headers: {
           "Content-Type": "application/json",
         },
-        // 👈 ضفنا الـ governorate في الـ Body اللي مبعوت للباك إند
         body: JSON.stringify({ username, email, password, governorate }),
       });
 
@@ -175,56 +174,63 @@ export const api = {
       return { success: false, data: [] };
     }
   },
-
-  getConversationById: async (id: string) => {
-    try {
-      const token = api.getToken();
-      // التعديل هنا: الـ باث بقى /chat/conversations/:id
-      const response = await fetch(`${API_BASE_URL}/chat/conversations/${id}`, {
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json"
-        }
-      });
-      return await response.json();
-    } catch (error) {
-      console.error(error);
-      return { success: false, data: null };
-    }
+  getConversationById: async (id: string, options?: RequestInit) => {
+  try {
+    const token = api.getToken();
+    const response = await fetch(`${API_BASE_URL}/chat/conversations/${id}`, {
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
+      },
+      signal: options?.signal,
+    });
+    return await response.json();
+  } catch (error) {
+    console.error(error);
+    return { success: false, data: null };
+  }
   },
-
-  sendTextToConversation: async (id: string, text: string) => {
-    try {
-      const token = api.getToken();
-      // التعديل هنا: الـ باث بقى /chat/conversations/:id/text
-      const response = await fetch(`${API_BASE_URL}/chat/conversations/${id}/text`, {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ question: text })
-      });
-      return await response.json();
-    } catch (error) {
-      console.error(error);
-      return { success: false };
-    }
-  },
-
-  sendImageToConversation: async (id: string, file: File) => {
+sendTextToConversation: async (id: string, text: string, options?: RequestInit) => {
+  try {
+    const token = api.getToken();
+    const response = await fetch(`${API_BASE_URL}/chat/conversations/${id}/text`, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ question: text }),
+      signal: options?.signal 
+    });
+    return await response.json();
+  } catch (error) {
+    console.error(error);
+    return { success: false };
+  }
+},
+  sendImageToConversation: async (
+    id: string, 
+    file: File, 
+    question?: string, 
+    options?: RequestInit
+  ) => {
     try {
       const token = api.getToken();
       const formData = new FormData();
-      formData.append("file", file);
+      
+      formData.append("file", file); 
+      
+      if (question && question.trim() !== "") {
+        formData.append("question", question);
+      }
 
-      // التعديل هنا: الـ باث بقى /chat/conversations/:id/image
       const response = await fetch(`${API_BASE_URL}/chat/conversations/${id}/image`, {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${token}`,
         },
-        body: formData
+        body: formData,
+        signal: options?.signal,
       });
       return await response.json();
     } catch (error) {
@@ -427,4 +433,3 @@ export const api = {
     return api.getToken() !== null;
   },
 };
-
