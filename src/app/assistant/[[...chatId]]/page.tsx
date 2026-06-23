@@ -175,7 +175,7 @@ function getCleanContent(content?: string): string {
   });
 
   // Clean up |||  (triple+ pipes that appear as text artifacts)
-  cleanText = cleanText.replace(/\|{2,}/g, "|");
+  // cleanText = cleanText.replace(/\|{2,}/g, "|");
 
   // Fix BiDi issue: English numbers/percent next to Arabic text
   // Add RTL mark around numeric sequences so BiDi algorithm doesn't displace them
@@ -897,16 +897,29 @@ const FormattedTime = ({ dateString }: { dateString: string }) => {
 // with RTL support and full GFM table rendering.
 const markdownComponents = {
   p: ({ children }: { children?: React.ReactNode }) => (
-    <p className="leading-7 mb-3 last:mb-0" dir="auto">{children}</p>
+    <p className="leading-7 mb-3 last:mb-0 text-right" dir="rtl">{children}</p>
   ),
 
   ul: ({ children }: { children?: React.ReactNode }) => (
-    <ul className="list-disc ps-5 mb-3 space-y-1" dir="auto">{children}</ul>
+    <ul className="list-disc pl-0 pr-5 mb-3 space-y-1 text-right" dir="rtl">{children}</ul>
   ),
 
   ol: ({ children }: { children?: React.ReactNode }) => (
-    <ol className="list-decimal ps-5 mb-3 space-y-1" dir="auto">{children}</ol>
+    <ol className="list-decimal pl-0 pr-5 mb-3 space-y-1 text-right" dir="rtl">{children}</ol>
   ),
+
+  li: ({ children }: { children?: React.ReactNode }) => (
+    <li className="text-right" dir="rtl">{children}</li>
+  ),
+
+  h3: ({ children }: { children?: React.ReactNode }) => (
+    <h3 className="text-lg font-bold text-gray-900 mt-6 mb-2 text-right" dir="rtl">{children}</h3>
+  ),
+
+  h4: ({ children }: { children?: React.ReactNode }) => (
+    <h4 className="text-base font-bold text-gray-900 mt-4 mb-2 text-right" dir="rtl">{children}</h4>
+  ),
+
 
   code: ({ children }: { children?: React.ReactNode }) => (
     <code className="bg-gray-50 text-[13px] font-mono px-1.5 py-0.5 rounded" dir="ltr">
@@ -920,7 +933,6 @@ const markdownComponents = {
     </pre>
   ),
 
-  // ✅ FIXED TABLE
   table: ({ children }: { children?: React.ReactNode }) => (
     <div className="my-4 w-full overflow-x-auto rounded-xl border border-gray-200">
       <table
@@ -972,62 +984,125 @@ const markdownComponents = {
   ),
 };
 
-/** A single ChatGPT-style row: full-width, no bubble, plain aligned text. */
+// ============================================================================
+// MESSAGE ROW — MODIFIED COMPONENT
+// User messages: right-aligned bubble with background, border, and shadow.
+// Assistant messages: plain text, no bubble, unchanged from original.
+// ============================================================================
 const MessageRow = React.memo(({ msg, onRetry }: { msg: ChatMessage; onRetry: (m: ChatMessage) => void }) => {
   const isUser = msg.role === "user";
   const isError = msg.status === "error";
   const isSending = msg.status === "sending";
-  const align = isUser ? "text-right" : "text-left";
 
   return (
     <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} layout="position" className="w-full py-3.5">
-      <div className={cx("max-w-[680px] mx-auto px-2", align)}>
-        {msg.type === "image" && msg.imageUrl && (
-          <img
-            src={msg.imageUrl}
-            alt="مرفق المستخدم"
-            className={cx("rounded-2xl w-44 sm:w-56 object-cover mb-2.5 border border-gray-100 inline-block", isSending && "opacity-70")}
-            loading="lazy"
-          />
-        )}
+      <div className="max-w-[680px] mx-auto px-2">
 
-        {!isUser && msg.source === "cnn" && msg.metadata?.disease && (
-          <div className="mb-3 border-s-2 border-red-300 ps-3 py-1 inline-block text-start">
-            <p className="text-[11px] font-semibold text-red-400 uppercase tracking-wider mb-0.5">{t.detectedDisease}</p>
-            <p className="text-base font-bold text-red-700">
-              {msg.metadata.disease}
-              {typeof msg.metadata.confidence === "number" && (
-                <span className="ms-2 text-sm font-medium text-red-400">
-                  ({msg.metadata.confidence}% {t.confidenceRatio})
-                </span>
+        {isUser ? (
+          // items-start = right side because the page is dir="rtl"
+          <div className="flex flex-col items-start gap-1.5">
+
+            {/* Attached image (shown above the text bubble when present) */}
+            {msg.type === "image" && msg.imageUrl && (
+              <img
+                src={msg.imageUrl}
+                alt="مرفق المستخدم"
+                className={cx(
+                  "rounded-2xl w-44 sm:w-56 object-cover border border-gray-100",
+                  isSending && "opacity-70"
+                )}
+                loading="lazy"
+              />
+            )}
+
+            {/* Text bubble */}
+            {msg.content && (
+              <div
+                className={cx(
+                  "bg-gray-50 border border-gray-100 shadow-sm rounded-2xl px-4 py-3 max-w-[85%] text-right",
+                  isSending && "opacity-70"
+                )}
+              >
+                <div className="prose prose-sm max-w-none text-gray-900 font-medium" dir="auto">
+                  <ReactMarkdown components={markdownComponents} remarkPlugins={[remarkGfm]}>
+                    {getCleanContent(msg.content)}
+                  </ReactMarkdown>
+                </div>
+              </div>
+            )}
+
+            {/* Timestamp / sending / error */}
+            <div className="flex items-center gap-2 text-[11px] text-gray-400 justify-start">
+              {msg.createdAt && !isSending && !isError && <FormattedTime dateString={msg.createdAt} />}
+              {isSending && <span className="animate-pulse">جاري الإرسال...</span>}
+              {isError && (
+                <button
+                  onClick={() => onRetry(msg)}
+                  className="flex items-center gap-1 text-red-500 hover:text-red-700 font-medium transition-colors focus:outline-none focus:underline"
+                >
+                  <AlertCircle size={12} /> {t.failed} · <RotateCcw size={11} /> {t.retry}
+                </button>
               )}
-            </p>
+            </div>
+          </div>
+
+        ) : (
+          /* ── Assistant message: plain text, no bubble ── */
+          <div className="text-right">
+
+            {/* Assistant image (e.g. CNN result image, if applicable) */}
+            {msg.type === "image" && msg.imageUrl && (
+              <img
+                src={msg.imageUrl}
+                alt="مرفق المستخدم"
+                className={cx(
+                  "rounded-2xl w-44 sm:w-56 object-cover mb-2.5 border border-gray-100 inline-block",
+                  isSending && "opacity-70"
+                )}
+                loading="lazy"
+              />
+            )}
+
+            {/* CNN disease detection card */}
+            {msg.source === "cnn" && msg.metadata?.disease && (
+              <div className="mb-3 border-s-2 border-red-300 ps-3 py-1 inline-block text-start">
+                <p className="text-[11px] font-semibold text-red-400 uppercase tracking-wider mb-0.5">{t.detectedDisease}</p>
+                <p className="text-base font-bold text-red-700">
+                  {msg.metadata.disease}
+                  {typeof msg.metadata.confidence === "number" && (
+                    <span className="ms-2 text-sm font-medium text-red-400">
+                      ({msg.metadata.confidence}% {t.confidenceRatio})
+                    </span>
+                  )}
+                </p>
+              </div>
+            )}
+
+            {/* Assistant text content */}
+            {msg.content && (
+              <div className="prose prose-sm max-w-none text-gray-600 font-normal" dir="auto">
+                <ReactMarkdown components={markdownComponents} remarkPlugins={[remarkGfm]}>
+                  {getCleanContent(msg.content)}
+                </ReactMarkdown>
+              </div>
+            )}
+
+            {/* Timestamp / sending / error */}
+            <div className="flex items-center gap-2 mt-1.5 text-[11px] text-gray-400 justify-start">
+              {msg.createdAt && !isSending && !isError && <FormattedTime dateString={msg.createdAt} />}
+              {isSending && <span className="animate-pulse">جاري الإرسال...</span>}
+              {isError && (
+                <button
+                  onClick={() => onRetry(msg)}
+                  className="flex items-center gap-1 text-red-500 hover:text-red-700 font-medium transition-colors focus:outline-none focus:underline"
+                >
+                  <AlertCircle size={12} /> {t.failed} · <RotateCcw size={11} /> {t.retry}
+                </button>
+              )}
+            </div>
           </div>
         )}
 
-        {msg.content && (
-          <div
-            className={cx("prose prose-sm max-w-none", isUser ? "text-gray-900 font-medium" : "text-gray-600 font-normal")}
-            dir="auto"
-          >
-            <ReactMarkdown components={markdownComponents} remarkPlugins={[remarkGfm]}>
-              {getCleanContent(msg.content)}
-            </ReactMarkdown>
-          </div>
-        )}
-
-        <div className={cx("flex items-center gap-2 mt-1.5 text-[11px] text-gray-400", isUser ? "justify-end" : "justify-start")}>
-          {msg.createdAt && !isSending && !isError && <FormattedTime dateString={msg.createdAt} />}
-          {isSending && <span className="animate-pulse">جاري الإرسال...</span>}
-          {isError && (
-            <button
-              onClick={() => onRetry(msg)}
-              className="flex items-center gap-1 text-red-500 hover:text-red-700 font-medium transition-colors focus:outline-none focus:underline"
-            >
-              <AlertCircle size={12} /> {t.failed} · <RotateCcw size={11} /> {t.retry}
-            </button>
-          )}
-        </div>
       </div>
     </motion.div>
   );
