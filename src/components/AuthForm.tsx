@@ -3,7 +3,7 @@
 import { useState, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
-import { Leaf, Eye, EyeOff, ArrowLeft, Loader2 } from "lucide-react";
+import { Leaf, Eye, EyeOff, Loader2 } from "lucide-react";
 
 const egyptGovernorates = [
   { id: "Cairo", name: "القاهرة" },
@@ -272,6 +272,16 @@ export default function AuthForm() {
                   </button>
                 </div>
               </Field>
+
+              {/* ── Forgot password link ── */}
+              <div className="flex justify-start">
+                <button
+                  type="button"
+                  onClick={() => router.push("/forgot-password")}
+                  className="text-xs text-slate-500 hover:text-emerald-400 transition-colors">
+                  نسيت كلمة المرور؟
+                </button>
+              </div>
 
               <SubmitBtn
                 loading={loading}

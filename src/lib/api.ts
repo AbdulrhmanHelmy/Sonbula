@@ -1,11 +1,12 @@
 // Use Vercel backend by default, or override with environment variable
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://planet-ai-backend-gules.vercel.app/api";
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 
 export interface User {
   _id: string;
   username: string;
   email: string;
-  governorate?: string; 
+  governorate?: string;
 }
 
 export interface AuthResponse {
@@ -38,7 +39,10 @@ export const api = {
       if (!response.ok) {
         return {
           success: false,
-          message: typeof data.error === "string" ? data.error : data.message || "Login failed",
+          message:
+            typeof data.error === "string"
+              ? data.error
+              : data.message || "Login failed",
         };
       }
 
@@ -51,8 +55,12 @@ export const api = {
     }
   },
 
-  // 👈 عدلنا الـ Parameters عشان تستقبل الـ governorate
-  signup: async (username: string, email: string, password: string, governorate: string): Promise<AuthResponse> => {
+  signup: async (
+    username: string,
+    email: string,
+    password: string,
+    governorate: string,
+  ): Promise<AuthResponse> => {
     try {
       const response = await fetch(`${API_BASE_URL}/auth/signup`, {
         method: "POST",
@@ -71,8 +79,8 @@ export const api = {
             typeof data.error === "string"
               ? data.error
               : Array.isArray(data.error)
-              ? data.error.join(", ")
-              : data.message || "Signup failed",
+                ? data.error.join(", ")
+                : data.message || "Signup failed",
         };
       }
 
@@ -85,15 +93,51 @@ export const api = {
     }
   },
 
+  forgotPassword: async (email: string): Promise<AuthResponse> => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/forgot-password`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
+      return await response.json();
+    } catch (error) {
+      return {
+        success: false,
+        message: error instanceof Error ? error.message : "An error occurred",
+      };
+    }
+  },
+  resetPassword: async (
+    email: string,
+    otp: string,
+    newPassword: string,
+  ): Promise<AuthResponse> => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/reset-password`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, otp, newPassword }),
+      });
+      return await response.json();
+    } catch (error) {
+      return {
+        success: false,
+        message: error instanceof Error ? error.message : "An error occurred",
+      };
+    }
+  },
   // Analytics Endpoints
 
-  /**
-   * Fetches disease distribution across governorates for the heatmap.
-   */
   getGovernorateDistribution: async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/analytics/distribution/governorate`);
-      if (!response.ok) throw new Error("Failed to fetch governorate distribution");
+      const response = await fetch(
+        `${API_BASE_URL}/analytics/distribution/governorate`,
+      );
+      if (!response.ok)
+        throw new Error("Failed to fetch governorate distribution");
       return await response.json();
     } catch (error) {
       console.error(error);
@@ -101,12 +145,11 @@ export const api = {
     }
   },
 
-  /**
-   * Fetches overall disease distribution for the charts.
-   */
   getDiseaseDistribution: async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/analytics/distribution/disease`);
+      const response = await fetch(
+        `${API_BASE_URL}/analytics/distribution/disease`,
+      );
       if (!response.ok) throw new Error("Failed to fetch disease distribution");
       return await response.json();
     } catch (error) {
@@ -115,12 +158,13 @@ export const api = {
     }
   },
 
-  /**
-   * Fetches the scans history with pagination and optional governorate filtering.
-   */
-  getScansHistory: async (page = 1, limit = 10, governorate?: string, sortBy = "date") => {
+  getScansHistory: async (
+    page = 1,
+    limit = 10,
+    governorate?: string,
+    sortBy = "date",
+  ) => {
     try {
-      // Build query string dynamically
       const params = new URLSearchParams({
         page: page.toString(),
         limit: limit.toString(),
@@ -128,7 +172,9 @@ export const api = {
       });
       if (governorate) params.append("governorate", governorate);
 
-      const response = await fetch(`${API_BASE_URL}/analytics/scans?${params.toString()}`);
+      const response = await fetch(
+        `${API_BASE_URL}/analytics/scans?${params.toString()}`,
+      );
       if (!response.ok) throw new Error("Failed to fetch scans history");
       return await response.json();
     } catch (error) {
@@ -136,20 +182,19 @@ export const api = {
       return { data: [], total: 0 };
     }
   },
-  
+
   // --- Chat & Assistant Endpoints ---
-  
+
   createConversation: async (title?: string) => {
     try {
       const token = api.getToken();
-      // التعديل هنا: ضفنا /chat قبل /conversations
       const response = await fetch(`${API_BASE_URL}/chat/conversations`, {
         method: "POST",
         headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json"
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(title ? { title } : {})
+        body: JSON.stringify(title ? { title } : {}),
       });
       return await response.json();
     } catch (error) {
@@ -161,12 +206,11 @@ export const api = {
   getConversations: async () => {
     try {
       const token = api.getToken();
-      // التعديل هنا: ضفنا /chat قبل /conversations
       const response = await fetch(`${API_BASE_URL}/chat/conversations`, {
         headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json"
-        }
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
       });
       return await response.json();
     } catch (error) {
@@ -174,64 +218,77 @@ export const api = {
       return { success: false, data: [] };
     }
   },
+
   getConversationById: async (id: string, options?: RequestInit) => {
-  try {
-    const token = api.getToken();
-    const response = await fetch(`${API_BASE_URL}/chat/conversations/${id}`, {
-      headers: {
-        "Authorization": `Bearer ${token}`,
-        "Content-Type": "application/json"
-      },
-      signal: options?.signal,
-    });
-    return await response.json();
-  } catch (error) {
-    console.error(error);
-    return { success: false, data: null };
-  }
+    try {
+      const token = api.getToken();
+      const response = await fetch(`${API_BASE_URL}/chat/conversations/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        signal: options?.signal,
+      });
+      return await response.json();
+    } catch (error) {
+      console.error(error);
+      return { success: false, data: null };
+    }
   },
-sendTextToConversation: async (id: string, text: string, options?: RequestInit) => {
-  try {
-    const token = api.getToken();
-    const response = await fetch(`${API_BASE_URL}/chat/conversations/${id}/text`, {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${token}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ question: text }),
-      signal: options?.signal 
-    });
-    return await response.json();
-  } catch (error) {
-    console.error(error);
-    return { success: false };
-  }
-},
+
+  sendTextToConversation: async (
+    id: string,
+    text: string,
+    options?: RequestInit,
+  ) => {
+    try {
+      const token = api.getToken();
+      const response = await fetch(
+        `${API_BASE_URL}/chat/conversations/${id}/text`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ question: text }),
+          signal: options?.signal,
+        },
+      );
+      return await response.json();
+    } catch (error) {
+      console.error(error);
+      return { success: false };
+    }
+  },
+
   sendImageToConversation: async (
-    id: string, 
-    file: File, 
-    question?: string, 
-    options?: RequestInit
+    id: string,
+    file: File,
+    question?: string,
+    options?: RequestInit,
   ) => {
     try {
       const token = api.getToken();
       const formData = new FormData();
-      
-      formData.append("file", file); 
-      
+
+      formData.append("file", file);
+
       if (question && question.trim() !== "") {
         formData.append("question", question);
       }
 
-      const response = await fetch(`${API_BASE_URL}/chat/conversations/${id}/image`, {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${token}`,
+      const response = await fetch(
+        `${API_BASE_URL}/chat/conversations/${id}/image`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+          signal: options?.signal,
         },
-        body: formData,
-        signal: options?.signal,
-      });
+      );
       return await response.json();
     } catch (error) {
       console.error(error);
@@ -242,12 +299,11 @@ sendTextToConversation: async (id: string, text: string, options?: RequestInit) 
   deleteConversation: async (id: string) => {
     try {
       const token = api.getToken();
-      // التعديل هنا: الـ باث بقى /chat/conversations/:id
       const response = await fetch(`${API_BASE_URL}/chat/conversations/${id}`, {
         method: "DELETE",
         headers: {
-          "Authorization": `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
       return await response.json();
     } catch (error) {
@@ -263,7 +319,7 @@ sendTextToConversation: async (id: string, text: string, options?: RequestInit) 
       const token = api.getToken();
       const response = await fetch(`${API_BASE_URL}/community/posts`, {
         headers: {
-          "Authorization": `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       });
       return await response.json();
@@ -284,7 +340,7 @@ sendTextToConversation: async (id: string, text: string, options?: RequestInit) 
       const response = await fetch(`${API_BASE_URL}/community/posts`, {
         method: "POST",
         headers: {
-          "Authorization": `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: formData,
       });
@@ -298,12 +354,15 @@ sendTextToConversation: async (id: string, text: string, options?: RequestInit) 
   togglePostUpvote: async (postId: string) => {
     try {
       const token = api.getToken();
-      const response = await fetch(`${API_BASE_URL}/community/posts/${postId}/upvote`, {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${token}`,
+      const response = await fetch(
+        `${API_BASE_URL}/community/posts/${postId}/upvote`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      });
+      );
       return await response.json();
     } catch (error) {
       console.error(error);
@@ -314,11 +373,14 @@ sendTextToConversation: async (id: string, text: string, options?: RequestInit) 
   getPostComments: async (postId: string) => {
     try {
       const token = api.getToken();
-      const response = await fetch(`${API_BASE_URL}/community/posts/${postId}/comments`, {
-        headers: {
-          "Authorization": `Bearer ${token}`,
+      const response = await fetch(
+        `${API_BASE_URL}/community/posts/${postId}/comments`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      });
+      );
       return await response.json();
     } catch (error) {
       console.error(error);
@@ -329,14 +391,17 @@ sendTextToConversation: async (id: string, text: string, options?: RequestInit) 
   addComment: async (postId: string, content: string) => {
     try {
       const token = api.getToken();
-      const response = await fetch(`${API_BASE_URL}/community/posts/${postId}/comments`, {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `${API_BASE_URL}/community/posts/${postId}/comments`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ content }),
         },
-        body: JSON.stringify({ content }),
-      });
+      );
       return await response.json();
     } catch (error) {
       console.error(error);
@@ -347,14 +412,17 @@ sendTextToConversation: async (id: string, text: string, options?: RequestInit) 
   voteComment: async (commentId: string, voteType: "upvote" | "downvote") => {
     try {
       const token = api.getToken();
-      const response = await fetch(`${API_BASE_URL}/community/comments/${commentId}/vote`, {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `${API_BASE_URL}/community/comments/${commentId}/vote`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ voteType }),
         },
-        body: JSON.stringify({ voteType }),
-      });
+      );
       return await response.json();
     } catch (error) {
       console.error(error);
@@ -365,11 +433,14 @@ sendTextToConversation: async (id: string, text: string, options?: RequestInit) 
   getUserPosts: async (userId: string) => {
     try {
       const token = api.getToken();
-      const response = await fetch(`${API_BASE_URL}/community/users/${userId}/posts`, {
-        headers: {
-          "Authorization": `Bearer ${token}`,
+      const response = await fetch(
+        `${API_BASE_URL}/community/users/${userId}/posts`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      });
+      );
       return await response.json();
     } catch (error) {
       console.error(error);
@@ -383,9 +454,9 @@ sendTextToConversation: async (id: string, text: string, options?: RequestInit) 
       const token = api.getToken();
       const response = await fetch(`${API_BASE_URL}/user/greeting`, {
         headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json"
-        }
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
       });
       return await response.json();
     } catch (error) {
@@ -393,6 +464,7 @@ sendTextToConversation: async (id: string, text: string, options?: RequestInit) 
       return { success: false, data: null };
     }
   },
+
   // Token management
   getToken: (): string | null => {
     if (typeof window !== "undefined") {
