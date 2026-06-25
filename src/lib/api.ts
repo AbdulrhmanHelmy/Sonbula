@@ -1,6 +1,7 @@
 // Use Vercel backend by default, or override with environment variable
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+  process.env.NEXT_PUBLIC_API_URL ||
+  "https://planet-ai-backend-gules.vercel.app/api";
 
 export interface User {
   _id: string;
