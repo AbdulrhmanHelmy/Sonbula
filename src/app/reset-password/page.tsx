@@ -16,8 +16,11 @@ import {
 export default function ResetPasswordPage() {
   const router = useRouter();
 
-  const email = localStorage.getItem("email")||"";
-  const [otp, setOtp] = useState("");
+const [email, setEmail] = useState("");
+
+useEffect(() => {
+  setEmail(localStorage.getItem("email") || "");
+}, []);  const [otp, setOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
