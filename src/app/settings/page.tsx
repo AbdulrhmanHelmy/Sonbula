@@ -13,7 +13,7 @@ import {
   RefreshCw,
   CheckCircle,
 } from "lucide-react";
-import Button from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { useSettings } from "@/context/SettingsContext";
 
 export default function SettingsPage() {
@@ -73,7 +73,7 @@ export default function SettingsPage() {
   }) => (
     <Button
       size="sm"
-      variant={active ? "primary" : "outline"}
+      variant={active ? "default" : "outline"}
       onClick={onClick}
       className={
         active

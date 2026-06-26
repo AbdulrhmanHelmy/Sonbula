@@ -10,6 +10,7 @@ import {
   LogOut,
   ArrowLeft,
   Sparkles,
+  MessageSquare,
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import { api, type User as ApiUser } from "@/lib/api";
@@ -116,6 +117,21 @@ export default function ProfilePage() {
                 تعديل الملف الشخصي، تغيير كلمة المرور، والإعدادات
               </p>
             </div>
+          </div>
+
+          <div className="mb-6">
+            <Link href="/profile/complaints" className="flex items-center justify-between p-4 bg-slate-900/60 border border-slate-800/60 rounded-xl hover:bg-slate-800/60 transition-all">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-400">
+                  <MessageSquare className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-white">الشكاوى الخاصة بي</h3>
+                  <p className="text-xs text-slate-500">متابعة حالة شكاويك والردود عليها</p>
+                </div>
+              </div>
+              <ArrowLeft className="w-4 h-4 text-slate-500 rotate-180" />
+            </Link>
           </div>
 
           <hr className="border-slate-800/60 mb-6" />

@@ -5,6 +5,7 @@ import Navbar from "@/components/Navbar";
 import Link from "next/link";
 import "./support.css";
 import { useSettings } from "@/context/SettingsContext";
+import { api } from "@/lib/api";
 
 // ─── Static Data (bilingual) ──────────────────────────────────────────────────
 
@@ -267,9 +268,17 @@ export default function SupportPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 1600));
+    
+    const subject = form.subject || form.type;
+    const response = await api.submitComplaint(subject, form.message);
+    
     setLoading(false);
-    setSubmitted(true);
+    if (response.success) {
+      setSubmitted(true);
+    } else {
+      // Show error (optional, ideally using a toast, but keeping it simple)
+      console.error(response.message);
+    }
   };
 
   const resetForm = () => {

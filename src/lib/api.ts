@@ -320,7 +320,93 @@ export const api = {
     }
   },
 
-  addComment: async (postId: string, content: string) => {
+  // Toggle save status of a post
+  toggleSavePost: async (postId: string): Promise<{ success: boolean; savedPosts?: string[] }> => {
+    try {
+      const token = api.getToken();
+      const response = await fetch(`${API_BASE_URL}/community/posts/${postId}/save`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      return response.json();
+    } catch (error) {
+      console.error("Error toggling save post:", error);
+      return { success: false };
+    }
+  },
+
+  // Get user's saved posts IDs
+  getSavedPosts: async (): Promise<{ success: boolean; data?: string[] }> => {
+    try {
+      const token = api.getToken();
+      const response = await fetch(`${API_BASE_URL}/community/saved-posts`, {
+        headers: {
+          "Authorization": `Bearer ${token}`,
+        },
+      });
+      return response.json();
+    } catch (error) {
+      console.error("Error fetching saved posts:", error);
+      return { success: false, data: [] };
+    }
+  },
+
+  // Get community stats
+  getCommunityStats: async (): Promise<{ success: boolean; data?: { membersCount: number; postsCount: number } }> => {
+    try {
+      const token = api.getToken();
+      const response = await fetch(`${API_BASE_URL}/community/stats`, {
+        headers: {
+          "Authorization": `Bearer ${token}`,
+        },
+      });
+      return response.json();
+    } catch (error) {
+      console.error("Error fetching community stats:", error);
+      return { success: false };
+    }
+  },
+
+  // Community Comments
+  // Submit a complaint
+  submitComplaint: async (subject: string, description: string): Promise<{ success: boolean; message?: string }> => {
+    try {
+      const token = api.getToken();
+      const response = await fetch(`${API_BASE_URL}/complaints`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ subject, description }),
+      });
+      return response.json();
+    } catch (error) {
+      console.error("Error submitting complaint:", error);
+      return { success: false, message: "Network error" };
+    }
+  },
+
+  // Get user complaints
+  getUserComplaints: async (): Promise<{ success: boolean; data?: any[] }> => {
+    try {
+      const token = api.getToken();
+      const response = await fetch(`${API_BASE_URL}/complaints/my-complaints`, {
+        headers: {
+          "Authorization": `Bearer ${token}`,
+        },
+      });
+      return response.json();
+    } catch (error) {
+      console.error("Error fetching user complaints:", error);
+      return { success: false, data: [] };
+    }
+  },
+
+  addComment: async (postId: string, content: string): Promise<any> => {
     try {
       const token = api.getToken();
       const response = await fetch(`${API_BASE_URL}/community/posts/${postId}/comments`, {

@@ -19,7 +19,7 @@ import {
   Users
 } from "lucide-react";
 import { motion, AnimatePresence, useInView } from "framer-motion";
-import Button from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 
 function GithubIcon({ className }: { className?: string }) {
   return (

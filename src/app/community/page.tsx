@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Heart,
   MessageCircle,
-  Share2,
+  Bookmark,
   TrendingUp,
   Award,
   Star,
@@ -51,6 +51,7 @@ interface Post {
   content: string;
   media: string | null;
   upvotes: string[];
+  commentCount?: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -98,7 +99,8 @@ const UI = {
     follow: "Follow",
     following: "Following",
     replyPlaceholder: "Write a reply...",
-    share: "Share",
+    save: "Save",
+    saved: "Saved",
     doctor: "Doctor",
     noComments: "No comments yet. Be the first to reply!",
     loadingComments: "Loading comments...",
@@ -159,7 +161,8 @@ const UI = {
     follow: "متابعة",
     following: "تتابع",
     replyPlaceholder: "اكتب رداً...",
-    share: "مشاركة",
+    save: "حفظ",
+    saved: "تم الحفظ",
     doctor: "طبيب",
     noComments: "لا توجد تعليقات بعد. كن أول من يرد!",
     loadingComments: "جارٍ تحميل التعليقات...",
@@ -440,10 +443,12 @@ function CommentItem({
 // ─── Post Card ────────────────────────────────────────────────────────────────
 
 function PostCard({
-  post, currentUserId, t, onUpvote,
+  post, currentUserId, t, onUpvote, isSaved, onToggleSave,
 }: {
   post: Post; currentUserId: string | null; t: (typeof UI)["en"];
   onUpvote: (postId: string) => void;
+  isSaved: boolean;
+  onToggleSave: (postId: string) => void;
 }) {
   const [showComments, setShowComments] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
@@ -562,13 +567,16 @@ function PostCard({
                 showComments ? "text-emerald-400 bg-emerald-500/10" : "text-slate-400 hover:text-emerald-400 hover:bg-emerald-500/5"
               }`}>
               <MessageCircle className="w-[18px] h-[18px]" />
-              <span>{commentsLoaded ? comments.length : ""}</span>
+              <span>{commentsLoaded ? comments.length : (post.commentCount || 0)}</span>
             </button>
 
-            <button className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-sky-400 hover:bg-sky-500/5 transition-all ml-auto">
-              <Share2 className="w-[18px] h-[18px]" />
-              <span className="hidden sm:inline">{t.share}</span>
-            </button>
+            <motion.button whileTap={{ scale: 1.2 }} onClick={() => onToggleSave(post._id)}
+              className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all ml-auto ${
+                isSaved ? "text-amber-400 bg-amber-500/15" : "text-slate-400 hover:text-amber-400 hover:bg-amber-500/5"
+              }`}>
+              <Bookmark className={`w-[18px] h-[18px] transition-all ${isSaved ? "fill-amber-400 stroke-amber-400" : ""}`} />
+              <span className="hidden sm:inline">{isSaved ? t.saved : t.save}</span>
+            </motion.button>
           </div>
         </div>
 
@@ -646,14 +654,47 @@ export default function CommunityPage() {
   const [isPosting, setIsPosting] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [showScrollTop, setShowScrollTop] = useState(false);
-
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [savedPostIds, setSavedPostIds] = useState<Set<string>>(new Set());
+  const [stats, setStats] = useState({ membersCount: 12400, postsCount: 0 });
 
   useEffect(() => {
     const auth = api.isAuthenticated();
     setIsAuthenticated(auth);
-    if (auth) setCurrentUserId(api.getUser()?._id || null);
+    if (auth) {
+      setCurrentUserId(api.getUser()?._id || null);
+      api.getSavedPosts().then(res => {
+        if (res.success && res.data) setSavedPostIds(new Set(res.data));
+      });
+    }
+    
+    api.getCommunityStats().then(res => {
+      if (res.success && res.data) setStats(res.data);
+    });
   }, []);
+
+  const handleToggleSave = useCallback(async (postId: string) => {
+    setSavedPostIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(postId)) next.delete(postId);
+      else next.add(postId);
+      return next;
+    });
+    
+    const res = await api.toggleSavePost(postId);
+    if (!res.success) {
+      // Revert if error
+      setSavedPostIds((prev) => {
+        const next = new Set(prev);
+        if (next.has(postId)) next.delete(postId);
+        else next.add(postId);
+        return next;
+      });
+    } else if (res.savedPosts) {
+      setSavedPostIds(new Set(res.savedPosts));
+    }
+  }, []);
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Scroll to top button
   useEffect(() => {
@@ -710,9 +751,13 @@ export default function CommunityPage() {
     }
   };
 
-  const filteredPosts = searchQuery.trim()
-    ? posts.filter((p) => p.content.toLowerCase().includes(searchQuery.toLowerCase()) || p.author?.username?.toLowerCase().includes(searchQuery.toLowerCase()))
+  const basePosts = activeTab === 3
+    ? posts.filter((p) => savedPostIds.has(p._id))
     : posts;
+
+  const filteredPosts = searchQuery.trim()
+    ? basePosts.filter((p) => p.content?.toLowerCase().includes(searchQuery.toLowerCase()) || p.author?.username?.toLowerCase().includes(searchQuery.toLowerCase()))
+    : basePosts;
 
   // Dynamic sidebar data
   const trendingTopics = (() => {
@@ -766,8 +811,8 @@ export default function CommunityPage() {
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
             className="flex flex-wrap justify-center gap-6">
             {[
-              { icon: <Users className="w-4 h-4" />, value: "12,400+", label: t.statMembers, color: "text-emerald-400" },
-              { icon: <Leaf className="w-4 h-4" />, value: loadingPosts ? "..." : `${posts.length}`, label: t.statPosts, color: "text-cyan-400" },
+              { icon: <Users className="w-4 h-4" />, value: stats.membersCount > 1000 ? `${(stats.membersCount / 1000).toFixed(1)}k+` : stats.membersCount, label: t.statMembers, color: "text-emerald-400" },
+              { icon: <Leaf className="w-4 h-4" />, value: loadingPosts ? "..." : `${stats.postsCount || posts.length}`, label: t.statPosts, color: "text-cyan-400" },
               { icon: <ThumbsUp className="w-4 h-4" />, value: "98%", label: t.statHelpful, color: "text-amber-400" },
             ].map((stat, i) => (
               <div key={i} className="flex items-center gap-2 text-sm glass-card-light px-4 py-2 rounded-full">
@@ -923,7 +968,7 @@ export default function CommunityPage() {
               <AnimatePresence mode="popLayout">
                 {filteredPosts.map((post, idx) => (
                   <motion.div key={post._id} initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.03 }}>
-                    <PostCard post={post} currentUserId={currentUserId} t={t} onUpvote={handleUpvote} />
+                    <PostCard post={post} currentUserId={currentUserId} t={t} onUpvote={handleUpvote} isSaved={savedPostIds.has(post._id)} onToggleSave={handleToggleSave} />
                   </motion.div>
                 ))}
               </AnimatePresence>
