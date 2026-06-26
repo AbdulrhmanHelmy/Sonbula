@@ -31,7 +31,7 @@
 
 .home-root {
   font-family: var(--font-body);
-  background: var(--bg-dark);
+  background: transparent !important;
   color: #e8f5e9;
   min-height: 100vh;
   position: relative;
@@ -42,12 +42,11 @@
   content: '';
   position: fixed;
   inset: 0;
-  z-index: 0;
+  z-index: -10;
   background:
     radial-gradient(ellipse 80% 60% at 50% -10%, rgba(34,197,94,0.16) 0%, transparent 60%),
     radial-gradient(ellipse 60% 40% at 90% 80%,  rgba(22,163,74,0.10) 0%, transparent 50%),
-    radial-gradient(ellipse 50% 40% at 10% 90%,  rgba(20,83,45,0.15)  0%, transparent 50%),
-    linear-gradient(160deg, #080f0a 0%, #0a1a0e 40%, #080f0a 100%);
+    radial-gradient(ellipse 50% 40% at 10% 90%,  rgba(20,83,45,0.15)  0%, transparent 50%);
   pointer-events: none;
 }
 

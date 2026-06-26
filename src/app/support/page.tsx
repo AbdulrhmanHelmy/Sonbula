@@ -285,7 +285,19 @@ export default function SupportPage() {
   };
 
   return (
-    <div className="support-root" dir={isAr ? "rtl" : "ltr"}>
+    <div className="support-root relative" dir={isAr ? "rtl" : "ltr"}>
+      {/* Full Page Background Image Layer */}
+      <div 
+        className="fixed inset-0 -z-30 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: "url('/images/image (3).jpg')" }}
+      />
+      {/* Dark Gradient Overlay with Backdrop Blur */}
+      <div 
+        className="fixed inset-0 -z-20 backdrop-blur-sm"
+        style={{
+          background: "linear-gradient(to bottom, rgba(2,6,23,0.75), rgba(2,6,23,0.85))"
+        }}
+      />
       <Navbar />
 
       {/* ── Hero ── */}

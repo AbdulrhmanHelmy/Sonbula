@@ -60,7 +60,7 @@ const UI = {
     stat1Label: "دقة الكشف",
     stat2Value: "أقل من 2 ث",
     stat2Label: "وقت التحليل",
-    stat3Value: "+500",
+    stat3Value: "+26",
     stat3Label: "مرض نباتي",
     whyTitle: "لماذا تختار سنبلة؟",
     whySub: "تقنية ذكاء اصطناعي متقدمة للزراعة الحديثة",
@@ -98,7 +98,19 @@ export default function Home() {
   const t = UI[isAr ? "ar" : "en"];
 
   return (
-    <div className="home-root min-h-screen" dir={isAr ? "rtl" : "ltr"}>
+    <div className="home-root min-h-screen relative" dir={isAr ? "rtl" : "ltr"}>
+      {/* Full Page Background Image Layer */}
+      <div 
+        className="fixed inset-0 -z-30 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: "url('/images/images (1).jpg')" }}
+      />
+      {/* Dark Gradient Overlay with Backdrop Blur */}
+      <div 
+        className="fixed inset-0 -z-20 backdrop-blur-sm"
+        style={{
+          background: "linear-gradient(to bottom, rgba(2,6,23,0.75), rgba(2,6,23,0.85))"
+        }}
+      />
       <Navbar />
 
       {/* ── Hero ── */}

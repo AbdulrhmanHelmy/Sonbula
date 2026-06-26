@@ -728,14 +728,14 @@ const Sidebar = ({
       <aside
         id="sidebar"
         className={cx(
-          "fixed lg:relative inset-y-0 start-0 z-[60] h-full bg-white flex flex-col transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] shrink-0 border-e border-gray-100",
+          "fixed lg:relative inset-y-0 start-0 z-[60] h-full bg-white/75 backdrop-blur-md flex flex-col transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] shrink-0 border-e border-gray-100/50",
           isOpen ? "translate-x-0 w-72 lg:w-72" : "translate-x-full lg:translate-x-0 w-72 lg:w-16"
         )}
         aria-label="Sidebar Navigation"
       >
         {isOpen ? (
-        <div className="w-72 flex flex-col h-full bg-white overflow-hidden">
-          <div className="p-5 border-b border-gray-100 flex items-center justify-between bg-white">
+        <div className="w-72 flex flex-col h-full bg-transparent overflow-hidden">
+          <div className="p-5 border-b border-gray-100/50 flex items-center justify-between bg-transparent">
             <div className="flex items-center gap-3">
               <span className="text-2xl" aria-hidden="true">🌱</span>
               <span className="font-bold text-xl text-gray-900 tracking-tight">{t.appTitle}</span>
@@ -841,7 +841,7 @@ const Sidebar = ({
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") setIsOpen(true);
             }}
-            className="hidden lg:flex w-16 flex-col items-center h-full bg-white py-4 gap-1 cursor-pointer"
+            className="hidden lg:flex w-16 flex-col items-center h-full bg-white/75 backdrop-blur-md py-4 gap-1 cursor-pointer"
           >
             <button
               onClick={(e) => {
@@ -1170,7 +1170,7 @@ const ComposerBar = ({
   onClearFile: () => void;
   disabled: boolean;
 }) => (
-  <div className="bg-white/95 backdrop-blur-md px-4 pb-5 pt-2 sticky bottom-0">
+  <div className="bg-white/60 backdrop-blur-md px-4 pb-5 pt-2 sticky bottom-0">
     <div className="max-w-[680px] mx-auto w-full relative">
       <AnimatePresence>
         {preview && (
@@ -1371,7 +1371,19 @@ const AssistantPageInner = () => {
   const showEmptyState = !activeConvId || (!isLoadingMessages && messages.length === 0);
 
   return (
-    <div dir="rtl" className="flex h-screen bg-white overflow-hidden text-gray-900 font-sans selection:bg-gray-200">
+    <div dir="rtl" className="flex h-screen bg-transparent overflow-hidden text-gray-900 font-sans selection:bg-gray-200 relative">
+      {/* Full Page Background Image Layer */}
+      <div 
+        className="fixed inset-0 -z-30 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: "url('/images/images (2).jpg')" }}
+      />
+      {/* Dark Gradient Overlay with Backdrop Blur */}
+      <div 
+        className="fixed inset-0 -z-20 backdrop-blur-sm"
+        style={{
+          background: "linear-gradient(to bottom, rgba(2,6,23,0.75), rgba(2,6,23,0.85))"
+        }}
+      />
       <Toast toast={toast} onDismiss={dismissToast} />
 
       <Sidebar
@@ -1384,7 +1396,7 @@ const AssistantPageInner = () => {
       />
 
       <main
-        className="flex-1 flex flex-col relative w-full h-full min-w-0 bg-white transition-all duration-300"
+        className="flex-1 flex flex-col relative w-full h-full min-w-0 bg-white/70 backdrop-blur-md transition-all duration-300"
         onDragEnter={handleDragEnter}
         onDragLeave={handleDragLeave}
         onDragOver={handleDragOver}
@@ -1404,7 +1416,7 @@ const AssistantPageInner = () => {
           )}
         </AnimatePresence>
 
-        <header className="bg-white/95 backdrop-blur-md border-b border-gray-100 p-3.5 flex items-center gap-3 z-[40] sticky top-0">
+        <header className="bg-white/60 backdrop-blur-md border-b border-gray-100/50 p-3.5 flex items-center gap-3 z-[40] sticky top-0">
           <button
             onClick={() => toggleSidebar(!sidebarOpen)}
             className={cx(
