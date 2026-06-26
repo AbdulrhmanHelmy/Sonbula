@@ -12,6 +12,15 @@ import {
   Brain,
   HelpCircle,
   Lock,
+  Stethoscope,
+  Star,
+  DollarSign,
+  HeadphonesIcon,
+  Share2,
+  Smartphone,
+  Maximize2,
+  Sprout,
+  Database,
 } from "lucide-react";
 import { useSettings } from "@/context/SettingsContext";
 import Navbar from "@/components/Navbar";
@@ -21,8 +30,40 @@ import Link from "next/link";
 
 const getCategories = (isAr: boolean): string[] =>
   isAr
-    ? ["الكل", "الدقة", "النباتات", "الأمان", "الاستخدام", "التقنية"]
-    : ["All", "Accuracy", "Plants", "Security", "Usage", "Technology"];
+    ? [
+        "الكل",
+        "الدقة",
+        "النباتات",
+        "الأمان",
+        "الاستخدام",
+        "التقنية",
+        "العلاج",
+        "التجربة",
+        "التسعير",
+        "الدعم",
+        "النطاق",
+        "المنصة",
+        "المشاركة",
+        "الزراعة",
+        "البيانات",
+      ]
+    : [
+        "All",
+        "Accuracy",
+        "Plants",
+        "Security",
+        "Usage",
+        "Technology",
+        "Treatment",
+        "Experience",
+        "Pricing",
+        "Support",
+        "Scope",
+        "Platform",
+        "Sharing",
+        "Agronomy",
+        "Data",
+      ];
 
 const getCategoryMap = (isAr: boolean): Record<string, string> =>
   isAr
@@ -32,6 +73,15 @@ const getCategoryMap = (isAr: boolean): Record<string, string> =>
         Security: "الأمان",
         Usage: "الاستخدام",
         Technology: "التقنية",
+        Treatment: "العلاج",
+        Experience: "التجربة",
+        Pricing: "التسعير",
+        Support: "الدعم",
+        Scope: "النطاق",
+        Platform: "المنصة",
+        Sharing: "المشاركة",
+        Agronomy: "الزراعة",
+        Data: "البيانات",
       }
     : {
         Accuracy: "Accuracy",
@@ -39,6 +89,15 @@ const getCategoryMap = (isAr: boolean): Record<string, string> =>
         Security: "Security",
         Usage: "Usage",
         Technology: "Technology",
+        Treatment: "Treatment",
+        Experience: "Experience",
+        Pricing: "Pricing",
+        Support: "Support",
+        Scope: "Scope",
+        Platform: "Platform",
+        Sharing: "Sharing",
+        Agronomy: "Agronomy",
+        Data: "Data",
       };
 
 const FAQ_DATA = [
@@ -182,6 +241,176 @@ const FAQ_DATA = [
     answer_ar:
       "تتطلب سنبلة حالياً اتصالاً بالإنترنت لإجراء تحليل الذكاء الاصطناعي. نعمل على وضع وضع غير متصل خفيف الوزن لتحديد النباتات الأساسية في المناطق ذات الاتصال الضعيف.",
   },
+  {
+    id: 15,
+    category: "Treatment",
+    question_en: "Does Sanbola suggest treatment plans and pesticides after disease detection?",
+    question_ar: "هل تقترح منصة سنبلة خططاً علاجية ومبيدات بعد اكتشاف المرض؟",
+    answer_en: "Yes, once a disease is accurately diagnosed, Sanbola provides a comprehensive treatment plan that includes suitable pesticide recommendations, optimal dosages, and safe application methods to ensure your crops recover effectively.",
+    answer_ar: "نعم، بمجرد تشخيص المرض بدقة، تقدم سنبلة خطة علاجية متكاملة تتضمن أسماء المبيدات المناسبة، والجرعات الموصى بها، وطرق الاستخدام الآمنة لضمان تعافي النباتات بشكل فعال."
+  },
+  {
+    id: 16,
+    category: "Treatment",
+    question_en: "Are the suggested solutions purely chemical, or do they include organic alternatives?",
+    question_ar: "هل الحلول العلاجية المقترحة كيميائية فقط أم تتضمن حلولاً عضوية؟",
+    answer_en: "Sanbola offers a diverse range of options. In addition to fast-acting chemical treatments, the platform provides eco-friendly, organic solutions and bio-pesticide alternatives to help maintain soil health and sustainable farming practices.",
+    answer_ar: "توفر سنبلة خيارات متنوعة تناسب احتياجاتك. فإلى جانب الحلول الكيميائية سريعة الفعالية، تقترح المنصة بدائل عضوية وصديقة للبيئة للحفاظ على خصوبة التربة وضمان زراعة مستدامة وآمنة."
+  },
+  {
+    id: 17,
+    category: "Treatment",
+    question_en: "Can the platform provide preventive guidelines to avoid disease recurrence?",
+    question_ar: "هل يمكن للمنصة تقديم إرشادات وقائية لتجنب عودة المرض مرة أخرى؟",
+    answer_en: "Absolutely. Treatment is only part of the solution. Sanbola delivers customized agricultural and preventive guidelines—such as optimizing irrigation, improving crop spacing for ventilation, and crop rotation advice—to protect your field from future outbreaks.",
+    answer_ar: "بالتأكيد، العلاج هو نصف الحل فقط. تقدم المنصة إرشادات زراعية ووقائية مخصصة، مثل تنظيم أوقات الري، تحسين التهوية بين الشتلات، وتدوير المحاصيل، لمساعدتك على حماية حقلك ومنع تكرار الإصابة."
+  },
+  {
+    id: 18,
+    category: "Treatment",
+    question_en: "How reliable is the treatment advice provided by the platform?",
+    question_ar: "ما مدى موثوقية النصائح العلاجية التي تقدمها منصة سنبلة؟",
+    answer_en: "The treatment advice is highly reliable, generated using advanced AI models backed by verified agricultural databases and expert knowledge. However, for highly complex or widespread infections, we always recommend consulting a local agricultural engineer.",
+    answer_ar: "النصائح العلاجية لدينا موثوقة للغاية، حيث تعتمد على نماذج ذكاء اصطناعي متطورة مرتبطة بقواعد بيانات زراعية معتمدة عالمياً. ومع ذلك، ننصح دائماً باستشارة المهندس الزراعي المحلي في حالات الإصابة المعقدة أو واسعة النطاق لضمان أفضل النتائج الميدانية."
+  },
+  {
+    id: 19,
+    category: "Experience",
+    question_en: "In what language does the AI interact with users?",
+    question_ar: "بأي لغة يتفاعل الذكاء الاصطناعي مع المستخدمين؟",
+    answer_en: "To ensure maximum clarity and accessibility, all AI interactions and generated responses within the Sonbula platform are exclusively in Arabic, tailoring the technical output specifically for Arab farmers.",
+    answer_ar: "لضمان وصول المعلومة بكل وضوح وسهولة، تم تصميم منصة سنبلة بحيث تكون جميع تفاعلات وردود الذكاء الاصطناعي باللغة العربية حصراً، مما يوفر بيئة مريحة ومفهومة للمزارع العربي."
+  },
+  {
+    id: 20,
+    category: "Experience",
+    question_en: "How does the platform personalize the user experience?",
+    question_ar: "كيف توفر المنصة تجربة استخدام مخصصة وشخصية؟",
+    answer_en: "The system enhances user engagement by dynamically extracting your preferred first name, greeting you personally (e.g., 'Welcome, Helmy'), and tailoring the interaction to provide a friendly, customized experience.",
+    answer_ar: "يتعرف النظام على بياناتك ليستخرج اسمك الأول الذي تفضل مناداتك به، ليرحب بك بحرارة (مثل: 'مرحباً احمد ')، مما يضمن لك تجربة تفاعلية ودية ومخصصة تشعرك بالاهتمام."
+  },
+  {
+    id: 21,
+    category: "Experience",
+    question_en: "How does Sonbula guarantee the accuracy of its agricultural advice?",
+    question_ar: "كيف تضمن منصة سنبلة دقة وموثوقية الإرشادات الزراعية المقدمة؟",
+    answer_en: "Sonbula utilizes Retrieval-Augmented Generation (RAG) architecture. Before formulating any response, the AI securely queries validated agricultural databases and scientific sources, ensuring all diagnostic advice is grounded in verified data rather than model approximation.",
+    answer_ar: "نحن لا نعتمد على التخمين. تستخدم سنبلة تقنية التوليد المعزز بالاسترجاع (RAG)، مما يعني أن الذكاء الاصطناعي يعود أولاً إلى مصادر وقواعد بيانات زراعية موثوقة للتحقق من المعلومات قبل أن يقدم لك أي نصيحة، لتكون مطمئناً تماماً لقراراتك."
+  },
+  {
+    id: 22,
+    category: "Pricing",
+    question_en: "Is the Sanbola app completely free, or do I have to pay?",
+    question_ar: "هل تطبيق سنبلة مجاني بالكامل ولا فيه رسوم؟",
+    answer_en: "Sanbola offers a completely free version that allows you to scan your plants and identify common diseases. We also offer affordable premium plans if you'd like to access advanced features like direct consultations with experts and detailed reports.",
+    answer_ar: "تطبيق سنبلة بيقدم نسخة مجانية بالكامل بتسمح لك تفحص زرعك وتعرف الأمراض الأساسية. وعندنا كمان باقات مدفوعة بأسعار بسيطة لو حابب تستفيد من ميزات متقدمة زي التواصل المباشر مع الخبراء والتقارير التفصيلية."
+  },
+  {
+    id: 23,
+    category: "Pricing",
+    question_en: "Is there a limit to how many pictures I can scan every day?",
+    question_ar: "هل فيه عدد معين للصور اللي أقدر أفحصها كل يوم؟",
+    answer_en: "On the free plan, you can scan a specific number of images daily to ensure a smooth experience for all our farmers. If you upgrade to a premium plan, you can enjoy unlimited daily scans anytime you need.",
+    answer_ar: "في الخطة المجانية، تقدر تفحص عدد محدد من الصور يومياً عشان نضمن تقديم أفضل خدمة لكل المزارعين. أما لو اشتركت في الباقة المدفوعة، هتقدر تفحص عدد غير محدود من الصور براحتك وفي أي وقت."
+  },
+  {
+    id: 24,
+    category: "Support",
+    question_en: "What should I do if the app doesn't recognize the disease or the result doesn't make sense?",
+    question_ar: "أعمل إيه لو صورت النبات والتطبيق ما عرفش المرض أو النتيجة مش واضحة؟",
+    answer_en: "Don't worry, it happens! If the result isn't clear, try taking another picture in good natural lighting, focusing closely on the affected leaf or area. If the issue persists, you can contact our support team directly from the app, and we'll help you diagnose your crop right away.",
+    answer_ar: "ولا يهمك، بتحصل أحياناً! لو النتيجة مش واضحة، جرب تصور النبات مرة تانية في إضاءة كويسة وركز جداً على الجزء المصاب. ولو لسه المشكلة موجودة، تقدر تراسل فريق الدعم الفني من جوه التطبيق وهنساعدك فوراً في تشخيص حالة زرعتك."
+  },
+  {
+    id: 25,
+    category: "Support",
+    question_en: "Can I talk to a real agricultural engineer through the app just to be sure?",
+    question_ar: "هل ينفع أتكلم مع مهندس زراعي بجد من خلال التطبيق عشان أتأكد من المرض؟",
+    answer_en: "Absolutely! We know that an expert's opinion brings peace of mind. Sanbola provides a feature to communicate directly with certified agricultural engineers. You can send them pictures and discuss the diagnosis to confirm the best treatment plan for your farm.",
+    answer_ar: "أكيد! إحنا عارفين إن رأي الخبير بيطمن جداً. التطبيق بيوفر لك خاصية التواصل المباشر مع نخبة من المهندسين الزراعيين المعتمدين. تقدر تبعتلهم الصور وتتناقش معاهم عشان تتأكد من التشخيص وتعرف أفضل طرق العلاج لزرعتك."
+  },
+  {
+    id: 26,
+    category: "Scope",
+    question_en: "Does the app detect insects and pests, or just fungal and bacterial diseases?",
+    question_ar: "هل التطبيق يكتشف الحشرات والآفات الزراعية، ولا الأمراض الفطرية والبكتيرية بس؟",
+    answer_en: "Sanbola is designed to be your expert eye in the field! The app can identify a wide range of fungal, bacterial, and viral diseases. It can also detect damage caused by insects and agricultural pests simply by analyzing a picture of the affected leaf or plant part.",
+    answer_ar: "سنبلة مصمم عشان يكون عينك الخبيرة في الغيط! التطبيق بيقدر يتعرف على مجموعة واسعة من الأمراض الفطرية والبكتيرية والفيروسية، وكمان بيقدر يكتشف الإصابات الناتجة عن الحشرات والآفات الزراعية بمجرد ما تصور الورقة أو الجزء المصاب من النبات."
+  },
+  {
+    id: 27,
+    category: "Scope",
+    question_en: "Can the app tell me if the plant needs fertilizer or is suffering from a lack of water?",
+    question_ar: "هل يقدر التطبيق يعرفني لو النبات محتاج سماد أو عطشان وناقصه ميه؟",
+    answer_en: "Currently, Sanbola primarily specializes in diagnosing diseases and pest damage. While some symptoms of nutrient deficiency or severe dehydration might be detected, the app is not built to provide precise fertilization or irrigation schedules. We always recommend monitoring your soil moisture and consulting your local agricultural engineer for proper nutrition programs.",
+    answer_ar: "حالياً، تركيز سنبلة الأساسي هو تشخيص الأمراض والآفات. ممكن التطبيق يلاحظ بعض أعراض نقص العناصر الغذائية أو الجفاف الشديد، لكنه مش مخصص لتقديم جداول تسميد أو ري دقيقة. بننصحك دايماً تتابع رطوبة التربة وتستشير المهندس الزراعي عشان تعمل برنامج تسميد مناسب لمحصولك."
+  },
+  {
+    id: 28,
+    category: "Platform",
+    question_en: "Can I download the app from Google Play or the App Store?",
+    question_ar: "هل أقدر أحمل التطبيق من متجر جوجل بلاي للآندرويد أو الآب ستور للآيفون؟",
+    answer_en: "Absolutely! The Sanbola app is available to download for free on both the Google Play Store for Android devices and the App Store for iOS devices. You can download it right now and start scanning your crops immediately.",
+    answer_ar: "أكيد! تطبيق سنبلة متاح للتحميل مجاناً على متجر جوجل بلاي (Google Play) لأجهزة الأندرويد، وكمان على متجر الآب ستور (App Store) لأجهزة الآيفون. تقدر تنزله في ثواني وتبدأ تفحص زرعك في أي وقت."
+  },
+  {
+    id: 29,
+    category: "Sharing",
+    question_en: "Can I print the scan result or send it on WhatsApp to the agricultural pharmacy engineer to get the right treatment?",
+    question_ar: "هل ينفع أطبع نتيجة الفحص أو أبعتها على الواتساب لمهندس الصيدلية الزراعية عشان يصرفلي العلاج؟",
+    answer_en: "Yes, this is one of Sanbola's most useful features! Once your result is ready, you can easily share the full report directly via WhatsApp or any other messaging app with your agricultural engineer or local pharmacy so they can prescribe the right pesticide. You can also print or save the report to keep a health record for your farm.",
+    answer_ar: "طبعاً، دي من أهم ميزات سنبلة! بمجرد ما تطلع نتيجة الفحص، تقدر تشارك التقرير بضغطة زر على الواتساب أو أي تطبيق تاني وتبعته لمهندس الصيدلية الزراعية عشان يوصفلك المبيد أو العلاج المناسب بسرعة. وكمان تقدر تحفظ التقرير أو تطبعه عشان تتابع حالة محصولك أول بأول."
+  },
+  // ─── فئة: الزراعة (Agronomy) ─────────────────────────────────────────────
+  {
+    id: 30,
+    category: "Agronomy",
+    question_en: "What are the most common crops supported by Sanbola in Egypt?",
+    question_ar: "ما أبرز المحاصيل المصرية التي تدعمها منصة سنبلة؟",
+    answer_en: "Sanbola has been trained extensively on Egypt's major field crops, including wheat, cotton, sugarcane, tomatoes, potatoes, onions, and citrus fruits. Our agricultural database is continually updated to reflect local varieties and regional disease patterns prevalent across the Nile Delta and Upper Egypt.",
+    answer_ar: "دُرِّبت منصة سنبلة على نطاق واسع لتشمل أبرز المحاصيل الزراعية المصرية، من بينها القمح والقطن وقصب السكر والطماطم والبطاطس والبصل والحمضيات. وتُحدَّث قاعدة بياناتنا الزراعية باستمرار لتعكس الأصناف المحلية وأنماط الأمراض السائدة في الدلتا وصعيد مصر."
+  },
+  {
+    id: 31,
+    category: "Agronomy",
+    question_en: "Does Sanbola take seasonal and climatic conditions into account when providing recommendations?",
+    question_ar: "هل تأخذ منصة سنبلة في الحسبان الظروف الموسمية والمناخية عند تقديم التوصيات؟",
+    answer_en: "Yes. The recommendation engine integrates seasonal calendars and regional climatic data. Advice on pesticide timing, irrigation adjustments, and preventive measures is contextually adapted to the prevailing season and weather patterns in your area, reducing the risk of misapplication.",
+    answer_ar: "نعم. يدمج محرك التوصيات لدينا التقويمات الموسمية وبيانات المناخ الإقليمية. وتُكيَّف النصائح المتعلقة بتوقيت رش المبيدات وضبط الري والتدابير الوقائية وفقاً للموسم السائد والأنماط المناخية في منطقتك، مما يُقلّل من مخاطر الاستخدام الخاطئ."
+  },
+  {
+    id: 32,
+    category: "Agronomy",
+    question_en: "Can Sanbola help me plan a crop rotation schedule to prevent recurring soil diseases?",
+    question_ar: "هل تساعدني سنبلة في وضع جدول تدوير محاصيل يحول دون تكرار الأمراض الأرضية؟",
+    answer_en: "Sanbola provides evidence-based crop rotation guidance tailored to your field history and the pathogens previously detected. By alternating host and non-host crops, the system recommends rotation sequences that break disease cycles and help restore soil microbial balance over successive growing seasons.",
+    answer_ar: "تُقدّم سنبلة إرشادات مستندة إلى الأدلة العلمية لتدوير المحاصيل، مُصمَّمة خصيصاً وفقاً لسجل حقلك والمسببات المرضية المكتشفة سابقاً. وعن طريق تناوب المحاصيل العائلة وغير العائلة للمرض، يُوصي النظام بتسلسلات تدوير تقطع دورات الإصابة وتُسهم في استعادة التوازن الميكروبي للتربة عبر مواسم زراعية متعاقبة."
+  },
+  // ─── فئة: البيانات (Data) ────────────────────────────────────────────────
+  {
+    id: 33,
+    category: "Data",
+    question_en: "How long does Sanbola retain my diagnosis records and field history?",
+    question_ar: "كم تحتفظ منصة سنبلة بسجلات التشخيصات وتاريخ الحقل؟",
+    answer_en: "By default, diagnosis records are retained for 12 months in your personal dashboard, allowing you to track seasonal disease trends over an entire crop cycle. You may export your full history at any time in PDF or CSV format, and permanently delete records upon request in accordance with our data privacy policy.",
+    answer_ar: "تُحتفظ سجلات التشخيص بصورة افتراضية لمدة 12 شهراً في لوحة التحكم الشخصية، مما يتيح لك رصد اتجاهات الأمراض الموسمية على مدار دورة زراعية كاملة. ويمكنك تصدير سجلك الكامل في أي وقت بصيغة PDF أو CSV، وحذف السجلات نهائياً بناءً على طلبك وفقاً لسياسة خصوصية البيانات المعمول بها.",
+  },
+  {
+    id: 34,
+    category: "Data",
+    question_en: "Does Sanbola use my field data to improve its AI models?",
+    question_ar: "هل تستخدم منصة سنبلة بيانات حقلي لتحسين نماذجها الذكية؟",
+    answer_en: "Only with your explicit consent. Users who opt in to our collaborative improvement programme contribute anonymised, aggregated image data that strengthens model accuracy for all farmers. Participants who choose not to opt in will never have their data used for model training, and this choice has no impact on the quality of service they receive.",
+    answer_ar: "يجري ذلك فحسب بموافقتك الصريحة. يُسهم المستخدمون المنضمون إلى برنامج التحسين التشاركي لدينا ببيانات صور مجهّلة ومجمَّعة تُعزّز دقة النماذج لصالح جميع المزارعين. أما من يختارون عدم الانضمام، فلن تُستخدم بياناتهم في التدريب إطلاقاً، ولن يؤثر ذلك الاختيار على جودة الخدمة المقدَّمة إليهم.",
+  },
+  {
+    id: 35,
+    category: "Data",
+    question_en: "Can I export a comprehensive health report for my entire farm to share with agricultural authorities?",
+    question_ar: "هل يمكنني تصدير تقرير صحي شامل لمزرعتي بأكملها لمشاركته مع الجهات الزراعية المختصة؟",
+    answer_en: "Yes. Sanbola's reporting module generates structured farm health reports covering all diagnosed conditions, treatment actions taken, and disease prevalence trends across your registered plots. Reports comply with standard agricultural documentation formats accepted by Egyptian and regional agricultural directorates, making it straightforward to submit them for subsidy applications or official inspections.",
+    answer_ar: "نعم. يُولّد وحدة التقارير في سنبلة تقارير صحية هيكلية شاملة تغطي جميع الأمراض المشخَّصة والإجراءات العلاجية المُتّخذة واتجاهات انتشار الأمراض عبر القطع المسجّلة. وتتوافق هذه التقارير مع صيغ التوثيق الزراعي القياسية المعتمدة لدى مديريات الزراعة المصرية والإقليمية، مما يُيسّر تقديمها لطلبات الدعم أو عمليات التفتيش الرسمية.",
+  },
 ];
 
 const categoryIcon = (cat: string, size: number = 16) => {
@@ -196,6 +425,24 @@ const categoryIcon = (cat: string, size: number = 16) => {
       return <Zap size={size} />;
     case "Technology":
       return <HelpCircle size={size} />;
+    case "Treatment":
+      return <Stethoscope size={size} />;
+    case "Experience":
+      return <Star size={size} />;
+    case "Pricing":
+      return <DollarSign size={size} />;
+    case "Support":
+      return <HeadphonesIcon size={size} />;
+    case "Scope":
+      return <Maximize2 size={size} />;
+    case "Platform":
+      return <Smartphone size={size} />;
+    case "Sharing":
+      return <Share2 size={size} />;
+    case "Agronomy":
+      return <Sprout size={size} />;
+    case "Data":
+      return <Database size={size} />;
     default:
       return <HelpCircle size={size} />;
   }

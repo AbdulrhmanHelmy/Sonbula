@@ -76,18 +76,14 @@ export default function Navbar() {
   const navLinks = [
     { href: "/", label: t("nav.home") },
     { href: "/assistant", label: t("nav.assistant") },
-    { href: "/care-guide", label: t("nav.careGuide") },
     { href: "/diseases", label: t("nav.diseases") },
-    { href: "/weather", label: t("nav.weather") },
     { href: "/community", label: t("nav.community") },
     { href: "/faq", label: t("nav.faq") },
     { href: "/support", label: t("nav.support") },
   ];
 
   const moreLinks = [
-    { href: "/care-guide", label: t("nav.careGuideFull") },
     { href: "/diseases", label: t("nav.diseasesDb") },
-    { href: "/weather", label: t("nav.weatherInsights") },
     { href: "/community", label: t("nav.communityFull") },
     { href: "/faq", label: t("nav.faqFull") },
     { href: "/support", label: t("nav.supportFull") },
