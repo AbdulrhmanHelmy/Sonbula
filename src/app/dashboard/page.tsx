@@ -226,7 +226,7 @@ export default function DashboardOverview() {
                       ))}
                     </Pie>
                     <Tooltip
-                      formatter={(value: number) => [
+                      formatter={(value: any) => [
                         `${value} (${
                           pieTotal ? ((value / pieTotal) * 100).toFixed(1) : 0
                         }%)`,

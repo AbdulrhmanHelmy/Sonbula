@@ -624,6 +624,9 @@ function PostCard({
   currentUserId: string | null;
   t: (typeof UI)["en"];
   onUpvote: (postId: string) => void;
+  isSaved?: boolean;
+  onToggleSave?: (postId: string) => void;
+  onDeletePost?: (postId: string) => void;
 }) {
   const [showComments, setShowComments] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
@@ -708,7 +711,7 @@ function PostCard({
 
   const handleDeletePost = async () => {
     const res = await api.deletePost(post._id);
-    if (res.success) onDeletePost(post._id);
+    if (res.success && onDeletePost) onDeletePost(post._id);
   };
 
   return (
@@ -822,7 +825,7 @@ function PostCard({
               <span>{commentsLoaded ? comments.length : (post.commentCount || 0)}</span>
             </button>
 
-            <motion.button whileTap={{ scale: 1.2 }} onClick={() => onToggleSave(post._id)}
+            <motion.button whileTap={{ scale: 1.2 }} onClick={() => onToggleSave?.(post._id)}
               className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all ml-auto ${
                 isSaved ? "text-amber-400 bg-amber-500/15" : "text-slate-400 hover:text-amber-400 hover:bg-amber-500/5"
               }`}>
@@ -1046,29 +1049,7 @@ export default function CommunityPage() {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleToggleSave = useCallback(async (postId: string) => {
-    setSavedPostIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(postId)) next.delete(postId);
-      else next.add(postId);
-      return next;
-    });
-    
-    const res = await api.toggleSavePost(postId);
-    if (!res.success) {
-      // Revert if error
-      setSavedPostIds((prev) => {
-        const next = new Set(prev);
-        if (next.has(postId)) next.delete(postId);
-        else next.add(postId);
-        return next;
-      });
-    } else if (res.savedPosts) {
-      setSavedPostIds(new Set(res.savedPosts));
-    }
-  }, []);
 
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const handler = () => setShowScrollTop(window.scrollY > 600);

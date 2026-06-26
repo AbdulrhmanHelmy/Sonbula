@@ -3,7 +3,9 @@
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL ||
-  "https://planet-ai-backend-gules.vercel.app/api";
+  (process.env.NODE_ENV === "development"
+    ? "http://localhost:5001/api"
+    : "https://planet-ai-backend-gules.vercel.app/api");
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
