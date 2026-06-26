@@ -60,7 +60,7 @@ const UI = {
     stat1Label: "دقة الكشف",
     stat2Value: "أقل من 2 ث",
     stat2Label: "وقت التحليل",
-    stat3Value: "+500",
+    stat3Value: "+26",
     stat3Label: "مرض نباتي",
     whyTitle: "لماذا تختار سنبلة؟",
     whySub: "تقنية ذكاء اصطناعي متقدمة للزراعة الحديثة",
