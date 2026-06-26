@@ -1,4 +1,3 @@
-// Use Vercel backend by default, or override with environment variable
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL ||
   "https://planet-ai-backend-gules.vercel.app/api";
@@ -24,19 +23,14 @@ export interface AuthResponse {
 }
 
 export const api = {
-  // Authentication endpoints
   signin: async (email: string, password: string): Promise<AuthResponse> => {
     try {
       const response = await fetch(`${API_BASE_URL}/auth/signin`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
-
       const data: AuthResponse = await response.json();
-
       if (!response.ok) {
         return {
           success: false,
@@ -46,7 +40,6 @@ export const api = {
               : data.message || "Login failed",
         };
       }
-
       return data;
     } catch (error) {
       return {
@@ -65,14 +58,10 @@ export const api = {
     try {
       const response = await fetch(`${API_BASE_URL}/auth/signup`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, email, password, governorate }),
       });
-
       const data: AuthResponse = await response.json();
-
       if (!response.ok) {
         return {
           success: false,
@@ -84,7 +73,6 @@ export const api = {
                 : data.message || "Signup failed",
         };
       }
-
       return data;
     } catch (error) {
       return {
@@ -98,9 +86,7 @@ export const api = {
     try {
       const response = await fetch(`${API_BASE_URL}/auth/forgot-password`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
       });
       return await response.json();
@@ -111,6 +97,7 @@ export const api = {
       };
     }
   },
+
   resetPassword: async (
     email: string,
     otp: string,
@@ -130,7 +117,8 @@ export const api = {
       };
     }
   },
-  // Analytics Endpoints
+
+  // --- Analytics ---
 
   getGovernorateDistribution: async () => {
     try {
@@ -172,7 +160,6 @@ export const api = {
         sortBy,
       });
       if (governorate) params.append("governorate", governorate);
-
       const response = await fetch(
         `${API_BASE_URL}/analytics/scans?${params.toString()}`,
       );
@@ -184,7 +171,7 @@ export const api = {
     }
   },
 
-  // --- Chat & Assistant Endpoints ---
+  // --- Chat & Assistant ---
 
   createConversation: async (title?: string) => {
     try {
@@ -272,20 +259,15 @@ export const api = {
     try {
       const token = api.getToken();
       const formData = new FormData();
-
       formData.append("file", file);
-
       if (question && question.trim() !== "") {
         formData.append("question", question);
       }
-
       const response = await fetch(
         `${API_BASE_URL}/chat/conversations/${id}/image`,
         {
           method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
           body: formData,
           signal: options?.signal,
         },
@@ -302,9 +284,7 @@ export const api = {
       const token = api.getToken();
       const response = await fetch(`${API_BASE_URL}/chat/conversations/${id}`, {
         method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
       return await response.json();
     } catch (error) {
@@ -313,15 +293,13 @@ export const api = {
     }
   },
 
-  // --- Community Endpoints ---
+  // --- Community ---
 
   getPosts: async () => {
     try {
       const token = api.getToken();
       const response = await fetch(`${API_BASE_URL}/community/posts`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
       return await response.json();
     } catch (error) {
@@ -335,16 +313,29 @@ export const api = {
       const token = api.getToken();
       const formData = new FormData();
       formData.append("content", content);
-      if (media) {
-        formData.append("media", media);
-      }
+      if (media) formData.append("media", media);
       const response = await fetch(`${API_BASE_URL}/community/posts`, {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
         body: formData,
       });
+      return await response.json();
+    } catch (error) {
+      console.error(error);
+      return { success: false };
+    }
+  },
+
+  deletePost: async (postId: string) => {
+    try {
+      const token = api.getToken();
+      const response = await fetch(
+        `${API_BASE_URL}/community/posts/${postId}`,
+        {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
       return await response.json();
     } catch (error) {
       console.error(error);
@@ -359,9 +350,7 @@ export const api = {
         `${API_BASE_URL}/community/posts/${postId}/upvote`,
         {
           method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         },
       );
       return await response.json();
@@ -377,9 +366,7 @@ export const api = {
       const response = await fetch(
         `${API_BASE_URL}/community/posts/${postId}/comments`,
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         },
       );
       return await response.json();
@@ -401,6 +388,23 @@ export const api = {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({ content }),
+        },
+      );
+      return await response.json();
+    } catch (error) {
+      console.error(error);
+      return { success: false };
+    }
+  },
+
+  deleteComment: async (postId: string, commentId: string) => {
+    try {
+      const token = api.getToken();
+      const response = await fetch(
+        `${API_BASE_URL}/community/posts/${postId}/comments/${commentId}`,
+        {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` },
         },
       );
       return await response.json();
@@ -437,9 +441,7 @@ export const api = {
       const response = await fetch(
         `${API_BASE_URL}/community/users/${userId}/posts`,
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         },
       );
       return await response.json();
@@ -449,7 +451,8 @@ export const api = {
     }
   },
 
-  // --- User Profile & Greeting ---
+  // --- User Profile ---
+
   getUserGreeting: async () => {
     try {
       const token = api.getToken();
@@ -466,18 +469,15 @@ export const api = {
     }
   },
 
-  // Token management
+  // --- Token & User Management ---
+
   getToken: (): string | null => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("token");
-    }
+    if (typeof window !== "undefined") return localStorage.getItem("token");
     return null;
   },
 
   setToken: (token: string): void => {
-    if (typeof window !== "undefined") {
-      localStorage.setItem("token", token);
-    }
+    if (typeof window !== "undefined") localStorage.setItem("token", token);
   },
 
   clearToken: (): void => {
@@ -487,7 +487,6 @@ export const api = {
     }
   },
 
-  // User info management
   getUser: (): User | null => {
     if (typeof window !== "undefined") {
       const user = localStorage.getItem("user");

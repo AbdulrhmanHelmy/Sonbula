@@ -24,8 +24,11 @@ import {
   Send,
   X,
   RefreshCw,
+  Trash2,
+  AlertTriangle,
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
+import { useSettings } from "@/context/SettingsContext";
 import { api, type User as ApiUser } from "@/lib/api";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -57,6 +60,95 @@ interface Comment {
   createdAt: string;
   updatedAt: string;
 }
+
+// ─── UI Translations ──────────────────────────────────────────────────────────
+
+const UI = {
+  en: {
+    loadingPage: "Loading...",
+    logout: "Logout",
+    myPosts: "My Posts",
+    totalLikes: "Total Likes",
+    avgEngagement: "Avg. Engagement",
+    accountInfo: "Account Info",
+    posts: "My Posts",
+    username: "Username",
+    email: "Email",
+    userId: "User ID",
+    comingSoonTitle: "Coming Soon",
+    comingSoonDesc: "Edit profile, change password, and settings",
+    home: "Home",
+    loadingPosts: "Loading your posts...",
+    errorTitle: "Couldn't load your posts",
+    errorSub: "Check your connection and try again",
+    retry: "Try Again",
+    noPostsTitle: "You haven't posted anything yet",
+    noPostsSub: "Share your experience with your plants on the community page!",
+    goToCommunity: "Go to Community",
+    noComments: "No comments yet. Be the first to reply!",
+    loadingComments: "Loading comments...",
+    replyPlaceholder: "Write a reply...",
+    doctor: "Doctor",
+    deletePostTitle: "Delete Post",
+    deletePostConfirm:
+      "Are you sure? This action cannot be undone and the post will be permanently deleted.",
+    cancel: "Cancel",
+    deleting: "Deleting...",
+    yesDelete: "Yes, Delete",
+    deletePostTooltip: "Delete post",
+    justNow: "now",
+    minuteAgo: "1m ago",
+    minutesAgo: "m ago",
+    hourAgo: "1h ago",
+    hoursAgo: "h ago",
+    dayAgo: "1d ago",
+    daysAgo: "d ago",
+    you: "You",
+  },
+  ar: {
+    loadingPage: "جار التحميل...",
+    logout: "خروج",
+    myPosts: "منشوراتي",
+    totalLikes: "إجمالي الإعجابات",
+    avgEngagement: "متوسط التفاعل",
+    accountInfo: "معلومات الحساب",
+    posts: "منشوراتي",
+    username: "اسم المستخدم",
+    email: "البريد الإلكتروني",
+    userId: "معرف المستخدم",
+    comingSoonTitle: "مميزات قريباً",
+    comingSoonDesc: "تعديل الملف الشخصي، تغيير كلمة المرور، والإعدادات",
+    home: "الرئيسية",
+    loadingPosts: "جارٍ تحميل منشوراتك...",
+    errorTitle: "حدث خطأ أثناء تحميل منشوراتك",
+    errorSub: "تحقق من اتصالك بالإنترنت وحاول مرة أخرى",
+    retry: "إعادة المحاولة",
+    noPostsTitle: "لم تنشر أي شيء بعد",
+    noPostsSub: "شارك تجربتك مع نباتاتك في صفحة المجتمع!",
+    goToCommunity: "اذهب للمجتمع",
+    noComments: "لا توجد تعليقات بعد. كن أول من يرد!",
+    loadingComments: "جارٍ تحميل التعليقات...",
+    replyPlaceholder: "اكتب رداً...",
+    doctor: "طبيب",
+    deletePostTitle: "حذف المنشور",
+    deletePostConfirm:
+      "هل أنت متأكد؟ لا يمكن التراجع عن هذا الإجراء وسيتم حذف المنشور نهائياً.",
+    cancel: "إلغاء",
+    deleting: "جارٍ الحذف...",
+    yesDelete: "نعم، احذف",
+    deletePostTooltip: "حذف المنشور",
+    justNow: "الآن",
+    minuteAgo: "منذ دقيقة",
+    minutesAgo: "د",
+    hourAgo: "منذ ساعة",
+    hoursAgo: "س",
+    dayAgo: "منذ يوم",
+    daysAgo: "ي",
+    you: "أنت",
+  },
+};
+
+type Dict = (typeof UI)["en"];
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -114,7 +206,7 @@ function UserAvatar({
   );
 }
 
-function formatRelativeTime(dateStr: string): string {
+function formatRelativeTime(dateStr: string, t: Dict): string {
   const now = Date.now();
   const date = new Date(dateStr).getTime();
   const diffMs = now - date;
@@ -122,13 +214,71 @@ function formatRelativeTime(dateStr: string): string {
   const diffHr = Math.floor(diffMs / 3600000);
   const diffDay = Math.floor(diffMs / 86400000);
 
-  if (diffMin < 1) return "الآن";
-  if (diffMin === 1) return "منذ دقيقة";
-  if (diffMin < 60) return `منذ ${diffMin} دقيقة`;
-  if (diffHr === 1) return "منذ ساعة";
-  if (diffHr < 24) return `منذ ${diffHr} ساعة`;
-  if (diffDay === 1) return "منذ يوم";
-  return `منذ ${diffDay} يوم`;
+  if (diffMin < 1) return t.justNow;
+  if (diffMin === 1) return t.minuteAgo;
+  if (diffMin < 60) return `${diffMin}${t.minutesAgo}`;
+  if (diffHr === 1) return t.hourAgo;
+  if (diffHr < 24) return `${diffHr}${t.hoursAgo}`;
+  if (diffDay === 1) return t.dayAgo;
+  return `${diffDay}${t.daysAgo}`;
+}
+
+// ─── Delete Confirm Dialog ────────────────────────────────────────────────────
+
+function DeleteConfirmDialog({
+  t,
+  onConfirm,
+  onCancel,
+  loading,
+}: {
+  t: Dict;
+  onConfirm: () => void;
+  onCancel: () => void;
+  loading: boolean;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+      onClick={onCancel}>
+      <motion.div
+        initial={{ scale: 0.85, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.85, opacity: 0 }}
+        onClick={(e) => e.stopPropagation()}
+        className="bg-slate-900 border border-slate-700/60 rounded-2xl p-6 max-w-xs w-full shadow-2xl">
+        <div className="flex flex-col items-center text-center gap-3">
+          <div className="w-12 h-12 bg-red-500/10 rounded-full flex items-center justify-center">
+            <AlertTriangle className="w-6 h-6 text-red-400" />
+          </div>
+          <h3 className="text-sm font-bold text-white">{t.deletePostTitle}</h3>
+          <p className="text-xs text-slate-400 leading-relaxed">
+            {t.deletePostConfirm}
+          </p>
+        </div>
+        <div className="flex gap-2 mt-5">
+          <button
+            onClick={onCancel}
+            className="flex-1 py-2.5 rounded-xl text-xs font-semibold text-slate-400 bg-slate-800/60 hover:bg-slate-800 transition-all">
+            {t.cancel}
+          </button>
+          <button
+            onClick={onConfirm}
+            disabled={loading}
+            className="flex-1 py-2.5 rounded-xl text-xs font-semibold text-white bg-red-500 hover:bg-red-600 transition-all disabled:opacity-60 flex items-center justify-center gap-1.5">
+            {loading ? (
+              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+            ) : (
+              <Trash2 className="w-3.5 h-3.5" />
+            )}
+            {loading ? t.deleting : t.yesDelete}
+          </button>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
 }
 
 // ─── Image Lightbox ───────────────────────────────────────────────────────────
@@ -167,10 +317,12 @@ function ImageLightbox({ src, onClose }: { src: string; onClose: () => void }) {
 function CommentItem({
   comment,
   currentUserId,
+  t,
   onVote,
 }: {
   comment: Comment;
   currentUserId: string;
+  t: Dict;
   onVote: (commentId: string, voteType: "upvote" | "downvote") => void;
 }) {
   const score =
@@ -196,11 +348,11 @@ function CommentItem({
             </span>
             {comment.author?.role === "DOCTOR" && (
               <span className="text-[9px] font-bold text-blue-400 bg-blue-500/15 px-1.5 py-0.5 rounded-full">
-                طبيب
+                {t.doctor}
               </span>
             )}
             <span className="text-[10px] text-slate-600">
-              {formatRelativeTime(comment.createdAt)}
+              {formatRelativeTime(comment.createdAt, t)}
             </span>
           </div>
           <p className="text-xs text-slate-300 leading-relaxed">
@@ -249,11 +401,15 @@ function CommentItem({
 function ProfilePostCard({
   post,
   currentUserId,
+  t,
   onUpvote,
+  onDelete,
 }: {
   post: Post;
   currentUserId: string;
+  t: Dict;
   onUpvote: (postId: string) => void;
+  onDelete: (postId: string) => void;
 }) {
   const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
   const [showComments, setShowComments] = useState(false);
@@ -262,6 +418,9 @@ function ProfilePostCard({
   const [commentsLoaded, setCommentsLoaded] = useState(false);
   const [commentInput, setCommentInput] = useState("");
   const [submittingComment, setSubmittingComment] = useState(false);
+
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const hasUpvoted = post.upvotes?.includes(currentUserId);
   const isDoctor = post.author?.role === "DOCTOR";
@@ -297,7 +456,7 @@ function ProfilePostCard({
             ...res.data,
             author: {
               _id: user?._id || res.data.author,
-              username: user?.username || "أنت",
+              username: user?.username || t.you,
               role: "USER" as const,
             },
           },
@@ -330,12 +489,26 @@ function ProfilePostCard({
     await api.voteComment(commentId, voteType);
   };
 
+  const handleConfirmDelete = async () => {
+    setDeleting(true);
+    try {
+      const res = await api.deletePost(post._id);
+      if (res.success) {
+        onDelete(post._id);
+      }
+    } finally {
+      setDeleting(false);
+      setShowDeleteDialog(false);
+    }
+  };
+
   return (
     <>
       <motion.div
         layout
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95 }}
         className={`bg-slate-900/50 border rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl ${
           isDoctor
             ? "border-blue-500/20 hover:shadow-blue-500/10 ring-1 ring-blue-500/10"
@@ -359,12 +532,12 @@ function ProfilePostCard({
                 </span>
                 {isDoctor && (
                   <span className="text-[10px] font-bold text-blue-400 bg-blue-500/15 px-2 py-0.5 rounded-full border border-blue-500/20 flex items-center gap-1">
-                    <Stethoscope className="w-2.5 h-2.5" /> طبيب
+                    <Stethoscope className="w-2.5 h-2.5" /> {t.doctor}
                   </span>
                 )}
               </div>
               <div className="flex items-center gap-2 text-[11px] text-slate-500">
-                <span>{formatRelativeTime(post.createdAt)}</span>
+                <span>{formatRelativeTime(post.createdAt, t)}</span>
                 {post.author?.governorate && (
                   <span className="flex items-center gap-0.5">
                     <MapPin className="w-2.5 h-2.5" /> {post.author.governorate}
@@ -372,6 +545,14 @@ function ProfilePostCard({
                 )}
               </div>
             </div>
+
+            <motion.button
+              whileTap={{ scale: 0.9 }}
+              onClick={() => setShowDeleteDialog(true)}
+              title={t.deletePostTooltip}
+              className="p-2 text-slate-600 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-all">
+              <Trash2 className="w-4 h-4" />
+            </motion.button>
           </div>
 
           {/* Content */}
@@ -445,12 +626,12 @@ function ProfilePostCard({
                   <div className="flex items-center justify-center gap-2 py-6">
                     <Loader2 className="w-4 h-4 text-emerald-400 animate-spin" />
                     <span className="text-xs text-slate-500">
-                      جارٍ تحميل التعليقات...
+                      {t.loadingComments}
                     </span>
                   </div>
                 ) : comments.length === 0 ? (
                   <p className="text-xs text-slate-500 text-center py-4">
-                    لا توجد تعليقات بعد. كن أول من يرد!
+                    {t.noComments}
                   </p>
                 ) : (
                   comments.map((c) => (
@@ -458,6 +639,7 @@ function ProfilePostCard({
                       key={c._id}
                       comment={c}
                       currentUserId={currentUserId}
+                      t={t}
                       onVote={handleVoteComment}
                     />
                   ))
@@ -466,7 +648,7 @@ function ProfilePostCard({
                 {/* Reply input */}
                 <div className="flex gap-2 mt-2">
                   <UserAvatar
-                    username={api.getUser()?.username || "أنت"}
+                    username={api.getUser()?.username || t.you}
                     size="sm"
                   />
                   <div className="flex-1 flex items-center bg-slate-800/40 rounded-xl px-3 py-2 gap-2 focus-within:ring-1 focus-within:ring-emerald-500/40 transition-all">
@@ -479,7 +661,7 @@ function ProfilePostCard({
                           handleAddComment();
                         }
                       }}
-                      placeholder="اكتب رداً..."
+                      placeholder={t.replyPlaceholder}
                       className="flex-1 bg-transparent text-xs text-slate-300 placeholder-slate-600 outline-none"
                     />
                     <motion.button
@@ -500,6 +682,18 @@ function ProfilePostCard({
           )}
         </AnimatePresence>
       </motion.div>
+
+      {/* Delete confirm dialog */}
+      <AnimatePresence>
+        {showDeleteDialog && (
+          <DeleteConfirmDialog
+            t={t}
+            onConfirm={handleConfirmDelete}
+            onCancel={() => setShowDeleteDialog(false)}
+            loading={deleting}
+          />
+        )}
+      </AnimatePresence>
 
       <AnimatePresence>
         {lightboxSrc && (
@@ -558,12 +752,14 @@ function StatCard({
 
 export default function ProfilePage() {
   const router = useRouter();
+  const { language } = useSettings();
+  const isAr = language === "ar";
+  const t = UI[isAr ? "ar" : "en"];
+
   const [user, setUser] = useState<ApiUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [posts, setPosts] = useState<Post[]>([]);
   const [loadingPosts, setLoadingPosts] = useState(false);
-  // ✅ بدّلنا الاعتماد على posts.length === 0 (اللي بيسبب تكرار لا نهائي
-  // لو المستخدم مفيش عنده بوستات أصلاً) بـ flag واضح يقول "حصل تحميل قبل كده"
   const [postsLoaded, setPostsLoaded] = useState(false);
   const [postsError, setPostsError] = useState(false);
   const [activeTab, setActiveTab] = useState<"info" | "posts">("info");
@@ -591,14 +787,11 @@ export default function ProfilePage() {
         );
         setPosts(myPosts);
       } else {
-        // الطلب رجع بدون نجاح (مثلاً مفيش data) — نعتبره فشل عشان نقدر نعرض زرار إعادة المحاولة
         setPostsError(true);
       }
     } catch {
       setPostsError(true);
     } finally {
-      // ✅ بيتسجل دايماً، سواء نجحت العملية أو فشلت أو رجعت فاضية،
-      // عشان الـ useEffect متحتاج تعمل fetch تاني
       setLoadingPosts(false);
       setPostsLoaded(true);
     }
@@ -611,7 +804,7 @@ export default function ProfilePage() {
   }, [activeTab, fetchMyPosts, postsLoaded, loadingPosts]);
 
   const handleRetryPosts = () => {
-    setPostsLoaded(false); // هيخلي الـ useEffect يعمل fetch تاني
+    setPostsLoaded(false);
   };
 
   const handleLogout = () => {
@@ -619,7 +812,6 @@ export default function ProfilePage() {
     router.push("/");
   };
 
-  // ✅ handleUpvote قبل الـ if (loading) عشان يكون في scope الـ return الرئيسي
   const handleUpvote = useCallback(
     async (postId: string) => {
       setPosts((prev) =>
@@ -639,6 +831,10 @@ export default function ProfilePage() {
     [user?._id],
   );
 
+  const handleDeletePost = useCallback((postId: string) => {
+    setPosts((prev) => prev.filter((p) => p._id !== postId));
+  }, []);
+
   const totalUpvotes = posts.reduce(
     (sum, p) => sum + (p.upvotes?.length || 0),
     0,
@@ -651,7 +847,7 @@ export default function ProfilePage() {
         <div className="flex items-center justify-center h-[calc(100vh-64px)]">
           <div className="text-center space-y-3">
             <div className="w-8 h-8 border-2 border-emerald-500/30 border-t-emerald-400 rounded-full animate-spin mx-auto" />
-            <p className="text-sm text-slate-500">جار التحميل...</p>
+            <p className="text-sm text-slate-500">{t.loadingPage}</p>
           </div>
         </div>
       </div>
@@ -661,7 +857,7 @@ export default function ProfilePage() {
   return (
     <div
       className="min-h-screen bg-slate-950 text-slate-100 relative overflow-x-hidden"
-      dir="rtl">
+      dir={isAr ? "rtl" : "ltr"}>
       {/* Background glows */}
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-emerald-500/8 rounded-full blur-[130px] pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-cyan-500/5 rounded-full blur-[110px] pointer-events-none" />
@@ -674,13 +870,11 @@ export default function ProfilePage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="bg-slate-900/50 backdrop-blur-md border border-slate-800/60 rounded-2xl overflow-hidden mb-5">
-          {/* Top banner */}
           <div className="h-20 bg-gradient-to-r from-emerald-500/20 via-cyan-500/15 to-emerald-500/10 relative">
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(16,185,129,0.15),transparent_60%)]" />
           </div>
 
           <div className="px-6 pb-6 -mt-8 relative">
-            {/* Avatar */}
             <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-400 to-cyan-500 flex items-center justify-center text-2xl font-black text-white shadow-xl shadow-emerald-500/30 mb-3 border-4 border-slate-900">
               {user?.username?.charAt(0).toUpperCase() || "U"}
             </div>
@@ -695,23 +889,22 @@ export default function ProfilePage() {
               <button
                 onClick={handleLogout}
                 className="flex items-center gap-1.5 px-3 py-1.5 bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 text-xs font-semibold text-red-400 rounded-lg transition-all">
-                <LogOut className="w-3.5 h-3.5" /> خروج
+                <LogOut className="w-3.5 h-3.5" /> {t.logout}
               </button>
             </div>
 
-            {/* Stats row */}
             {posts.length > 0 && (
               <div className="grid grid-cols-3 gap-3 mt-5">
                 <StatCard
                   icon={<FileText className="w-4 h-4" />}
                   value={posts.length}
-                  label="منشوراتي"
+                  label={t.myPosts}
                   color="text-emerald-400"
                 />
                 <StatCard
                   icon={<Heart className="w-4 h-4" />}
                   value={totalUpvotes}
-                  label="إجمالي الإعجابات"
+                  label={t.totalLikes}
                   color="text-rose-400"
                 />
                 <StatCard
@@ -721,7 +914,7 @@ export default function ProfilePage() {
                       ? (totalUpvotes / posts.length).toFixed(1)
                       : "0"
                   }
-                  label="متوسط التفاعل"
+                  label={t.avgEngagement}
                   color="text-amber-400"
                 />
               </div>
@@ -733,8 +926,8 @@ export default function ProfilePage() {
         <div className="flex gap-1 bg-slate-900/50 border border-slate-800/60 rounded-xl p-1 mb-5">
           {(
             [
-              { key: "info", label: "معلومات الحساب" },
-              { key: "posts", label: "منشوراتي" },
+              { key: "info", label: t.accountInfo },
+              { key: "posts", label: t.posts },
             ] as const
           ).map((tab) => (
             <button
@@ -768,12 +961,12 @@ export default function ProfilePage() {
               {[
                 {
                   icon: <User className="w-3.5 h-3.5" />,
-                  label: "اسم المستخدم",
+                  label: t.username,
                   value: user?.username,
                 },
                 {
                   icon: <Mail className="w-3.5 h-3.5" />,
-                  label: "البريد الإلكتروني",
+                  label: t.email,
                   value: user?.email,
                 },
               ].map((f) => (
@@ -789,7 +982,7 @@ export default function ProfilePage() {
 
               <div>
                 <div className="flex items-center gap-1.5 text-xs text-slate-500 font-medium mb-1.5">
-                  <Fingerprint className="w-3.5 h-3.5" /> معرف المستخدم
+                  <Fingerprint className="w-3.5 h-3.5" /> {t.userId}
                 </div>
                 <div className="px-3.5 py-2.5 bg-slate-950/50 border border-slate-800/50 rounded-xl text-xs font-mono text-slate-600 break-all">
                   {user?._id || "—"}
@@ -800,10 +993,10 @@ export default function ProfilePage() {
                 <Sparkles className="w-4 h-4 text-emerald-400 mt-0.5 shrink-0" />
                 <div>
                   <p className="text-xs font-semibold text-emerald-400">
-                    مميزات قريباً
+                    {t.comingSoonTitle}
                   </p>
                   <p className="text-xs text-emerald-700 mt-0.5">
-                    تعديل الملف الشخصي، تغيير كلمة المرور، والإعدادات
+                    {t.comingSoonDesc}
                   </p>
                 </div>
               </div>
@@ -812,7 +1005,10 @@ export default function ProfilePage() {
                 <Link
                   href="/"
                   className="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-slate-900/60 border border-slate-800/60 hover:border-slate-700 text-sm font-semibold text-slate-400 hover:text-slate-200 transition-all">
-                  <ArrowLeft className="w-4 h-4" /> الرئيسية
+                  <ArrowLeft
+                    className={`w-4 h-4 ${isAr ? "" : "rotate-180"}`}
+                  />{" "}
+                  {t.home}
                 </Link>
               </div>
             </motion.div>
@@ -826,7 +1022,6 @@ export default function ProfilePage() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               className="space-y-4">
-              {/* Loading */}
               {loadingPosts && (
                 <>
                   <PostSkeleton />
@@ -835,58 +1030,57 @@ export default function ProfilePage() {
                 </>
               )}
 
-              {/* Error */}
               {!loadingPosts && postsError && (
                 <div className="bg-slate-900/50 border border-red-500/20 rounded-2xl p-10 text-center">
                   <FileText className="w-12 h-12 text-red-500/50 mx-auto mb-3" />
                   <p className="text-sm font-semibold text-slate-300 mb-1">
-                    حدث خطأ أثناء تحميل منشوراتك
+                    {t.errorTitle}
                   </p>
-                  <p className="text-xs text-slate-600 mb-5">
-                    تحقق من اتصالك بالإنترنت وحاول مرة أخرى
-                  </p>
+                  <p className="text-xs text-slate-600 mb-5">{t.errorSub}</p>
                   <button
                     onClick={handleRetryPosts}
                     className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-emerald-500 to-cyan-500 text-white text-sm font-bold rounded-xl shadow-lg shadow-emerald-500/20 hover:from-emerald-400 hover:to-cyan-400 transition-all">
-                    <RefreshCw className="w-4 h-4" /> إعادة المحاولة
+                    <RefreshCw className="w-4 h-4" /> {t.retry}
                   </button>
                 </div>
               )}
 
-              {/* Empty */}
               {!loadingPosts && !postsError && posts.length === 0 && (
                 <div className="bg-slate-900/50 border border-slate-800/60 rounded-2xl p-10 text-center">
                   <FileText className="w-12 h-12 text-slate-700 mx-auto mb-3" />
                   <p className="text-sm font-semibold text-slate-400 mb-1">
-                    لم تنشر أي شيء بعد
+                    {t.noPostsTitle}
                   </p>
-                  <p className="text-xs text-slate-600 mb-5">
-                    شارك تجربتك مع نباتاتك في صفحة المجتمع!
-                  </p>
+                  <p className="text-xs text-slate-600 mb-5">{t.noPostsSub}</p>
                   <Link
                     href="/community"
                     className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-emerald-500 to-cyan-500 text-white text-sm font-bold rounded-xl shadow-lg shadow-emerald-500/20 hover:from-emerald-400 hover:to-cyan-400 transition-all">
-                    اذهب للمجتمع
+                    {t.goToCommunity}
                   </Link>
                 </div>
               )}
 
-              {/* Posts list */}
-              {!loadingPosts &&
-                !postsError &&
-                posts.map((post, idx) => (
-                  <motion.div
-                    key={post._id}
-                    initial={{ opacity: 0, y: 16 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: idx * 0.05 }}>
-                    <ProfilePostCard
-                      post={post}
-                      currentUserId={user?._id || ""}
-                      onUpvote={handleUpvote}
-                    />
-                  </motion.div>
-                ))}
+              {/* Posts list with AnimatePresence for delete */}
+              <AnimatePresence mode="popLayout">
+                {!loadingPosts &&
+                  !postsError &&
+                  posts.map((post, idx) => (
+                    <motion.div
+                      key={post._id}
+                      initial={{ opacity: 0, y: 16 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, x: -30, scale: 0.95 }}
+                      transition={{ delay: idx * 0.05 }}>
+                      <ProfilePostCard
+                        post={post}
+                        currentUserId={user?._id || ""}
+                        t={t}
+                        onUpvote={handleUpvote}
+                        onDelete={handleDeletePost}
+                      />
+                    </motion.div>
+                  ))}
+              </AnimatePresence>
             </motion.div>
           )}
         </AnimatePresence>

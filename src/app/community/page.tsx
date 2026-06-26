@@ -30,6 +30,7 @@ import {
   Camera,
   ChevronUp,
   Eye,
+  Trash2,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -67,7 +68,7 @@ interface Comment {
   updatedAt: string;
 }
 
-// ─── UI Translations ─────────────────────────────────────────────────────────
+// ─── UI Translations ──────────────────────────────────────────────────────────
 
 const UI = {
   en: {
@@ -122,6 +123,13 @@ const UI = {
     dayAgo: "1d ago",
     daysAgo: "d ago",
     noTrending: "Add #hashtags in your posts to see trends!",
+    deletePost: "Delete Post",
+    deleteComment: "Delete Comment",
+    deletePostConfirmTitle: "Delete Post?",
+    deletePostConfirmMsg:
+      "This action cannot be undone. Are you sure you want to delete this post?",
+    deleteCancel: "Cancel",
+    deleteConfirm: "Delete",
     quickLinksItems: [
       { label: "🔬 Analyze a Plant", href: "/assistant" },
       { label: "📖 Plant Care Guide", href: "/care-guide" },
@@ -184,6 +192,13 @@ const UI = {
     dayAgo: "منذ يوم",
     daysAgo: "ي",
     noTrending: "أضف #هاشتاقات في منشوراتك لرؤية الاتجاهات!",
+    deletePost: "حذف المنشور",
+    deleteComment: "حذف التعليق",
+    deletePostConfirmTitle: "حذف المنشور؟",
+    deletePostConfirmMsg:
+      "هذا الإجراء لا يمكن التراجع عنه. هل أنت متأكد من حذف هذا المنشور؟",
+    deleteCancel: "إلغاء",
+    deleteConfirm: "حذف",
     quickLinksItems: [
       { label: "🔬 تحليل نبات", href: "/assistant" },
       { label: "📖 دليل العناية بالنبات", href: "/care-guide" },
@@ -198,7 +213,7 @@ const UI = {
   },
 };
 
-// ─── Global Styles ────────────────────────────────────────────────────────────
+// ─── Global Styles ─────────────────────────────────────────────────────────────
 
 const GlobalStyles = () => (
   <style
@@ -303,7 +318,7 @@ function getInitials(username: string): string {
   return username.slice(0, 2).toUpperCase();
 }
 
-// ─── Avatar Component ─────────────────────────────────────────────────────────
+// ─── Avatar Component ──────────────────────────────────────────────────────────
 
 function UserAvatar({
   username,
@@ -334,7 +349,7 @@ function UserAvatar({
   );
 }
 
-// ─── Progress Bar ─────────────────────────────────────────────────────────────
+// ─── Progress Bar ──────────────────────────────────────────────────────────────
 
 function ProgressBar({
   value,
@@ -366,7 +381,7 @@ function ProgressBar({
   );
 }
 
-// ─── Post Skeleton ────────────────────────────────────────────────────────────
+// ─── Post Skeleton ─────────────────────────────────────────────────────────────
 
 function PostSkeleton() {
   return (
@@ -393,7 +408,7 @@ function PostSkeleton() {
   );
 }
 
-// ─── Image Lightbox ───────────────────────────────────────────────────────────
+// ─── Image Lightbox ────────────────────────────────────────────────────────────
 
 function ImageLightbox({ src, onClose }: { src: string; onClose: () => void }) {
   return (
@@ -424,19 +439,81 @@ function ImageLightbox({ src, onClose }: { src: string; onClose: () => void }) {
   );
 }
 
-// ─── Comment Item ─────────────────────────────────────────────────────────────
+// ─── Delete Confirm Dialog ─────────────────────────────────────────────────────
+
+function DeleteDialog({
+  title,
+  message,
+  cancelLabel,
+  confirmLabel,
+  onCancel,
+  onConfirm,
+}: {
+  title: string;
+  message: string;
+  cancelLabel: string;
+  confirmLabel: string;
+  onCancel: () => void;
+  onConfirm: () => void;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4"
+      onClick={onCancel}>
+      <motion.div
+        initial={{ scale: 0.85, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.85, opacity: 0 }}
+        transition={{ type: "spring", damping: 20, stiffness: 300 }}
+        onClick={(e) => e.stopPropagation()}
+        className="glass-card rounded-2xl p-6 max-w-sm w-full shadow-2xl border border-red-500/20">
+        <div className="w-12 h-12 bg-red-500/15 rounded-xl flex items-center justify-center mx-auto mb-4">
+          <Trash2 className="w-6 h-6 text-red-400" />
+        </div>
+        <h3 className="text-base font-bold text-white text-center mb-2">
+          {title}
+        </h3>
+        <p className="text-xs text-slate-400 text-center mb-6 leading-relaxed">
+          {message}
+        </p>
+        <div className="flex gap-3">
+          <button
+            onClick={onCancel}
+            className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-slate-300 bg-slate-800/60 hover:bg-slate-700/60 transition-all">
+            {cancelLabel}
+          </button>
+          <motion.button
+            whileTap={{ scale: 0.96 }}
+            onClick={onConfirm}
+            className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-white bg-red-500 hover:bg-red-400 transition-all shadow-lg shadow-red-500/25">
+            {confirmLabel}
+          </motion.button>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+// ─── Comment Item ──────────────────────────────────────────────────────────────
 
 function CommentItem({
   comment,
   currentUserId,
   t,
   onVote,
+  onDelete,
 }: {
   comment: Comment;
   currentUserId: string | null;
   t: (typeof UI)["en"];
   onVote: (commentId: string, voteType: "upvote" | "downvote") => void;
+  onDelete: (commentId: string) => void;
 }) {
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+
   const score =
     (comment.upvotes?.length || 0) - (comment.downvotes?.length || 0);
   const hasUpvoted = currentUserId
@@ -445,75 +522,106 @@ function CommentItem({
   const hasDownvoted = currentUserId
     ? comment.downvotes?.includes(currentUserId)
     : false;
+  const isOwner = currentUserId === comment.author?._id;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, x: -10 }}
-      animate={{ opacity: 1, x: 0 }}
-      className="flex gap-2.5 group">
-      <Link href={`/profile/${comment.author?._id}`}>
-        <UserAvatar
-          username={comment.author?.username || "U"}
-          size="sm"
-          isDoctor={comment.author?.role === "DOCTOR"}
-        />
-      </Link>
-      <div className="flex-1">
-        <div className="bg-slate-800/40 rounded-xl px-3.5 py-2.5 hover:bg-slate-800/60 transition-colors">
-          <div className="flex items-center gap-1.5 mb-1">
-            <Link
-              href={`/profile/${comment.author?._id}`}
-              className="text-xs font-bold text-white hover:text-emerald-400 transition-colors">
-              {comment.author?.username || "User"}
-            </Link>
-            {comment.author?.role === "DOCTOR" && (
-              <span className="text-[9px] font-bold text-blue-400 bg-blue-500/15 px-1.5 py-0.5 rounded-full">
-                {t.doctor}
+    <>
+      <motion.div
+        initial={{ opacity: 0, x: -10 }}
+        animate={{ opacity: 1, x: 0 }}
+        className="flex gap-2.5 group">
+        <Link href={`/profile/${comment.author?._id}`}>
+          <UserAvatar
+            username={comment.author?.username || "U"}
+            size="sm"
+            isDoctor={comment.author?.role === "DOCTOR"}
+          />
+        </Link>
+        <div className="flex-1">
+          <div className="bg-slate-800/40 rounded-xl px-3.5 py-2.5 hover:bg-slate-800/60 transition-colors">
+            <div className="flex items-center gap-1.5 mb-1">
+              <Link
+                href={`/profile/${comment.author?._id}`}
+                className="text-xs font-bold text-white hover:text-emerald-400 transition-colors">
+                {comment.author?.username || "User"}
+              </Link>
+              {comment.author?.role === "DOCTOR" && (
+                <span className="text-[9px] font-bold text-blue-400 bg-blue-500/15 px-1.5 py-0.5 rounded-full">
+                  {t.doctor}
+                </span>
+              )}
+              <span className="text-[10px] text-slate-600">
+                {formatRelativeTime(comment.createdAt, t)}
               </span>
-            )}
-            <span className="text-[10px] text-slate-600">
-              {formatRelativeTime(comment.createdAt, t)}
-            </span>
+              {isOwner && (
+                <motion.button
+                  whileTap={{ scale: 0.9 }}
+                  onClick={() => setShowDeleteDialog(true)}
+                  title={t.deleteComment}
+                  className="ml-auto p-1 text-slate-600 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all opacity-0 group-hover:opacity-100">
+                  <Trash2 className="w-3 h-3" />
+                </motion.button>
+              )}
+            </div>
+            <p className="text-xs text-slate-300 leading-relaxed">
+              {comment.content}
+            </p>
           </div>
-          <p className="text-xs text-slate-300 leading-relaxed">
-            {comment.content}
-          </p>
+          <div className="flex items-center gap-0.5 mt-1 px-1">
+            <motion.button
+              whileTap={{ scale: 1.3 }}
+              onClick={() => onVote(comment._id, "upvote")}
+              className={`p-1 rounded-md transition-all ${hasUpvoted ? "text-emerald-400 bg-emerald-500/10" : "text-slate-600 hover:text-emerald-400"}`}>
+              <ThumbsUp className="w-3 h-3" />
+            </motion.button>
+            <span
+              className={`text-[10px] font-bold min-w-[14px] text-center ${score > 0 ? "text-emerald-400" : score < 0 ? "text-red-400" : "text-slate-600"}`}>
+              {score}
+            </span>
+            <motion.button
+              whileTap={{ scale: 1.3 }}
+              onClick={() => onVote(comment._id, "downvote")}
+              className={`p-1 rounded-md transition-all ${hasDownvoted ? "text-red-400 bg-red-500/10" : "text-slate-600 hover:text-red-400"}`}>
+              <ThumbsDown className="w-3 h-3" />
+            </motion.button>
+          </div>
         </div>
-        <div className="flex items-center gap-0.5 mt-1 px-1">
-          <motion.button
-            whileTap={{ scale: 1.3 }}
-            onClick={() => onVote(comment._id, "upvote")}
-            className={`p-1 rounded-md transition-all ${hasUpvoted ? "text-emerald-400 bg-emerald-500/10" : "text-slate-600 hover:text-emerald-400"}`}>
-            <ThumbsUp className="w-3 h-3" />
-          </motion.button>
-          <span
-            className={`text-[10px] font-bold min-w-[14px] text-center ${score > 0 ? "text-emerald-400" : score < 0 ? "text-red-400" : "text-slate-600"}`}>
-            {score}
-          </span>
-          <motion.button
-            whileTap={{ scale: 1.3 }}
-            onClick={() => onVote(comment._id, "downvote")}
-            className={`p-1 rounded-md transition-all ${hasDownvoted ? "text-red-400 bg-red-500/10" : "text-slate-600 hover:text-red-400"}`}>
-            <ThumbsDown className="w-3 h-3" />
-          </motion.button>
-        </div>
-      </div>
-    </motion.div>
+      </motion.div>
+
+      {/* Delete Comment Dialog */}
+      <AnimatePresence>
+        {showDeleteDialog && (
+          <DeleteDialog
+            title={t.deleteComment}
+            message={t.deletePostConfirmMsg}
+            cancelLabel={t.deleteCancel}
+            confirmLabel={t.deleteConfirm}
+            onCancel={() => setShowDeleteDialog(false)}
+            onConfirm={() => {
+              setShowDeleteDialog(false);
+              onDelete(comment._id);
+            }}
+          />
+        )}
+      </AnimatePresence>
+    </>
   );
 }
 
-// ─── Post Card ────────────────────────────────────────────────────────────────
+// ─── Post Card ─────────────────────────────────────────────────────────────────
 
 function PostCard({
   post,
   currentUserId,
   t,
   onUpvote,
+  onDeletePost,
 }: {
   post: Post;
   currentUserId: string | null;
   t: (typeof UI)["en"];
   onUpvote: (postId: string) => void;
+  onDeletePost: (postId: string) => void;
 }) {
   const [showComments, setShowComments] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
@@ -522,11 +630,13 @@ function PostCard({
   const [submittingComment, setSubmittingComment] = useState(false);
   const [commentsLoaded, setCommentsLoaded] = useState(false);
   const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const hasUpvoted = currentUserId
     ? post.upvotes?.includes(currentUserId)
     : false;
   const isDoctor = post.author?.role === "DOCTOR";
+  const isOwner = currentUserId === post.author?._id;
 
   const loadComments = useCallback(async () => {
     if (commentsLoaded) return;
@@ -573,8 +683,8 @@ function PostCard({
     setComments((prev) =>
       prev.map((c) => {
         if (c._id !== commentId) return c;
-        const up = [...(c.upvotes || [])],
-          down = [...(c.downvotes || [])];
+        const up = [...(c.upvotes || [])];
+        const down = [...(c.downvotes || [])];
         const upIdx = up.indexOf(currentUserId);
         if (upIdx > -1) up.splice(upIdx, 1);
         const downIdx = down.indexOf(currentUserId);
@@ -587,18 +697,30 @@ function PostCard({
     await api.voteComment(commentId, voteType);
   };
 
+  const handleDeleteComment = async (commentId: string) => {
+    const res = await api.deleteComment(post._id, commentId);
+    if (res.success) {
+      setComments((prev) => prev.filter((c) => c._id !== commentId));
+    }
+  };
+
+  const handleDeletePost = async () => {
+    const res = await api.deletePost(post._id);
+    if (res.success) onDeletePost(post._id);
+  };
+
   return (
     <>
+      {/* ── Post Card ── */}
       <motion.div
         layout
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
-        className={`glass-card rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl ${
+        className={`group glass-card rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl ${
           isDoctor
             ? "hover:shadow-blue-500/10 ring-1 ring-blue-500/20"
             : "hover:shadow-emerald-500/5"
         }`}>
-        {/* Doctor highlight bar */}
         {isDoctor && (
           <div className="h-0.5 bg-gradient-to-r from-blue-500 via-cyan-400 to-blue-500" />
         )}
@@ -634,6 +756,18 @@ function PostCard({
                 )}
               </div>
             </div>
+
+            {/* Delete Post Button — visible only on card hover */}
+            {isOwner && (
+              <motion.button
+                whileTap={{ scale: 0.9 }}
+                onClick={() => setShowDeleteDialog(true)}
+                title={t.deletePost}
+                className="p-2 text-slate-600 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-all
+                           opacity-0 group-hover:opacity-100 focus:opacity-100">
+                <Trash2 className="w-4 h-4" />
+              </motion.button>
+            )}
           </div>
 
           {/* Content */}
@@ -646,15 +780,15 @@ function PostCard({
             <motion.div
               whileHover={{ scale: 1.01 }}
               onClick={() => setLightboxSrc(post.media)}
-              className="relative w-full rounded-xl overflow-hidden mb-3 cursor-pointer group border border-slate-700/30">
+              className="relative w-full rounded-xl overflow-hidden mb-3 cursor-pointer group/img border border-slate-700/30">
               <img
                 src={post.media}
                 alt="Post media"
-                className="w-full max-h-96 object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                className="w-full max-h-96 object-cover transition-transform duration-300 group-hover/img:scale-[1.02]"
                 loading="lazy"
               />
-              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
-                <Eye className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-lg" />
+              <div className="absolute inset-0 bg-black/0 group-hover/img:bg-black/20 transition-colors flex items-center justify-center">
+                <Eye className="w-8 h-8 text-white opacity-0 group-hover/img:opacity-100 transition-opacity drop-shadow-lg" />
               </div>
             </motion.div>
           )}
@@ -721,6 +855,7 @@ function PostCard({
                       currentUserId={currentUserId}
                       t={t}
                       onVote={handleVoteComment}
+                      onDelete={handleDeleteComment}
                     />
                   ))
                 )}
@@ -763,7 +898,24 @@ function PostCard({
         </AnimatePresence>
       </motion.div>
 
-      {/* Lightbox */}
+      {/* Delete Post Dialog */}
+      <AnimatePresence>
+        {showDeleteDialog && (
+          <DeleteDialog
+            title={t.deletePostConfirmTitle}
+            message={t.deletePostConfirmMsg}
+            cancelLabel={t.deleteCancel}
+            confirmLabel={t.deleteConfirm}
+            onCancel={() => setShowDeleteDialog(false)}
+            onConfirm={async () => {
+              setShowDeleteDialog(false);
+              await handleDeletePost();
+            }}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Image Lightbox */}
       <AnimatePresence>
         {lightboxSrc && (
           <ImageLightbox
@@ -776,7 +928,7 @@ function PostCard({
   );
 }
 
-// ─── Achievement Definitions ──────────────────────────────────────────────────
+// ─── Achievement Definitions ───────────────────────────────────────────────────
 
 const ACHIEVEMENT_DEFS = [
   {
@@ -825,7 +977,7 @@ const ACHIEVEMENT_DEFS = [
   },
 ];
 
-// ─── Main Page ────────────────────────────────────────────────────────────────
+// ─── Main Page ─────────────────────────────────────────────────────────────────
 
 export default function CommunityPage() {
   const { language } = useSettings();
@@ -856,7 +1008,6 @@ export default function CommunityPage() {
     if (auth) setCurrentUserId(api.getUser()?._id || null);
   }, []);
 
-  // Scroll to top button
   useEffect(() => {
     const handler = () => setShowScrollTop(window.scrollY > 600);
     window.addEventListener("scroll", handler, { passive: true });
@@ -921,6 +1072,10 @@ export default function CommunityPage() {
     await api.togglePostUpvote(postId);
   };
 
+  const handleDeletePost = (postId: string) => {
+    setPosts((prev) => prev.filter((p) => p._id !== postId));
+  };
+
   const handleMediaSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -940,7 +1095,6 @@ export default function CommunityPage() {
       )
     : posts;
 
-  // Dynamic sidebar data
   const trendingTopics = (() => {
     const tagCounts = new Map<string, number>();
     posts.forEach((p) => {
@@ -992,8 +1146,8 @@ export default function CommunityPage() {
   const achievements = (() => {
     if (!currentUserId) return [];
     const my = posts.filter((p) => p.author?._id === currentUserId);
-    const pc = my.length,
-      pu = my.reduce((s, p) => s + (p.upvotes?.length || 0), 0);
+    const pc = my.length;
+    const pu = my.reduce((s, p) => s + (p.upvotes?.length || 0), 0);
     return ACHIEVEMENT_DEFS.map((d) => ({ ...d, current: d.compute(pc, pu) }));
   })();
 
@@ -1004,7 +1158,7 @@ export default function CommunityPage() {
       <GlobalStyles />
       <Navbar />
 
-      {/* ═══ HERO WITH BACKGROUND IMAGE ═══ */}
+      {/* HERO */}
       <div className="relative w-full h-[420px] sm:h-[480px] overflow-hidden -mt-[1px]">
         <Image
           src="/community-hero.png"
@@ -1073,7 +1227,7 @@ export default function CommunityPage() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-24 relative z-10">
-        {/* ═══ AUTH GUARD ═══ */}
+        {/* AUTH GUARD */}
         {!isAuthenticated && (
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -1111,7 +1265,7 @@ export default function CommunityPage() {
           </motion.div>
         )}
 
-        {/* ═══ SEARCH BAR ═══ */}
+        {/* SEARCH BAR */}
         {isAuthenticated && (
           <motion.div
             initial={{ opacity: 0, y: 12 }}
@@ -1139,10 +1293,9 @@ export default function CommunityPage() {
           </motion.div>
         )}
 
-        {/* ═══ MAIN LAYOUT ═══ */}
+        {/* MAIN LAYOUT */}
         {isAuthenticated && (
           <div className="flex flex-col lg:flex-row gap-6">
-            {/* FEED */}
             <div className="flex-1 min-w-0 space-y-5">
               {/* Tabs */}
               <div className="flex gap-1 glass-card rounded-xl p-1">
@@ -1322,13 +1475,14 @@ export default function CommunityPage() {
                       currentUserId={currentUserId}
                       t={t}
                       onUpvote={handleUpvote}
+                      onDeletePost={handleDeletePost}
                     />
                   </motion.div>
                 ))}
               </AnimatePresence>
             </div>
 
-            {/* ═══ SIDEBAR ═══ */}
+            {/* SIDEBAR */}
             <div className="w-full lg:w-80 xl:w-96 shrink-0 space-y-4">
               {/* Trending */}
               <motion.div
@@ -1444,7 +1598,11 @@ export default function CommunityPage() {
                       <motion.div
                         key={a.id}
                         whileHover={{ scale: 1.01 }}
-                        className={`p-3 rounded-xl transition-all ${a.current >= a.max ? "bg-emerald-500/5 ring-1 ring-emerald-500/20" : "hover:bg-slate-800/30"}`}>
+                        className={`p-3 rounded-xl transition-all ${
+                          a.current >= a.max
+                            ? "bg-emerald-500/5 ring-1 ring-emerald-500/20"
+                            : "hover:bg-slate-800/30"
+                        }`}>
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center gap-2.5">
                             <span
@@ -1467,7 +1625,11 @@ export default function CommunityPage() {
                             </div>
                           </div>
                           <span
-                            className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${a.current >= a.max ? "text-emerald-400 bg-emerald-500/15" : "text-slate-500 bg-slate-800/60"}`}>
+                            className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
+                              a.current >= a.max
+                                ? "text-emerald-400 bg-emerald-500/15"
+                                : "text-slate-500 bg-slate-800/60"
+                            }`}>
                             {a.current}/{a.max}
                           </span>
                         </div>

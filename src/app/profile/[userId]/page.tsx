@@ -22,6 +22,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
+import { useSettings } from "@/context/SettingsContext";
 import { api, type User as ApiUser } from "@/lib/api";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -53,6 +54,57 @@ interface Comment {
   createdAt: string;
   updatedAt: string;
 }
+
+// ─── UI Translations ──────────────────────────────────────────────────────────
+
+const UI = {
+  en: {
+    back: "Back",
+    unknownUser: "User",
+    doctor: "Doctor",
+    postsLabel: "Posts",
+    totalLikes: "Total Likes",
+    loadingComments: "Loading comments...",
+    noComments: "No comments yet. Be the first to reply!",
+    replyPlaceholder: "Write a reply...",
+    you: "You",
+    errorTitle: "Couldn't load posts",
+    errorSub: "Check your connection and try again",
+    retry: "Try Again",
+    noPostsTitle: "This user hasn't posted anything yet",
+    justNow: "now",
+    minuteAgo: "1m ago",
+    minutesAgo: "m ago",
+    hourAgo: "1h ago",
+    hoursAgo: "h ago",
+    dayAgo: "1d ago",
+    daysAgo: "d ago",
+  },
+  ar: {
+    back: "رجوع",
+    unknownUser: "مستخدم",
+    doctor: "طبيب",
+    postsLabel: "المنشورات",
+    totalLikes: "إجمالي الإعجابات",
+    loadingComments: "جارٍ تحميل التعليقات...",
+    noComments: "لا توجد تعليقات بعد. كن أول من يرد!",
+    replyPlaceholder: "اكتب رداً...",
+    you: "أنت",
+    errorTitle: "حدث خطأ أثناء تحميل المنشورات",
+    errorSub: "تحقق من اتصالك بالإنترنت وحاول مرة أخرى",
+    retry: "إعادة المحاولة",
+    noPostsTitle: "لا توجد منشورات لهذا المستخدم بعد",
+    justNow: "الآن",
+    minuteAgo: "منذ دقيقة",
+    minutesAgo: "د",
+    hourAgo: "منذ ساعة",
+    hoursAgo: "س",
+    dayAgo: "منذ يوم",
+    daysAgo: "ي",
+  },
+};
+
+type Dict = (typeof UI)["en"];
 
 // ─── Helpers (shared look with /profile and /community) ──────────────────────
 
@@ -110,7 +162,7 @@ function UserAvatar({
   );
 }
 
-function formatRelativeTime(dateStr: string): string {
+function formatRelativeTime(dateStr: string, t: Dict): string {
   const now = Date.now();
   const date = new Date(dateStr).getTime();
   const diffMs = now - date;
@@ -118,13 +170,13 @@ function formatRelativeTime(dateStr: string): string {
   const diffHr = Math.floor(diffMs / 3600000);
   const diffDay = Math.floor(diffMs / 86400000);
 
-  if (diffMin < 1) return "الآن";
-  if (diffMin === 1) return "منذ دقيقة";
-  if (diffMin < 60) return `منذ ${diffMin} دقيقة`;
-  if (diffHr === 1) return "منذ ساعة";
-  if (diffHr < 24) return `منذ ${diffHr} ساعة`;
-  if (diffDay === 1) return "منذ يوم";
-  return `منذ ${diffDay} يوم`;
+  if (diffMin < 1) return t.justNow;
+  if (diffMin === 1) return t.minuteAgo;
+  if (diffMin < 60) return `${diffMin}${t.minutesAgo}`;
+  if (diffHr === 1) return t.hourAgo;
+  if (diffHr < 24) return `${diffHr}${t.hoursAgo}`;
+  if (diffDay === 1) return t.dayAgo;
+  return `${diffDay}${t.daysAgo}`;
 }
 
 // ─── Image Lightbox ───────────────────────────────────────────────────────────
@@ -163,10 +215,12 @@ function ImageLightbox({ src, onClose }: { src: string; onClose: () => void }) {
 function CommentItem({
   comment,
   currentUserId,
+  t,
   onVote,
 }: {
   comment: Comment;
   currentUserId: string | null;
+  t: Dict;
   onVote: (commentId: string, voteType: "upvote" | "downvote") => void;
 }) {
   const score =
@@ -200,11 +254,11 @@ function CommentItem({
             </Link>
             {comment.author?.role === "DOCTOR" && (
               <span className="text-[9px] font-bold text-blue-400 bg-blue-500/15 px-1.5 py-0.5 rounded-full">
-                طبيب
+                {t.doctor}
               </span>
             )}
             <span className="text-[10px] text-slate-600">
-              {formatRelativeTime(comment.createdAt)}
+              {formatRelativeTime(comment.createdAt, t)}
             </span>
           </div>
           <p className="text-xs text-slate-300 leading-relaxed">
@@ -253,10 +307,12 @@ function CommentItem({
 function ProfilePostCard({
   post,
   currentUserId,
+  t,
   onUpvote,
 }: {
   post: Post;
   currentUserId: string | null;
+  t: Dict;
   onUpvote: (postId: string) => void;
 }) {
   const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
@@ -303,7 +359,7 @@ function ProfilePostCard({
             ...res.data,
             author: {
               _id: user?._id || res.data.author,
-              username: user?.username || "أنت",
+              username: user?.username || t.you,
               role: "USER" as const,
             },
           },
@@ -370,12 +426,12 @@ function ProfilePostCard({
                 </Link>
                 {isDoctor && (
                   <span className="text-[10px] font-bold text-blue-400 bg-blue-500/15 px-2 py-0.5 rounded-full border border-blue-500/20 flex items-center gap-1">
-                    <Stethoscope className="w-2.5 h-2.5" /> طبيب
+                    <Stethoscope className="w-2.5 h-2.5" /> {t.doctor}
                   </span>
                 )}
               </div>
               <div className="flex items-center gap-2 text-[11px] text-slate-500">
-                <span>{formatRelativeTime(post.createdAt)}</span>
+                <span>{formatRelativeTime(post.createdAt, t)}</span>
                 {post.author?.governorate && (
                   <span className="flex items-center gap-0.5">
                     <MapPin className="w-2.5 h-2.5" /> {post.author.governorate}
@@ -456,12 +512,12 @@ function ProfilePostCard({
                   <div className="flex items-center justify-center gap-2 py-6">
                     <Loader2 className="w-4 h-4 text-emerald-400 animate-spin" />
                     <span className="text-xs text-slate-500">
-                      جارٍ تحميل التعليقات...
+                      {t.loadingComments}
                     </span>
                   </div>
                 ) : comments.length === 0 ? (
                   <p className="text-xs text-slate-500 text-center py-4">
-                    لا توجد تعليقات بعد. كن أول من يرد!
+                    {t.noComments}
                   </p>
                 ) : (
                   comments.map((c) => (
@@ -469,6 +525,7 @@ function ProfilePostCard({
                       key={c._id}
                       comment={c}
                       currentUserId={currentUserId}
+                      t={t}
                       onVote={handleVoteComment}
                     />
                   ))
@@ -478,7 +535,7 @@ function ProfilePostCard({
                 {currentUserId && (
                   <div className="flex gap-2 mt-2">
                     <UserAvatar
-                      username={api.getUser()?.username || "أنت"}
+                      username={api.getUser()?.username || t.you}
                       size="sm"
                     />
                     <div className="flex-1 flex items-center bg-slate-800/40 rounded-xl px-3 py-2 gap-2 focus-within:ring-1 focus-within:ring-emerald-500/40 transition-all">
@@ -491,7 +548,7 @@ function ProfilePostCard({
                             handleAddComment();
                           }
                         }}
-                        placeholder="اكتب رداً..."
+                        placeholder={t.replyPlaceholder}
                         className="flex-1 bg-transparent text-xs text-slate-300 placeholder-slate-600 outline-none"
                       />
                       <motion.button
@@ -574,6 +631,10 @@ export default function PublicProfilePage() {
   const params = useParams();
   const userId = params?.userId as string;
 
+  const { language } = useSettings();
+  const isAr = language === "ar";
+  const t = UI[isAr ? "ar" : "en"];
+
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
   // The profile being viewed — derived from the posts we fetch, since there's
@@ -622,11 +683,11 @@ export default function PublicProfilePage() {
     }
   }, [userId]);
 
- useEffect(() => {
-   if (!postsLoaded) {
-     fetchUserPosts();
-   }
- }, [postsLoaded, fetchUserPosts]);
+  useEffect(() => {
+    if (!postsLoaded) {
+      fetchUserPosts();
+    }
+  }, [postsLoaded, fetchUserPosts]);
 
   const handleRetry = () => {
     setPostsLoaded(false);
@@ -662,7 +723,7 @@ export default function PublicProfilePage() {
   return (
     <div
       className="min-h-screen bg-slate-950 text-slate-100 relative overflow-x-hidden"
-      dir="rtl">
+      dir={isAr ? "rtl" : "ltr"}>
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-emerald-500/8 rounded-full blur-[130px] pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-cyan-500/5 rounded-full blur-[110px] pointer-events-none" />
 
@@ -673,7 +734,8 @@ export default function PublicProfilePage() {
         <button
           onClick={() => router.back()}
           className="flex items-center gap-2 text-xs font-semibold text-slate-500 hover:text-slate-300 transition-colors mb-5">
-          <ArrowLeft className="w-3.5 h-3.5" /> رجوع
+          <ArrowLeft className={`w-3.5 h-3.5 ${isAr ? "" : "rotate-180"}`} />{" "}
+          {t.back}
         </button>
 
         {/* ─── Profile Header ─── */}
@@ -707,11 +769,12 @@ export default function PublicProfilePage() {
               <div className="min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
                   <h1 className="text-lg font-bold text-white truncate">
-                    {profileUser?.username || (loadingPosts ? "..." : "مستخدم")}
+                    {profileUser?.username ||
+                      (loadingPosts ? "..." : t.unknownUser)}
                   </h1>
                   {isDoctor && (
                     <span className="text-[10px] font-bold text-blue-400 bg-blue-500/15 px-2 py-0.5 rounded-full border border-blue-500/20 flex items-center gap-1 shrink-0">
-                      <Stethoscope className="w-2.5 h-2.5" /> طبيب
+                      <Stethoscope className="w-2.5 h-2.5" /> {t.doctor}
                     </span>
                   )}
                 </div>
@@ -729,13 +792,13 @@ export default function PublicProfilePage() {
                 <StatCard
                   icon={<FileText className="w-4 h-4" />}
                   value={posts.length}
-                  label="المنشورات"
+                  label={t.postsLabel}
                   color="text-emerald-400"
                 />
                 <StatCard
                   icon={<Heart className="w-4 h-4" />}
                   value={totalUpvotes}
-                  label="إجمالي الإعجابات"
+                  label={t.totalLikes}
                   color="text-rose-400"
                 />
               </div>
@@ -757,15 +820,13 @@ export default function PublicProfilePage() {
             <div className="bg-slate-900/50 border border-red-500/20 rounded-2xl p-10 text-center">
               <AlertCircle className="w-12 h-12 text-red-400/50 mx-auto mb-3" />
               <p className="text-sm font-semibold text-slate-300 mb-1">
-                حدث خطأ أثناء تحميل المنشورات
+                {t.errorTitle}
               </p>
-              <p className="text-xs text-slate-600 mb-5">
-                تحقق من اتصالك بالإنترنت وحاول مرة أخرى
-              </p>
+              <p className="text-xs text-slate-600 mb-5">{t.errorSub}</p>
               <button
                 onClick={handleRetry}
                 className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-emerald-500 to-cyan-500 text-white text-sm font-bold rounded-xl shadow-lg shadow-emerald-500/20 hover:from-emerald-400 hover:to-cyan-400 transition-all">
-                <RefreshCw className="w-4 h-4" /> إعادة المحاولة
+                <RefreshCw className="w-4 h-4" /> {t.retry}
               </button>
             </div>
           )}
@@ -774,7 +835,7 @@ export default function PublicProfilePage() {
             <div className="bg-slate-900/50 border border-slate-800/60 rounded-2xl p-10 text-center">
               <FileText className="w-12 h-12 text-slate-700 mx-auto mb-3" />
               <p className="text-sm font-semibold text-slate-400 mb-1">
-                لا توجد منشورات لهذا المستخدم بعد
+                {t.noPostsTitle}
               </p>
             </div>
           )}
@@ -790,6 +851,7 @@ export default function PublicProfilePage() {
                 <ProfilePostCard
                   post={post}
                   currentUserId={currentUserId}
+                  t={t}
                   onUpvote={handleUpvote}
                 />
               </motion.div>
