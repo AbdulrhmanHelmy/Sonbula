@@ -1091,17 +1091,48 @@ html[data-theme="light"] .support-side-card:hover {
   box-shadow: 0 4px 16px rgba(0,0,0,0.08) !important;
 }
 
-/* FAQ items */
-html[data-theme="light"] .sfaq-q {
+/* FAQ section */
+html[data-theme="light"] .support-faq-section {
+  background: rgba(0,0,0,0.02) !important;
+  border-top-color: rgba(0,0,0,0.06) !important;
+}
+
+html[data-theme="light"] .support-section-title {
   color: #0f1f13 !important;
 }
 
-html[data-theme="light"] .sfaq-a {
+html[data-theme="light"] .support-section-sub {
+  color: #5a7d60 !important;
+}
+
+/* FAQ items */
+html[data-theme="light"] .faq-item {
+  background: rgba(255,255,255,0.9) !important;
+  border-color: rgba(0,0,0,0.06) !important;
+}
+
+html[data-theme="light"] .faq-item.open {
+  border-color: rgba(34,197,94,0.28) !important;
+}
+
+html[data-theme="light"] .faq-question {
+  color: #0f1f13 !important;
+}
+
+html[data-theme="light"] .faq-question:hover {
+  color: #15803d !important;
+}
+
+html[data-theme="light"] .faq-item.open .faq-question {
+  color: #15803d !important;
+}
+
+html[data-theme="light"] .faq-answer > p {
   color: #4a6b50 !important;
 }
 
-html[data-theme="light"] .sfaq-item {
-  border-color: rgba(0,0,0,0.06) !important;
+html[data-theme="light"] .faq-footer-cta p {
+  color: #5a7d60 !important;
 }
 
 /* Footer */
