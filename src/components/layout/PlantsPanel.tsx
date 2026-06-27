@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useSettings } from "@/context/SettingsContext";
 import { Plant, Disease as PlantDisease } from "@/lib/types";
 import { plantsData } from "@/lib/PlantsData";
 
@@ -22,6 +23,8 @@ const typeIcon = { فطري: "🍄", فيروسي: "🦠", بكتيري: "🔬" 
 
 export default function PlantsPanel() {
   const router = useRouter();
+  const { language } = useSettings();
+  const isRTL = language === "ar";
   const [selectedPlant, setSelectedPlant] = useState<Plant | null>(null);
   const [selectedDisease, setSelectedDisease] = useState<number>(0);
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
@@ -93,8 +96,8 @@ export default function PlantsPanel() {
         fontFamily: "'Noto Naskh Arabic', 'Cairo', serif",
         direction: "rtl",
         display: "flex",
-        height: "100vh",
-        background: "radial-gradient(circle at 50% 50%, #08150a 0%, #030804 100%)",
+        height: "100%",
+        background: "rgba(3, 7, 4, 0.92)",
         overflow: "hidden",
         position: "relative",
       }}
@@ -107,29 +110,34 @@ export default function PlantsPanel() {
         ::-webkit-scrollbar-thumb { background: rgba(16, 185, 129, 0.4); border-radius: 2px; }
         
         .plant-item {
-          transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
-          border-right: 3px solid transparent !important;
-          border-radius: 8px !important;
-          margin: 2px 8px !important;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+          border-radius: 12px !important;
+          margin: 4px 10px !important;
+          border: 1px solid transparent !important;
         }
         .plant-item:hover { 
           background: rgba(16, 185, 129, 0.08) !important; 
-          transform: translateX(-2px);
+          border-color: rgba(16, 185, 129, 0.15) !important;
+          transform: translateX(-4px);
         }
         .plant-item.active { 
-          background: linear-gradient(270deg, rgba(16, 185, 129, 0.16) 0%, rgba(16, 185, 129, 0.02) 100%) !important; 
+          background: linear-gradient(270deg, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0.02) 100%) !important; 
           border-right: 3px solid #10b981 !important; 
+          border-color: rgba(16, 185, 129, 0.2) rgba(16, 185, 129, 0.2) rgba(16, 185, 129, 0.2) #10b981 !important;
           color: #a7f3d0 !important;
-          box-shadow: inset 3px 0 10px rgba(16, 185, 129, 0.04);
+          box-shadow: 0 4px 20px rgba(16, 185, 129, 0.1), inset 3px 0 10px rgba(16, 185, 129, 0.04);
         }
         .plant-item.active div div {
-          color: #10b981 !important;
+          color: #34d399 !important;
           font-weight: 800 !important;
+          text-shadow: 0 0 10px rgba(52, 211, 153, 0.2);
         }
         
         .cat-pill {
-          transition: all 0.2s ease-in-out !important;
-          border: 1px solid rgba(16, 185, 129, 0.15) !important;
+          transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+          border: 1px solid rgba(255, 255, 255, 0.06) !important;
+          background: rgba(255, 255, 255, 0.02) !important;
+          border-radius: 8px !important;
         }
         .cat-pill:hover { 
           background: rgba(16, 185, 129, 0.12) !important; 
@@ -140,28 +148,31 @@ export default function PlantsPanel() {
           background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important; 
           color: #ffffff !important; 
           border-color: transparent !important;
-          box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);
+          box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
         }
         
         .dis-chip { 
           cursor: pointer; 
-          transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important; 
+          transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important; 
           border: 1px solid rgba(16, 185, 129, 0.15) !important;
+          border-radius: 12px !important;
         }
         .dis-chip:hover { 
           transform: translateY(-2px); 
-          background: rgba(16, 185, 129, 0.1) !important; 
-          border-color: rgba(16, 185, 129, 0.3) !important;
+          background: rgba(16, 185, 129, 0.12) !important; 
+          border-color: rgba(16, 185, 129, 0.35) !important;
+          box-shadow: 0 4px 12px rgba(16, 185, 129, 0.1);
         }
         .dis-chip.active {
-          background: rgba(16, 185, 129, 0.15) !important;
+          background: rgba(16, 185, 129, 0.18) !important;
           border-color: #10b981 !important;
           color: #a7f3d0 !important;
+          box-shadow: 0 0 15px rgba(16, 185, 129, 0.15);
         }
         
         .img-tab { 
           cursor: pointer; 
-          transition: all 0.2s ease-in-out !important; 
+          transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important; 
         }
         .img-tab:hover { 
           background: rgba(16, 185, 129, 0.08) !important; 
@@ -170,16 +181,29 @@ export default function PlantsPanel() {
         .img-tab.active { 
           background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important; 
           color: #ffffff !important; 
-          box-shadow: 0 4px 10px rgba(16, 185, 129, 0.15);
+          box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
         }
         
-        .toggle-btn { transition: all 0.2s ease-in-out !important; }
-        .toggle-btn:hover { background: rgba(16, 185, 129, 0.2) !important; transform: scale(1.05); }
+        .toggle-btn { 
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important; 
+          background: rgba(16, 185, 129, 0.08) !important;
+          border: 1px solid rgba(16, 185, 129, 0.15) !important;
+          box-shadow: 0 4px 12px rgba(16, 185, 129, 0.05) !important;
+          backdrop-filter: blur(4px) !important;
+        }
+        .toggle-btn:hover { 
+          background: rgba(16, 185, 129, 0.16) !important; 
+          border-color: rgba(16, 185, 129, 0.35) !important; 
+          transform: translateY(-1px) scale(1.05) !important;
+          box-shadow: 0 0 15px rgba(16, 185, 129, 0.2) !important;
+          color: #34d399 !important;
+        }
+        .toggle-btn:active { transform: scale(0.95) !important; }
         
         .df-filter { 
           cursor: pointer; 
-          transition: all 0.2s ease-in-out !important; 
-          padding: 4px 10px !important; 
+          transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important; 
+          padding: 4px 12px !important; 
           border-radius: 20px !important; 
           font-size: 12px !important; 
           font-family: 'Cairo', serif !important; 
@@ -191,25 +215,38 @@ export default function PlantsPanel() {
           background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important; 
           color: #ffffff !important; 
           border-color: transparent !important;
-          box-shadow: 0 4px 10px rgba(16, 185, 129, 0.15);
+          box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
         }
         .df-filter:hover { 
           border-color: rgba(16, 185, 129, 0.4) !important; 
-          background: rgba(16, 185, 129, 0.05) !important;
+          background: rgba(16, 185, 129, 0.08) !important;
         }
         
         .search-input {
-          transition: all 0.2s ease !important;
+          transition: all 0.25s ease-in-out !important;
+          border-radius: 12px !important;
         }
         .search-input:focus {
-          border-color: rgba(16, 185, 129, 0.4) !important;
+          border-color: rgba(16, 185, 129, 0.45) !important;
           background: rgba(16, 185, 129, 0.12) !important;
-          box-shadow: 0 0 10px rgba(16, 185, 129, 0.1) !important;
+          box-shadow: 0 0 15px rgba(16, 185, 129, 0.15) !important;
         }
         
-        .back-btn { transition: all 0.2s ease-in-out !important; }
-        .back-btn:hover { background: rgba(16, 185, 129, 0.2) !important; transform: scale(1.08) !important; color: #a7f3d0 !important; border-color: rgba(16, 185, 129, 0.4) !important; }
-        .back-btn:active { transform: scale(0.92) !important; }
+        .back-btn { 
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important; 
+          background: rgba(16, 185, 129, 0.08) !important;
+          border: 1px solid rgba(16, 185, 129, 0.15) !important;
+          box-shadow: 0 4px 12px rgba(16, 185, 129, 0.05) !important;
+          backdrop-filter: blur(4px) !important;
+        }
+        .back-btn:hover { 
+          background: rgba(16, 185, 129, 0.16) !important; 
+          border-color: rgba(16, 185, 129, 0.35) !important; 
+          transform: translateY(-1px) scale(1.05) !important; 
+          box-shadow: 0 0 15px rgba(16, 185, 129, 0.2) !important;
+          color: #34d399 !important;
+        }
+        .back-btn:active { transform: scale(0.95) !important; }
         
         input::placeholder { color: #4a6b4e; }
         .badge-leaf { background: rgba(52,168,83,0.15); color: #52a853; border: 1px solid rgba(52,168,83,0.3); }
@@ -280,8 +317,9 @@ export default function PlantsPanel() {
         style={{
           width: sidebarOpen ? 280 : 0,
           minWidth: sidebarOpen ? 280 : 0,
-          background: "#030704",
-          borderLeft: "1px solid rgba(16, 185, 129, 0.15)",
+          background: "rgba(3, 7, 4, 0.65)",
+          backdropFilter: "blur(12px)",
+          borderLeft: "1px solid rgba(16, 185, 129, 0.1)",
           display: "flex",
           flexDirection: "column",
           transition: "all 0.3s cubic-bezier(0.4,0,0.2,1)",
@@ -552,42 +590,66 @@ export default function PlantsPanel() {
               className="back-btn"
               onClick={() => router.push("/")}
               style={{
-                background: "rgba(16, 185, 129, 0.1)",
-                border: "1px solid rgba(16, 185, 129, 0.2)",
-                borderRadius: 8,
-                width: 34,
-                height: 34,
+                width: 40,
+                height: 40,
                 cursor: "pointer",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                fontSize: 18,
-                transition: "all 0.15s",
-                color: "#8ce095",
+                borderRadius: "12px",
               }}
               title="رجوع"
             >
-              →
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ transition: "transform 0.2s" }} className="hover:scale-110">
+                {isRTL ? (
+                  <>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                  </>
+                ) : (
+                  <>
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                  </>
+                )}
+              </svg>
             </button>
             <button
               className="toggle-btn"
               onClick={() => setSidebarOpen((v) => !v)}
               style={{
-                background: "rgba(74,180,90,0.1)",
-                border: "1px solid rgba(74,180,90,0.2)",
-                borderRadius: 8,
-                width: 34,
-                height: 34,
+                width: 40,
+                height: 40,
                 cursor: "pointer",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                fontSize: 15,
-                transition: "all 0.15s",
-                color: "#6baa73",
+                borderRadius: "12px",
               }}
+              title={sidebarOpen ? "إغلاق القائمة" : "فتح القائمة"}
             >
-              {isMobile ? (sidebarOpen ? "✕" : "☰") : (sidebarOpen ? "◀" : "▶")}
+              {isMobile ? (
+                sidebarOpen ? (
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                ) : (
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                  </svg>
+                )
+              ) : sidebarOpen ? (
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              )}
             </button>
             {selectedPlant && (
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>

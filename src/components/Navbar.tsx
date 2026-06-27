@@ -2,12 +2,14 @@
 
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 import { api, type User } from "@/lib/api";
 import { useSettings } from "@/context/SettingsContext";
 
 export default function Navbar() {
   const { t, language } = useSettings();
   const isAr = language === "ar";
+  const pathname = usePathname();
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<User | null>(null);
@@ -70,13 +72,19 @@ export default function Navbar() {
     window.location.href = "/";
   };
 
-  const linkClass =
-    "text-slate-300 hover:text-emerald-400 font-medium transition-colors text-sm relative after:absolute after:bottom-[-2px] after:left-0 after:w-0 after:h-[2px] after:bg-emerald-400 after:transition-all after:duration-300 hover:after:w-full";
+  const isActive = (href: string) =>
+    href === "/" ? pathname === "/" : pathname.startsWith(href);
+
+  const getLinkClass = (href: string) =>
+    isActive(href)
+      ? "text-emerald-400 font-medium transition-colors text-sm relative after:absolute after:bottom-[-2px] after:left-0 after:w-full after:h-[2px] after:bg-emerald-400 after:transition-all after:duration-300"
+      : "text-slate-300 hover:text-emerald-400 font-medium transition-colors text-sm relative after:absolute after:bottom-[-2px] after:left-0 after:w-0 after:h-[2px] after:bg-emerald-400 after:transition-all after:duration-300 hover:after:w-full";
 
   const navLinks = [
     { href: "/", label: t("nav.home") },
     { href: "/assistant", label: t("nav.assistant") },
     { href: "/diseases", label: t("nav.diseases") },
+    { href: "/plants", label: t("nav.plants") },
     { href: "/community", label: t("nav.community") },
     { href: "/faq", label: t("nav.faq") },
     { href: "/support", label: t("nav.support") },
@@ -84,6 +92,7 @@ export default function Navbar() {
 
   const moreLinks = [
     { href: "/diseases", label: t("nav.diseasesDb") },
+    { href: "/plants", label: t("nav.plants") },
     { href: "/community", label: t("nav.communityFull") },
     { href: "/faq", label: t("nav.faqFull") },
     { href: "/support", label: t("nav.supportFull") },
@@ -110,7 +119,7 @@ export default function Navbar() {
           {/* Desktop Full Nav */}
           <div className="hidden xl:flex items-center gap-5">
             {navLinks.map((link) => (
-              <Link key={link.href} href={link.href} className={linkClass}>
+              <Link key={link.href} href={link.href} className={getLinkClass(link.href)}>
                 {link.label}
               </Link>
             ))}
@@ -118,10 +127,10 @@ export default function Navbar() {
 
           {/* Tablet Nav */}
           <div className="hidden md:flex xl:hidden items-center gap-5">
-            <Link href="/" className={linkClass}>
+            <Link href="/" className={getLinkClass("/")}>
               {t("nav.home")}
             </Link>
-            <Link href="/assistant" className={linkClass}>
+            <Link href="/assistant" className={getLinkClass("/assistant")}>
               {t("nav.assistant")}
             </Link>
 
@@ -152,7 +161,11 @@ export default function Navbar() {
                     <Link
                       key={link.href}
                       href={link.href}
-                      className="block px-4 py-2.5 text-sm text-slate-300 hover:text-emerald-400 hover:bg-emerald-500/5 transition-colors"
+                      className={`block px-4 py-2.5 text-sm transition-colors ${
+                        isActive(link.href)
+                          ? "text-emerald-400 bg-emerald-500/10"
+                          : "text-slate-300 hover:text-emerald-400 hover:bg-emerald-500/5"
+                      }`}
                       onClick={() => setShowMoreMenu(false)}>
                       {link.label}
                     </Link>
@@ -296,7 +309,11 @@ export default function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="block px-3 py-2.5 text-sm text-slate-300 hover:text-emerald-400 hover:bg-emerald-500/5 rounded-lg transition-colors font-medium"
+                className={`block px-3 py-2.5 text-sm rounded-lg transition-colors font-medium ${
+                  isActive(link.href)
+                    ? "text-emerald-400 bg-emerald-500/10"
+                    : "text-slate-300 hover:text-emerald-400 hover:bg-emerald-500/5"
+                }`}
                 onClick={() => setShowMobileMenu(false)}>
                 {link.label}
               </Link>

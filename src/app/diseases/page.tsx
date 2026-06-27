@@ -369,13 +369,13 @@ export default function DiseasesPage() {
       {/* Full Page Background Image Layer */}
       <div 
         className="fixed inset-0 -z-30 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: "url('/images/image (4).jpg')" }}
+        style={{ backgroundImage: "url('/images/Diseases.webp')" }}
       />
-      {/* Dark Gradient Overlay with Backdrop Blur */}
+      {/* Dark Gradient Overlay */}
       <div 
-        className="fixed inset-0 -z-20 backdrop-blur-sm"
+        className="fixed inset-0 -z-20"
         style={{
-          background: "linear-gradient(to bottom, rgba(2,6,23,0.75), rgba(2,6,23,0.85))"
+          background: "linear-gradient(to bottom, rgba(2,6,23,0.80) 0%, rgba(2,6,23,0.88) 60%, rgba(2,6,23,0.96) 100%)"
         }}
       />
       {/* Ambient orbs */}
@@ -386,15 +386,15 @@ export default function DiseasesPage() {
       <Navbar />
 
       {/* ── HERO ── */}
-      <section className="relative pt-32 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+      <section className="relative pt-36 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         {/* Badge */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           className="flex justify-center mb-6">
-          <span className="inline-flex items-center gap-2 text-xs font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-4 py-1.5 rounded-full">
-            🔬 {isAr ? "قاعدة بيانات أمراض النبات" : "Plant Pathology Database"}
+          <span className="inline-flex items-center gap-2 text-xs font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-4 py-1.5 rounded-full tracking-wide">
+            🔬 {isAr ? "قاعدة بيانات أمراض النبات" : "AI-Powered Plant Disease Knowledge Base"}
           </span>
         </motion.div>
 

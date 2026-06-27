@@ -120,7 +120,7 @@ section:first-of-type {
   padding-bottom: clamp(3rem, 8vw, 6rem) !important;
 }
 
-section:first-of-type .text-center::before {
+.home-root section:first-of-type .text-center::before {
   content: '✦ AI-Powered Plant Intelligence';
   display: inline-flex;
   align-items: center;

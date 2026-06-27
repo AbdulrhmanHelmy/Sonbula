@@ -163,7 +163,7 @@ export default function SettingsPage() {
               <Button
                 variant="ghost"
                 className="text-xs border border-slate-800 hover:bg-white/5 text-slate-400 hover:text-emerald-400 mt-2 sm:mt-0"
-                disabled
+                onClick={() => router.push("/profile")}
               >
                 {t("settings.editProfile")}
               </Button>

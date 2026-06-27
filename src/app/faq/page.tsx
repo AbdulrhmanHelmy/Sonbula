@@ -537,8 +537,23 @@ export default function FAQPage() {
 
   return (
     <div
-      className="min-h-screen bg-slate-950 text-slate-100 overflow-x-hidden"
+      className="min-h-screen text-slate-100 overflow-x-hidden relative"
       dir={isAr ? "rtl" : "ltr"}>
+      {/* Full Page Background Image */}
+      <div
+        className="fixed inset-0 -z-30 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: "url('/images/QA.png')" }}
+      />
+      {/* Dark Gradient Overlay */}
+      <div
+        className="fixed inset-0 -z-20"
+        style={{
+          background: "linear-gradient(to bottom, rgba(2,6,23,0.82) 0%, rgba(2,6,23,0.90) 60%, rgba(2,6,23,0.97) 100%)"
+        }}
+      />
+      {/* Ambient orbs */}
+      <div className="fixed top-0 right-0 w-[600px] h-[600px] bg-emerald-500/8 rounded-full blur-[140px] pointer-events-none" />
+      <div className="fixed bottom-0 left-0 w-[500px] h-[500px] bg-emerald-700/6 rounded-full blur-[130px] pointer-events-none" />
       <Navbar />
       {/* Hero */}
       <section className="relative pt-24 sm:pt-32 pb-20 px-4 sm:px-6 lg:px-8">
