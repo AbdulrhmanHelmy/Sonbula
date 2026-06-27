@@ -386,7 +386,7 @@ export default function DiseasesPage() {
       <Navbar />
 
       {/* ── HERO ── */}
-      <section className="relative pt-36 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+      <section className="relative pt-24 sm:pt-36 pb-12 sm:pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         {/* Badge */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -403,7 +403,7 @@ export default function DiseasesPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-center text-white leading-tight mb-4">
+          className="text-3xl sm:text-4xl lg:text-6xl font-extrabold text-center text-white leading-tight mb-4">
           {isAr ? "أمراض النبات الشائعة" : "Common Plant Diseases"}{" "}
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-emerald-500 animate-pulse">
             {isAr ? "في مصر" : "in Egypt"}
@@ -415,7 +415,7 @@ export default function DiseasesPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="text-slate-400 text-center text-lg max-w-2xl mx-auto mb-10">
+          className="text-slate-400 text-center text-base sm:text-lg max-w-2xl mx-auto mb-10">
           {isAr
             ? "تشخيص أمراض النبات بالذكاء الاصطناعي مدرّب على ظروف المناخ المصري. تصفح قاعدة بياناتنا أو ارفع صورة للحصول على تشخيص فوري."
             : "AI-powered disease identification trained on Egyptian climate conditions. Browse our curated pathology database or upload a photo for instant diagnosis."}
@@ -578,7 +578,7 @@ export default function DiseasesPage() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="relative overflow-hidden rounded-3xl border border-emerald-500/20 bg-gradient-to-br from-slate-900/80 via-emerald-950/40 to-slate-900/80 backdrop-blur-md p-10 sm:p-14 text-center">
+          className="relative overflow-hidden rounded-3xl border border-emerald-500/20 bg-gradient-to-br from-slate-900/80 via-emerald-950/40 to-slate-900/80 backdrop-blur-md p-6 sm:p-10 lg:p-14 text-center">
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
             <div className="w-[400px] h-[400px] bg-emerald-500/10 rounded-full blur-[100px]" />
           </div>

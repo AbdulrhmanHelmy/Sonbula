@@ -12,6 +12,8 @@ import {
   Globe,
   RefreshCw,
   CheckCircle,
+  Settings as SettingsIcon,
+  User,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSettings } from "@/context/SettingsContext";
@@ -73,13 +75,13 @@ export default function SettingsPage() {
   }) => (
     <Button
       size="sm"
-      variant={active ? "default" : "outline"}
+      variant={active ? "default" : "ghost"}
       onClick={onClick}
-      className={
+      className={`px-3 py-1.5 text-xs font-bold rounded-xl transition-all duration-200 border border-transparent ${
         active
-          ? "shadow-md"
-          : "border-slate-700 text-slate-400 hover:bg-white/5 hover:text-slate-200"
-      }
+          ? "bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg shadow-emerald-500/25 border-emerald-400/20 hover:scale-105 active:scale-95"
+          : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border-slate-800/20 hover:border-slate-700/40 active:scale-95"
+      }`}
     >
       {children}
     </Button>
@@ -87,13 +89,13 @@ export default function SettingsPage() {
 
   return (
     <div
-      className="min-h-screen pb-20 relative overflow-hidden selection:bg-emerald-500 selection:text-white"
+      className="min-h-screen pb-20 relative overflow-hidden selection:bg-emerald-500 selection:text-white bg-slate-950 text-slate-100"
       style={{ background: "var(--background)", color: "var(--foreground)" }}
       dir={isAr ? "rtl" : "ltr"}
     >
-      {/* Background decoration */}
-      <div className="absolute top-0 left-0 w-[400px] h-[400px] bg-emerald-500/5 rounded-full blur-[100px] pointer-events-none" />
-      <div className="absolute bottom-10 right-0 w-[450px] h-[450px] bg-emerald-500/5 rounded-full blur-[120px] pointer-events-none" />
+      {/* Background glowing orbs */}
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-10 left-0 w-[450px] h-[450px] bg-emerald-800/5 rounded-full blur-[130px] pointer-events-none" />
 
       {/* SUCCESS TOAST */}
       <AnimatePresence>
@@ -102,7 +104,7 @@ export default function SettingsPage() {
             initial={{ opacity: 0, y: -40, x: "-50%" }}
             animate={{ opacity: 1, y: 0, x: "-50%" }}
             exit={{ opacity: 0, y: -40, x: "-50%" }}
-            className="fixed top-6 left-1/2 z-50 bg-emerald-950/90 text-emerald-300 px-6 py-3.5 rounded-2xl border border-emerald-500/40 shadow-2xl backdrop-blur-md flex items-center gap-3 font-semibold text-sm max-w-sm w-full mx-auto"
+            className="fixed top-6 left-1/2 z-50 bg-slate-900/90 text-emerald-300 px-6 py-3.5 rounded-2xl border border-emerald-500/30 shadow-[0_0_30px_rgba(16,185,129,0.2)] backdrop-blur-lg flex items-center gap-3 font-semibold text-sm max-w-sm w-full mx-auto"
           >
             <CheckCircle className="w-5 h-5 text-emerald-400 flex-shrink-0" />
             <span className="flex-1 text-center">{toast.msg}</span>
@@ -110,16 +112,16 @@ export default function SettingsPage() {
         )}
       </AnimatePresence>
 
-      <div className="max-w-3xl mx-auto px-4 py-8 relative z-10">
+      <div className="max-w-2xl mx-auto px-4 py-12 relative z-10">
         {/* Back button */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
           <Button
             variant="ghost"
             onClick={() => router.push("/")}
-            className="mb-8 text-slate-400 hover:text-emerald-400 hover:bg-white/5 border border-transparent hover:border-slate-800 transition-all duration-200 hover:scale-105 active:scale-95"
+            className="mb-8 text-slate-400 hover:text-emerald-400 bg-slate-900/40 hover:bg-emerald-500/10 border border-slate-800/60 hover:border-emerald-500/30 transition-all duration-300 rounded-xl hover:scale-105 active:scale-95 shadow-lg backdrop-blur-md px-4 py-2 group gap-1.5 flex items-center"
           >
             <ArrowLeft
-              className={`w-4 h-4 ${isAr ? "ml-2 rotate-180" : "mr-2"}`}
+              className={`w-4 h-4 ${isAr ? "ml-1 rotate-180" : "mr-1"} transition-transform group-hover:translate-x-[-2px]`}
             />
             {t("settings.back")}
           </Button>
@@ -131,17 +133,22 @@ export default function SettingsPage() {
           className="space-y-8"
         >
           {/* Header */}
-          <div className="pb-4 border-b border-slate-800/80">
-            <h1 className="text-3xl font-black text-white flex items-center gap-3">
-              ⚙️ {t("settings.title")}
-            </h1>
-            <p className="text-slate-400 text-sm mt-1.5">{t("settings.subtitle")}</p>
+          <div className="pb-6 border-b border-slate-800/50 flex flex-col gap-2">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shadow-md">
+                <SettingsIcon className="w-5 h-5 animate-[spin_10s_linear_infinite]" />
+              </div>
+              <h1 className="text-3xl font-black text-white tracking-tight">
+                {t("settings.title")}
+              </h1>
+            </div>
+            <p className="text-slate-400 text-sm">{t("settings.subtitle")}</p>
           </div>
 
           {/* Account Profile Card */}
           <section className="space-y-4">
-            <div className="p-5 bg-gradient-to-br from-slate-900/60 to-slate-900/20 backdrop-blur-md rounded-3xl border border-slate-800/80 flex flex-col sm:flex-row items-center sm:items-start gap-4">
-              <div className="w-14 h-14 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-2xl flex items-center justify-center text-2xl shadow-inner">
+            <div className="p-6 bg-slate-900/40 backdrop-blur-md rounded-3xl border border-slate-800/60 hover:border-emerald-500/25 transition-all duration-300 flex flex-col sm:flex-row items-center sm:items-start gap-4 hover:shadow-[0_0_25px_rgba(16,185,129,0.05)] group">
+              <div className="w-14 h-14 bg-gradient-to-br from-emerald-500/10 to-emerald-500/20 text-emerald-400 border border-emerald-500/25 rounded-2xl flex items-center justify-center text-2xl shadow-inner group-hover:scale-105 transition-transform duration-300">
                 🧑‍🌾
               </div>
               <div className="flex-1 text-center sm:text-start space-y-1">
@@ -149,7 +156,7 @@ export default function SettingsPage() {
                   <h3 className="font-bold text-white text-lg">
                     {t("settings.account")}
                   </h3>
-                  <span className="text-[10px] text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full font-bold w-fit mx-auto sm:mx-0">
+                  <span className="text-[10px] text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full font-bold w-fit mx-auto sm:mx-0 shadow-sm">
                     {t("settings.accountTier")}
                   </span>
                 </div>
@@ -161,10 +168,11 @@ export default function SettingsPage() {
                 </p>
               </div>
               <Button
-                variant="ghost"
-                className="text-xs border border-slate-800 hover:bg-white/5 text-slate-400 hover:text-emerald-400 mt-2 sm:mt-0"
+                variant="outline"
+                className="text-xs border border-slate-800 hover:border-emerald-500/30 hover:bg-emerald-500/10 text-slate-400 hover:text-emerald-400 mt-2 sm:mt-0 px-4 py-2 rounded-xl transition-all duration-300 hover:scale-105 active:scale-95 shadow-sm gap-1.5 flex items-center justify-center"
                 onClick={() => router.push("/profile")}
               >
+                <User className="w-3.5 h-3.5" />
                 {t("settings.editProfile")}
               </Button>
             </div>
@@ -176,21 +184,23 @@ export default function SettingsPage() {
               🖥️ {t("settings.appearance")}
             </h2>
 
-            <div className="p-5 rounded-3xl bg-slate-900/40 border border-slate-800/80 backdrop-blur-md space-y-4">
+            <div className="p-6 rounded-3xl bg-slate-900/40 border border-slate-800/60 backdrop-blur-md space-y-6 hover:border-emerald-500/20 hover:shadow-[0_0_30px_rgba(16,185,129,0.03)] transition-all duration-300">
               {/* Language Switch */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-800/40">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-slate-800/30">
                 <div className="flex items-center gap-3">
-                  <Globe className="w-5 h-5 text-emerald-400 flex-shrink-0" />
+                  <div className="w-10 h-10 rounded-xl bg-emerald-500/5 border border-emerald-500/15 flex items-center justify-center text-emerald-400">
+                    <Globe className="w-5 h-5 flex-shrink-0" />
+                  </div>
                   <div>
                     <span className="font-bold text-white text-sm block">
                       {t("settings.language")}
                     </span>
-                    <span className="text-[11px] text-slate-400 block">
+                    <span className="text-[11px] text-slate-400 block mt-0.5">
                       {t("settings.languageDesc")}
                     </span>
                   </div>
                 </div>
-                <div className="flex gap-2" dir="ltr">
+                <div className="flex gap-2 bg-slate-950/40 p-1.5 rounded-2xl border border-slate-800/50" dir="ltr">
                   <OptionButton
                     active={isAr}
                     onClick={() => handleLanguage("ar")}
@@ -207,25 +217,27 @@ export default function SettingsPage() {
               </div>
 
               {/* Theme */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-800/40">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-slate-800/30">
                 <div className="flex items-center gap-3">
-                  {theme === "light" ? (
-                    <Sun className="w-5 h-5 text-emerald-400" />
-                  ) : theme === "dark" ? (
-                    <Moon className="w-5 h-5 text-emerald-400" />
-                  ) : (
-                    <Monitor className="w-5 h-5 text-emerald-400" />
-                  )}
+                  <div className="w-10 h-10 rounded-xl bg-emerald-500/5 border border-emerald-500/15 flex items-center justify-center text-emerald-400">
+                    {theme === "light" ? (
+                      <Sun className="w-5 h-5" />
+                    ) : theme === "dark" ? (
+                      <Moon className="w-5 h-5" />
+                    ) : (
+                      <Monitor className="w-5 h-5" />
+                    )}
+                  </div>
                   <div>
                     <span className="font-bold text-white text-sm block">
                       {t("settings.theme")}
                     </span>
-                    <span className="text-[11px] text-slate-400 block">
+                    <span className="text-[11px] text-slate-400 block mt-0.5">
                       {t("settings.themeDesc")}
                     </span>
                   </div>
                 </div>
-                <div className="flex gap-1.5 flex-wrap" dir="ltr">
+                <div className="flex gap-1.5 flex-wrap bg-slate-950/40 p-1.5 rounded-2xl border border-slate-800/50" dir="ltr">
                   {(["light", "dark", "system"] as const).map((val) => (
                     <OptionButton
                       key={val}
@@ -243,19 +255,21 @@ export default function SettingsPage() {
               </div>
 
               {/* Font Size */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
-                  <Type className="w-5 h-5 text-emerald-400 flex-shrink-0" />
+                  <div className="w-10 h-10 rounded-xl bg-emerald-500/5 border border-emerald-500/15 flex items-center justify-center text-emerald-400">
+                    <Type className="w-5 h-5 flex-shrink-0" />
+                  </div>
                   <div>
                     <span className="font-bold text-white text-sm block">
                       {t("settings.fontSize")}
                     </span>
-                    <span className="text-[11px] text-slate-400 block">
+                    <span className="text-[11px] text-slate-400 block mt-0.5">
                       {t("settings.fontSizeDesc")}
                     </span>
                   </div>
                 </div>
-                <div className="flex gap-1.5 flex-wrap" dir="ltr">
+                <div className="flex gap-1.5 flex-wrap bg-slate-950/40 p-1.5 rounded-2xl border border-slate-800/50" dir="ltr">
                   {(["small", "medium", "large"] as const).map((val) => (
                     <OptionButton
                       key={val}
@@ -278,7 +292,7 @@ export default function SettingsPage() {
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-6 border-t border-slate-800/60">
             <Button
               variant="outline"
-              className="w-full sm:w-auto border-red-500/20 text-red-400 hover:bg-red-500/10 gap-2 text-xs"
+              className="w-full sm:w-auto border-red-500/20 text-red-400 hover:bg-red-500/10 hover:border-red-500/40 gap-2 text-xs py-2 px-4 rounded-xl transition-all duration-300 hover:scale-105 active:scale-95 shadow-sm"
               onClick={resetToDefaults}
             >
               <RefreshCw className="w-3.5 h-3.5" />

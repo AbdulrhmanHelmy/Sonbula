@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import NextImage from "next/image";
 import { useSettings } from "@/context/SettingsContext";
 import { Plant, Disease as PlantDisease } from "@/lib/types";
 import { plantsData } from "@/lib/PlantsData";
@@ -464,7 +465,48 @@ export default function PlantsPanel() {
                 transition: "all 0.15s",
               }}
             >
-              <span style={{ fontSize: 20 }}>{plant.emoji}</span>
+              {/* Plant thumbnail */}
+              <div
+                style={{
+                  width: 48,
+                  height: 48,
+                  borderRadius: 10,
+                  overflow: "hidden",
+                  flexShrink: 0,
+                  border: "1px solid rgba(16,185,129,0.18)",
+                  background: "rgba(16,185,129,0.06)",
+                  position: "relative",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                {plant.image ? (
+                  <NextImage
+                    src={plant.image}
+                    alt={plant.name}
+                    fill
+                    sizes="48px"
+                    style={{ objectFit: "cover" }}
+                    loading="lazy"
+                    onError={(e) => {
+                      const target = e.currentTarget as HTMLImageElement;
+                      target.style.display = "none";
+                    }}
+                  />
+                ) : null}
+                {/* Emoji fallback — shown underneath, hidden by image when it loads */}
+                <span
+                  style={{
+                    fontSize: 22,
+                    position: "absolute",
+                    zIndex: 0,
+                  }}
+                >
+                  {plant.emoji}
+                </span>
+              </div>
+
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div
                   style={{
@@ -758,26 +800,39 @@ export default function PlantsPanel() {
                   ))}
                 </div>
                 <div style={{ position: "relative", height: 220 }}>
-                  <img
-                    src={
-                      imageTab === "fruit"
-                        ? selectedPlant.image
-                        : selectedPlant.leafImage
-                    }
-                    alt={selectedPlant.name}
+                  {/* Emoji fallback shown behind the image */}
+                  <div
                     style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                      display: "block",
+                      position: "absolute",
+                      inset: 0,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontSize: 64,
+                      zIndex: 0,
                     }}
-                    onError={(
-                      e: React.SyntheticEvent<HTMLImageElement, Event>
-                    ) => {
-                      const target = e.target as HTMLImageElement;
-                      target.style.display = "none";
-                    }}
-                  />
+                  >
+                    {selectedPlant.emoji}
+                  </div>
+                  {(imageTab === "fruit" ? selectedPlant.image : selectedPlant.leafImage) && (
+                    <NextImage
+                      key={`${selectedPlant.id}-${imageTab}`}
+                      src={
+                        imageTab === "fruit"
+                          ? selectedPlant.image
+                          : selectedPlant.leafImage
+                      }
+                      alt={`${selectedPlant.name} ${imageTab === "fruit" ? "ثمرة" : "ورقة"}`}
+                      fill
+                      sizes="340px"
+                      style={{ objectFit: "cover", zIndex: 1 }}
+                      priority={false}
+                      onError={(e) => {
+                        const target = e.currentTarget as HTMLImageElement;
+                        target.style.display = "none";
+                      }}
+                    />
+                  )}
                   <div
                     style={{
                       position: "absolute",

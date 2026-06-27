@@ -117,21 +117,21 @@ export default function Home() {
       <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-32">
         <div className="text-center space-y-8">
           <div className="space-y-4">
-            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tight">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight">
               <span className="bg-gradient-to-r from-green-600 via-emerald-600 to-green-700 bg-clip-text text-transparent">
                 {t.heroGradient}
               </span>
               <span className="block text-gray-900">{t.heroSolid}</span>
             </h1>
-            <p className="text-xl sm:text-2xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-base sm:text-xl md:text-2xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
               {t.heroSub}
             </p>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center w-full sm:w-auto">
             <Link
               href="/assistant"
-              className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105 group">
+              className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105 group">
               <span>{t.btnAnalyze}</span>
               <svg
                 className={`w-5 h-5 ${isAr ? "mr-2 rotate-180 group-hover:-translate-x-1" : "ml-2 group-hover:translate-x-1"} transition-transform`}
@@ -148,38 +148,38 @@ export default function Home() {
             </Link>
             <Link
               href="/plants"
-              className="inline-flex items-center justify-center px-8 py-4 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-semibold rounded-xl shadow-md transition-all hover:scale-105 border border-emerald-200">
+              className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-semibold rounded-xl shadow-md transition-all hover:scale-105 border border-emerald-200">
               {t.btnDictionary}
             </Link>
             <Link
               href="/assistant"
-              className="inline-flex items-center justify-center px-8 py-4 border-2 border-green-600 text-green-600 hover:bg-green-50 font-semibold rounded-xl transition-all">
+              className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 border-2 border-green-600 text-green-600 hover:bg-green-50 font-semibold rounded-xl transition-all">
               {t.btnAssistant}
             </Link>
           </div>
 
-          <div className="grid grid-cols-3 gap-4 sm:gap-8 pt-8 border-t border-green-200">
+          <div className="grid grid-cols-3 gap-2 sm:gap-8 pt-8 border-t border-green-200">
             <div className="space-y-1">
-              <p className="text-3xl sm:text-4xl font-bold text-green-600">
+              <p className="text-2xl sm:text-3xl md:text-4xl font-bold text-green-600">
                 {t.stat1Value}
               </p>
-              <p className="text-sm sm:text-base text-gray-600">
+              <p className="text-xs sm:text-sm md:text-base text-gray-600">
                 {t.stat1Label}
               </p>
             </div>
             <div className="space-y-1">
-              <p className="text-3xl sm:text-4xl font-bold text-green-600">
+              <p className="text-2xl sm:text-3xl md:text-4xl font-bold text-green-600">
                 {t.stat2Value}
               </p>
-              <p className="text-sm sm:text-base text-gray-600">
+              <p className="text-xs sm:text-sm md:text-base text-gray-600">
                 {t.stat2Label}
               </p>
             </div>
             <div className="space-y-1">
-              <p className="text-3xl sm:text-4xl font-bold text-green-600">
+              <p className="text-2xl sm:text-3xl md:text-4xl font-bold text-green-600">
                 {t.stat3Value}
               </p>
-              <p className="text-sm sm:text-base text-gray-600">
+              <p className="text-xs sm:text-sm md:text-base text-gray-600">
                 {t.stat3Label}
               </p>
             </div>
@@ -190,10 +190,10 @@ export default function Home() {
       {/* ── Features ── */}
       <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="text-center mb-16">
-          <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4">
             {t.whyTitle}
           </h2>
-          <p className="text-xl text-gray-600">{t.whySub}</p>
+          <p className="text-base sm:text-xl text-gray-600">{t.whySub}</p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-8">
@@ -222,7 +222,7 @@ export default function Home() {
           ].map((card) => (
             <div
               key={card.title}
-              className="group bg-white rounded-2xl p-8 shadow-md hover:shadow-xl transition-all hover:translate-y-[-4px]">
+              className="group bg-white rounded-2xl p-5 sm:p-8 shadow-md hover:shadow-xl transition-all hover:translate-y-[-4px]">
               <div className="text-5xl mb-4 group-hover:scale-110 transition-transform">
                 {card.emoji}
               </div>
@@ -250,7 +250,7 @@ export default function Home() {
       {/* ── CTA Banner ── */}
       <section className="bg-gradient-to-r from-green-600 to-emerald-600 py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl sm:text-5xl font-bold text-white mb-6">
+          <h2 className="text-2xl sm:text-4xl md:text-5xl font-bold text-white mb-6">
             {t.ctaTitle}
           </h2>
           <p className="text-xl text-green-50 mb-8 max-w-2xl mx-auto">

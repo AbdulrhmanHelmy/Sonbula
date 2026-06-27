@@ -7,10 +7,8 @@ export const plantsData: Plant[] = [
     nameEn: "Tomato",
     emoji: "🍅",
     category: "خضروات",
-    image:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Tomato_je.jpg/400px-Tomato_je.jpg",
-    leafImage:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/400px-Image_created_with_a_mobile_phone.png",
+    image: "/images/Tomato.jpg",
+    leafImage: "/images/tomato_leaf.jpg",
     description:
       "من أكثر المحاصيل زراعةً في مصر، يُزرع طوال العام في معظم المحافظات.",
     season: "طوال العام",
@@ -71,10 +69,8 @@ export const plantsData: Plant[] = [
     nameEn: "Mango",
     emoji: "🥭",
     category: "فاكهة",
-    image:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Hapus_Mango.jpg/400px-Hapus_Mango.jpg",
-    leafImage:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Mangifera_indica_-_K%C3%B6hler%E2%80%93s_Medizinal-Pflanzen-095.jpg/400px-Mangifera_indica_-_K%C3%B6hler%E2%80%93s_Medizinal-Pflanzen-095.jpg",
+    image: "/images/mango.jpg",
+    leafImage: "/images/mango_leaf.jpg",
     description:
       "من أشهر الفواكه الاستوائية في مصر، تُزرع في الإسماعيلية وسيناء وأسوان.",
     season: "يونيو – سبتمبر",
@@ -118,10 +114,8 @@ export const plantsData: Plant[] = [
     nameEn: "Wheat",
     emoji: "🌾",
     category: "حبوب",
-    image:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Pita_quinua-trigo.jpg/400px-Pita_quinua-trigo.jpg",
-    leafImage:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Wheat_close-up.jpg/400px-Wheat_close-up.jpg",
+    image: "/images/Wheat.jpg",
+    leafImage: "/images/Wheat_leaf.jpg",
     description:
       "المحصول الاستراتيجي الأول في مصر، يُزرع في الدلتا والوجه البحري.",
     season: "نوفمبر – مايو",
@@ -165,10 +159,8 @@ export const plantsData: Plant[] = [
     nameEn: "Lemon",
     emoji: "🍋",
     category: "فاكهة",
-    image:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Lemon-Whole-Split.jpg/400px-Lemon-Whole-Split.jpg",
-    leafImage:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Lemon_Leaves.jpg/400px-Lemon_Leaves.jpg",
+    image: "/images/lemon.jpg",
+    leafImage: "/images/lemon_leaf.jpg",
     description:
       "من أكثر الحمضيات زراعةً في مصر، تُصدَّر بكميات كبيرة لأوروبا.",
     season: "طوال العام",
@@ -213,10 +205,8 @@ export const plantsData: Plant[] = [
     nameEn: "Grape",
     emoji: "🍇",
     category: "فاكهة",
-    image:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Wine_grapes03.jpg/400px-Wine_grapes03.jpg",
-    leafImage:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Grapevine_leaves.jpg/400px-Grapevine_leaves.jpg",
+    image: "/images/Grape.jpg",
+    leafImage: "/images/Grape_leaf.jpg",
     description:
       "يُزرع في مصر منذ آلاف السنين، أهم مناطقه الإسكندرية والفيوم وأسوان.",
     season: "يوليو – سبتمبر",
@@ -245,10 +235,8 @@ export const plantsData: Plant[] = [
     nameEn: "Olive",
     emoji: "🫒",
     category: "أشجار",
-    image:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Olives_in_bowl.jpg/400px-Olives_in_bowl.jpg",
-    leafImage:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Olea_europaea_subsp_europaea_leaves.jpg/400px-Olea_europaea_subsp_europaea_leaves.jpg",
+    image: "/images/Olive.jpg",
+    leafImage: "/images/Olive_leaf.jpg",
     description: "شجرة مقدسة تُزرع في سيناء ومطروح، تعيش مئات السنين.",
     season: "أكتوبر – ديسمبر",
     region: "سيناء، مطروح، الفيوم",
@@ -276,10 +264,8 @@ export const plantsData: Plant[] = [
     nameEn: "Potato",
     emoji: "🥔",
     category: "خضروات",
-    image:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Potato-Schwede-1.jpg/400px-Potato-Schwede-1.jpg",
-    leafImage:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Potato_plant.jpg/400px-Potato_plant.jpg",
+    image: "/images/Potato.jpg",
+    leafImage: "/images/Potato_leaf.jpg",
     description: "من أهم محاصيل الخضر اقتصادياً، تُصدَّر بكميات كبيرة لأوروبا.",
     season: "أكتوبر – مايو",
     region: "البحيرة، الإسكندرية، الشرقية",
@@ -308,10 +294,8 @@ export const plantsData: Plant[] = [
     nameEn: "Onion",
     emoji: "🧅",
     category: "خضروات",
-    image:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Onions.jpg/400px-Onions.jpg",
-    leafImage:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Onion_on_white_background.jpg/400px-Onion_on_white_background.jpg",
+    image: "/images/onion.jpg",
+    leafImage: "/images/onion_leaf.jpg",
     description: "مصر من أكبر مصدري البصل في العالم، يُزرع في الوادي والدلتا.",
     season: "أكتوبر – مارس",
     region: "الوادي الجديد، الشرقية، الفيوم",
@@ -354,10 +338,8 @@ export const plantsData: Plant[] = [
     nameEn: "Strawberry",
     emoji: "🍓",
     category: "فاكهة",
-    image:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/PerfectStrawberry.jpg/400px-PerfectStrawberry.jpg",
-    leafImage:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Strawberry_leaves.jpg/400px-Strawberry_leaves.jpg",
+    image: "/images/Strawberry.jpg",
+    leafImage: "/images/Strawberry_leaf.jpg",
     description:
       "مصر من أكبر منتجي الفراولة المصدرة في العالم، تُزرع في الإسكندرية والبحيرة.",
     season: "نوفمبر – إبريل",
@@ -401,10 +383,8 @@ export const plantsData: Plant[] = [
     nameEn: "Corn",
     emoji: "🌽",
     category: "حبوب",
-    image:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Corncobs_-_whole_and_cut.jpg/400px-Corncobs_-_whole_and_cut.jpg",
-    leafImage:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Maize_field.jpg/400px-Maize_field.jpg",
+    image: "/images/corn.jpg",
+    leafImage: "/images/corn_leaf.jpg",
     description: "ثاني أهم محصول حبوب في مصر بعد القمح، يُزرع في الصيف.",
     season: "إبريل – سبتمبر",
     region: "الوجه البحري، الصعيد، الجيزة",
@@ -432,10 +412,8 @@ export const plantsData: Plant[] = [
     nameEn: "Fig",
     emoji: "🫐",
     category: "فاكهة",
-    image:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Fresh_Figs.jpg/400px-Fresh_Figs.jpg",
-    leafImage:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Ficus_carica_leaf.jpg/400px-Ficus_carica_leaf.jpg",
+    image: "/images/Fig.jpg",
+    leafImage: "/images/Fig_leaf.jpg",
     description:
       "شجرة تاريخية في مصر، تُزرع في الوجه القبلي وسيناء وتتحمل الجفاف.",
     season: "يونيو – أكتوبر",
@@ -464,10 +442,8 @@ export const plantsData: Plant[] = [
     nameEn: "Pepper",
     emoji: "🫑",
     category: "خضروات",
-    image:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Capsicum_annuum_2.jpg/400px-Capsicum_annuum_2.jpg",
-    leafImage:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Capsicum_annuum_leaves.jpg/400px-Capsicum_annuum_leaves.jpg",
+    image: "/images/Pepper.jpg",
+    leafImage: "/images/Pepper_leaf.jpg",
     description:
       "محصول مهم في مصر للاستهلاك المحلي والتصدير، يُزرع في الصيف والخريف.",
     season: "مارس – أكتوبر",
